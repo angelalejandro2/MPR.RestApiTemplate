@@ -1,0 +1,113 @@
+<#@ template language="C#" debug="true" hostSpecific="true" #>
+<#@ output extension=".generated.cs" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+
+<#
+    string entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\Domain\Entities");
+    var entityFiles = Directory.GetFiles(entitiesPath, "*.cs");
+
+    foreach (var file in entityFiles)
+    {
+        string className = Path.GetFileNameWithoutExtension(file);
+        string modelName = className + "Model";
+        string lowerName = char.ToLower(className[0]) + className.Substring(1);
+        var lines = File.ReadAllLines(file);
+
+        // Leer [Key] properties
+        var keyProps = new List<(string Type, string Name)>();
+        bool nextIsKey = false;
+
+        foreach (var line in lines)
+        {
+            var trimmed = line.Trim();
+            if (trimmed.StartsWith("[Key]"))
+            {
+                nextIsKey = true;
+                continue;
+            }
+
+            if (nextIsKey && trimmed.StartsWith("public") && trimmed.Contains("{ get;"))
+            {
+                var parts = trimmed.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length >= 3)
+                {
+                    string type = parts[1];
+                    string name = parts[2].Split('{')[0].Replace(";", "").Trim();
+                    keyProps.Add((type, name));
+                }
+                nextIsKey = false;
+            }
+        }
+
+        string routeParams = string.Join("/", keyProps.Select(p => $"{{{char.ToLower(p.Name[0]) + p.Name.Substring(1)}}}"));
+        string methodParams = string.Join(", ", keyProps.Select(p => $"{p.Type} {char.ToLower(p.Name[0]) + p.Name.Substring(1)}"));
+        string paramArgs = string.Join(", ", keyProps.Select(p => $"{char.ToLower(p.Name[0]) + p.Name.Substring(1)}"));
+#>
+using Microsoft.AspNetCore.Mvc;
+using MPR.RestApiTemplate.Application.Models;
+using MPR.RestApiTemplate.Application.Services;
+
+namespace MPR.RestApiTemplate.Api.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class <#= className #>Controller : ControllerBase
+    {
+        private readonly <#= className #>Service _service;
+
+        public <#= className #>Controller(<#= className #>Service service)
+        {
+            _service = service;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<<#= modelName #>>>> GetAll()
+        {
+            var result = await _service.GetAllAsync();
+            return Ok(result);
+        }
+<#
+    if (keyProps.Any())
+    {
+#>
+        [HttpGet("<#= routeParams #>")]
+        public async Task<ActionResult<<#= modelName #>>> GetById(<#= methodParams #>)
+        {
+            var result = await _service.GetByIdAsync(<#= paramArgs #>);
+            if (result == null)
+                return NotFound();
+            return Ok(result);
+        }
+
+        [HttpPut("<#= routeParams #>")]
+        public async Task<IActionResult> Update(<#= methodParams #>, [FromBody] <#= modelName #> model)
+        {
+            // TODO: implementar lógica de actualización
+            return NoContent();
+        }
+
+        [HttpDelete("<#= routeParams #>")]
+        public async Task<IActionResult> Delete(<#= methodParams #>)
+        {
+            // TODO: implementar lógica de eliminación
+            return NoContent();
+        }
+<#
+    }
+#>
+
+        [HttpPost]
+        public async Task<ActionResult<<#= modelName #>>> Create([FromBody] <#= modelName #> model)
+        {
+            // TODO: implementar lógica de creación
+            return CreatedAtAction(nameof(GetById), new { /* clave */ }, model);
+        }
+    }
+}
+<#
+    }
+#>
