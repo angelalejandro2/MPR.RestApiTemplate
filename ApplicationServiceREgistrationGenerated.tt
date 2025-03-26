@@ -21,13 +21,14 @@
     var serviceNames = new List<string>();
 
     foreach (var line in serviceLines)
+{
+    // Detecta clases públicas con sufijo Service, incluyendo parciales
+    var match = Regex.Match(line.Trim(), @"public\s+(?:partial\s+)?class\s+(\w+Service)\b");
+    if (match.Success)
     {
-        var match = Regex.Match(line.Trim(), @"public\s+class\s+(\w+Service)\b");
-        if (match.Success)
-        {
-            serviceNames.Add(match.Groups[1].Value);
-        }
+        serviceNames.Add(match.Groups[1].Value);
     }
+}
 
     serviceNames = serviceNames.Distinct().ToList();
 #>
