@@ -1,0 +1,39 @@
+param (
+    [string]$AppSettingsPath = "../MPR.RestApiTemplate.Api/appsettings.json",
+    [string]$ConnectionStringsFile = "./AppSettingsConnectionStrings.json"
+)
+
+# Validar que existen los archivos
+if (!(Test-Path $AppSettingsPath)) {
+    Write-Error "No se encontró el archivo appsettings.json en $AppSettingsPath"
+    exit 1
+}
+
+if (!(Test-Path $ConnectionStringsFile)) {
+    Write-Error "No se encontró el archivo con los placeholders en $ConnectionStringsFile"
+    exit 1
+}
+
+# Leer contenido
+$appSettings = Get-Content $AppSettingsPath -Raw | ConvertFrom-Json
+$placeholders = Get-Content $ConnectionStringsFile -Raw | ConvertFrom-Json
+
+# Asegurar sección ConnectionStrings
+if (-not $appSettings.ConnectionStrings) {
+    $appSettings | Add-Member -MemberType NoteProperty -Name ConnectionStrings -Value @{}
+}
+
+# Insertar nuevos placeholders si no existen
+foreach ($key in $placeholders.ConnectionStrings.PSObject.Properties.Name) {
+    if ($appSettings.ConnectionStrings.PSObject.Properties.Name -contains $key) {
+        Write-Warning "La cadena de conexión '$key' ya existe. No se sobrescribirá."
+    } else {
+        $appSettings.ConnectionStrings | Add-Member -NotePropertyName $key -NotePropertyValue $placeholders.ConnectionStrings.$key
+        Write-Host "✅ Agregada: $key"
+    }
+}
+
+# Guardar cambios
+$appSettings | ConvertTo-Json -Depth 10 | Out-File $AppSettingsPath -Encoding UTF8
+
+Write-Host "`n✅ appsettings.json actualizado. Solo se agregaron entradas nuevas."
