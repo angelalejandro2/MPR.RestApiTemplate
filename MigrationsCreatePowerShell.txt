@@ -3,12 +3,16 @@ $contextsPath = ".\Infrastructure\Context"
 $startupProject = ".\MPR.RestApiTemplate.Api"
 $project = ".\Infrastructure"
 
-# Requiere Entity Framework CLI
-# dotnet tool install --global dotnet-ef
+# Asegura que el CLI esté disponible
+if (-not (Get-Command "dotnet-ef" -ErrorAction SilentlyContinue)) {
+    Write-Error "dotnet-ef is not installed. Run 'dotnet tool install --global dotnet-ef'"
+    exit 1
+}
 
-Get-ChildItem -Path $contextsPath -Filter *.cs | ForEach-Object {
+Get-ChildItem -Path $contextsPath -Recurse -Filter *.cs | ForEach-Object {
     $fileContent = Get-Content $_.FullName -Raw
-    if ($fileContent -match "class\s+(\w+DbContext)\s*:\s*DbContext") {
+    $regex = '(?s)class\s+(\w+DbContext)\b.*?:\s*[\w<>,\s]*DbContext\b'
+    if ($fileContent -match $regex) {
         $contextName = $matches[1]
         $contextShortName = $contextName -replace "DbContext$", ""
         $outputDir = "Migrations\$contextShortName"
