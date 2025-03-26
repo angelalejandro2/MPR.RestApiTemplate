@@ -1,0 +1,43 @@
+<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+
+<#
+    string contextPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile));
+    var contextFiles = Directory.GetFiles(contextPath, "*DbContext.cs");
+
+    var contexts = contextFiles
+        .Select(f => Path.GetFileNameWithoutExtension(f))
+        .ToList();
+
+    string namespaceName = Host.TemplateFile.Contains("SqlServer") 
+        ? "MPR.RestApiTemplate.Infrastructure.SqlServer.Context"
+        : "MPR.RestApiTemplate.Infrastructure.Oracle.Context";
+#>
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+
+namespace <#= namespaceName #>;
+
+public static class DbContextRegistration
+{
+    public static IServiceCollection AddInfrastructureDbContexts(this IServiceCollection services, IConfiguration configuration)
+    {
+<#
+    foreach (var ctx in contexts)
+    {
+        string connectionName = ctx.Replace("DbContext", "Connection");
+#>
+        services.AddDbContext<<#= ctx #>>(options =>
+            options.Use<#= (namespaceName.Contains("Oracle") ? "Oracle" : "SqlServer") #>(
+                configuration.GetConnectionString("<#= connectionName #>")
+            ));
+<#
+    }
+#>
+        return services;
+    }
+}
