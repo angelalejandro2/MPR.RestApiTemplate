@@ -2,15 +2,44 @@
 <#@ output extension=".cs" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System.IO" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
 <#@ import namespace="System.Linq" #>
 
 <#
     string contextPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile));
     var contextFiles = Directory.GetFiles(contextPath, "*DbContext.cs");
 
-    var contextNames = contextFiles
-        .Select(f => Path.GetFileNameWithoutExtension(f))
-        .ToList();
+    var contextInfo = new List<(string ClassName, string Provider)>();
+
+    foreach (var file in contextFiles)
+    {
+        var lines = File.ReadAllLines(file);
+        string provider = "Oracle"; // Default
+        string className = null;
+
+        for (int i = 0; i < lines.Length; i++)
+        {
+            string line = lines[i].Trim();
+
+            // Buscar atributo DbProvider
+            var attrMatch = Regex.Match(line, @"\[DbProvider\(DbProvider\.(\w+)\)\]");
+            if (attrMatch.Success)
+            {
+                provider = attrMatch.Groups[1].Value;
+            }
+
+            // Buscar clase
+            var classMatch = Regex.Match(line, @"public\s+class\s+(\w+DbContext)");
+            if (classMatch.Success)
+            {
+                className = classMatch.Groups[1].Value;
+                break;
+            }
+        }
+
+        if (!string.IsNullOrEmpty(className))
+            contextInfo.Add((className, provider));
+    }
 #>
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -23,12 +52,21 @@ public static class DbContextRegistration
     public static IServiceCollection AddInfrastructureDbContexts(this IServiceCollection services, IConfiguration configuration)
     {
 <#
-    foreach (var ctx in contextNames)
+    foreach (var (ctx, provider) in contextInfo)
     {
+        string useCall = provider switch
+        {
+            "SqlServer" => "UseSqlServer",
+            "Oracle" => "UseOracle",
+            "Npgsql" => "UseNpgsql",
+            "Sqlite" => "UseSqlite",
+            _ => "UseOracle" // fallback
+        };
+
         string connName = ctx.Replace("DbContext", "Connection");
 #>
         services.AddDbContext<<#= ctx #>>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("<#= connName #>"))
+            options.<#= useCall #>(configuration.GetConnectionString("<#= connName #>"))
         );
 <#
     }
