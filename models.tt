@@ -1,0 +1,67 @@
+<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ output extension=".generated.cs" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+
+<#
+    string entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\Domain\Entities");
+    var entityFiles = Directory.GetFiles(entitiesPath, "*.cs");
+    var entityNames = entityFiles.Select(f => Path.GetFileNameWithoutExtension(f)).ToHashSet();
+
+    foreach (var file in entityFiles)
+    {
+        var className = Path.GetFileNameWithoutExtension(file);
+        var lines = File.ReadAllLines(file);
+
+        bool nextIsKey = false;
+#>
+using System.ComponentModel.DataAnnotations;
+
+namespace MPR.RestApiTemplate.Application.Models
+{
+    public class <#= className #>Model
+    {
+<#
+        foreach (var line in lines)
+        {
+            var trimmed = line.Trim();
+
+            if (trimmed.StartsWith("[Key]"))
+            {
+                nextIsKey = true;
+                continue;
+            }
+
+            if (trimmed.StartsWith("public") && trimmed.Contains("{ get;") && !trimmed.Contains("class"))
+            {
+                var parts = trimmed.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length >= 3)
+                {
+                    string type = parts[1];
+                    string name = parts[2].Split('{')[0].Replace(";", "").Trim();
+
+                    // Convertir Entity a Model si aplica
+                    string modelType = entityNames.Contains(type) ? type + "Model" : type;
+
+                    if (nextIsKey)
+                    {
+#>        
+        [Key]
+<#
+                        nextIsKey = false;
+                    }
+#>        
+        public <#= modelType #> <#= name #> {{ get; set; }}
+<#
+                }
+            }
+        }
+#>
+    }
+}
+<#
+    }
+#>
