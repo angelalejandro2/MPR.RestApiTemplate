@@ -37,14 +37,21 @@ namespace MPR.RestApiTemplate.Application.Models
 
             if (trimmed.StartsWith("public") && trimmed.Contains("{ get;") && !trimmed.Contains("class"))
             {
-                var parts = trimmed.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length >= 3)
-                {
-                    string type = parts[1];
-                    string name = parts[2].Split('{')[0].Replace(";", "").Trim();
+                var parts = cleanLine.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+if (parts.Length >= 3)
+{
+    string rawType = parts[1];
+    string rawName = parts[2];
 
-                    // Convertir Entity a Model si aplica
-                    string modelType = entityNames.Contains(type) ? type + "Model" : type;
+    // Reparar tipo nullable
+    string type = rawType.EndsWith("?") ? rawType : rawType.TrimEnd('?');
+    if (rawType.EndsWith("?")) type += "?";
+
+    // Limpiar nombre
+    string name = rawName.Split(new[] { '{', ';' }, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
+
+    // Convertir Entity a Model si aplica
+    string modelType = entityNames.Contains(type.TrimEnd('?')) ? type.Replace(type.TrimEnd('?'), type.TrimEnd('?') + "Model") : type;
 
                     if (nextIsKey)
                     {
