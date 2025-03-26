@@ -14,21 +14,19 @@
     foreach (var file in contextFiles)
     {
         var lines = File.ReadAllLines(file);
-        string provider = "Oracle"; // Default
+        string provider = "Oracle"; // default
         string className = null;
 
         for (int i = 0; i < lines.Length; i++)
         {
             string line = lines[i].Trim();
 
-            // Buscar atributo DbProvider
             var attrMatch = Regex.Match(line, @"\[DbProvider\(DbProvider\.(\w+)\)\]");
             if (attrMatch.Success)
             {
                 provider = attrMatch.Groups[1].Value;
             }
 
-            // Buscar clase
             var classMatch = Regex.Match(line, @"public\s+class\s+(\w+DbContext)");
             if (classMatch.Success)
             {
@@ -60,13 +58,16 @@ public static class DbContextRegistration
             "Oracle" => "UseOracle",
             "Npgsql" => "UseNpgsql",
             "Sqlite" => "UseSqlite",
-            _ => "UseOracle" // fallback
+            _ => "UseOracle"
         };
 
         string connName = ctx.Replace("DbContext", "Connection");
 #>
         services.AddDbContext<<#= ctx #>>(options =>
-            options.<#= useCall #>(configuration.GetConnectionString("<#= connName #>"))
+            options.<#= useCall #>(
+                configuration.GetConnectionString("<#= connName #>"),
+                optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(<#= ctx #>).Assembly.FullName)
+            )
         );
 <#
     }
