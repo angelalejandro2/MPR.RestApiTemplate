@@ -1,6 +1,6 @@
-$contextsPath = ".\Infrastructure\Context"
-$startupProject = ".\MPR.RestApiTemplate.Api"
-$project = ".\Infrastructure"
+﻿$contextsPath = "..\MPR.RestApiTemplate.Infrastructure\Context"
+$startupProject = "..\MPR.RestApiTemplate.Api"
+$project = "..\MPR.RestApiTemplate.Infrastructure"
 
 # Verifica que dotnet ef esté instalado
 if (-not (Get-Command "dotnet-ef" -ErrorAction SilentlyContinue)) {

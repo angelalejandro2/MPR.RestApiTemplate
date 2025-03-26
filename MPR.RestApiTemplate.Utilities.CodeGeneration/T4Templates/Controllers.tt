@@ -1,13 +1,19 @@
-<#@ template language="C#" debug="true" hostSpecific="true" #>
+﻿<#@ template language="C#" debug="true" hostSpecific="true" #>
 <#@ output extension=".generated.cs" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Collections.Generic" #>
+using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
+using MPR.RestApiTemplate.Application.Models;
+using MPR.RestApiTemplate.Application.Services;
 
+namespace MPR.RestApiTemplate.Api.Controllers
+{
 <#
-    string entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\Domain\Entities");
+    string entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Domain\Entities");
     var entityFiles = Directory.GetFiles(entitiesPath, "*.cs");
 
     foreach (var file in entityFiles)
@@ -46,16 +52,12 @@
         string routeParams = string.Join("/", keyProps.Select(p => $"{{{char.ToLower(p.Name[0]) + p.Name.Substring(1)}}}"));
         string methodParams = string.Join(", ", keyProps.Select(p => $"{p.Type} {char.ToLower(p.Name[0]) + p.Name.Substring(1)}"));
         string paramArgs = string.Join(", ", keyProps.Select(p => $"{char.ToLower(p.Name[0]) + p.Name.Substring(1)}"));
+        string keyObject = string.Join(", ", keyProps.Select(p => $"model.{p.Name}"));
 #>
-using Microsoft.AspNetCore.Mvc;
-using MPR.RestApiTemplate.Application.Models;
-using MPR.RestApiTemplate.Application.Services;
-
-namespace MPR.RestApiTemplate.Api.Controllers
-{
     [ApiController]
-    [Route("api/[controller]")]
-    public class <#= className #>Controller : ControllerBase
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    public partial class <#= className #>Controller : ControllerBase
     {
         private readonly <#= className #>Service _service;
 
@@ -65,7 +67,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<<#= modelName #>>>> GetAll()
+        public virtual async Task<ActionResult<IEnumerable<<#= modelName #>>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
@@ -75,7 +77,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
     {
 #>
         [HttpGet("<#= routeParams #>")]
-        public async Task<ActionResult<<#= modelName #>>> GetById(<#= methodParams #>)
+        public virtual async Task<ActionResult<<#= modelName #>>> GetById(<#= methodParams #>)
         {
             var result = await _service.GetByIdAsync(<#= paramArgs #>);
             if (result == null)
@@ -83,31 +85,30 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Ok(result);
         }
 
-        [HttpPut("<#= routeParams #>")]
-        public async Task<IActionResult> Update(<#= methodParams #>, [FromBody] <#= modelName #> model)
-        {
-            // TODO: implementar lógica de actualización
-            return NoContent();
-        }
-
         [HttpDelete("<#= routeParams #>")]
-        public async Task<IActionResult> Delete(<#= methodParams #>)
+        public virtual async Task<ActionResult> DeleteAsync(<#= methodParams #>)
         {
-            // TODO: implementar lógica de eliminación
+            await _service.DeleteAsync(<#= paramArgs #>);
             return NoContent();
         }
 <#
     }
 #>
+        [HttpPut]
+        public virtual async Task<ActionResult<<#= modelName #>>> UpdateAsync([FromBody] <#= modelName #> model)
+        {
+            var result = await _service.UpdateAsync(model);
+            return Accepted(result);
+        }
 
         [HttpPost]
-        public async Task<ActionResult<<#= modelName #>>> Create([FromBody] <#= modelName #> model)
+        public virtual async Task<ActionResult<<#= modelName #>>> AddASync([FromBody] <#= modelName #> model)
         {
-            // TODO: implementar lógica de creación
-            return CreatedAtAction(nameof(GetById), new { /* clave */ }, model);
+            var result = await _service.AddAsync(model);
+            return CreatedAtAction(nameof(GetById), new { <#= keyObject #> }, model);
         }
     }
-}
 <#
     }
 #>
+}

@@ -1,0 +1,6 @@
+@MPR.RestApiTemplate.Api_HostAddress = https://localhost:7261
+
+GET {{MPR.RestApiTemplate.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

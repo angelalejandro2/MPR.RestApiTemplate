@@ -1,0 +1,23 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".generated.cs" #>
+using MPR.RestApiTemplate.Domain.Entities;
+
+namespace MPR.RestApiTemplate.Domain.Interfaces.Repositories
+{
+<#
+	var entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Domain\Entities");
+	var files = Directory.GetFiles(entitiesPath, "*.cs");
+	foreach (var file in files)
+	{
+		var className = Path.GetFileNameWithoutExtension(file);
+#>
+	public interface I<#= className #>Repository : IGenericRepository<<#= className #>>	{ }
+<#
+	}
+#>
+}

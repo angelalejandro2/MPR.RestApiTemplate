@@ -1,7 +1,7 @@
-$timestamp = Get-Date -Format "yyyyMMddHHmmss"
-$contextsPath = ".\Infrastructure\Context"
-$startupProject = ".\MPR.RestApiTemplate.Api"
-$project = ".\Infrastructure"
+﻿$timestamp = Get-Date -Format "yyyyMMddHHmmss"
+$contextsPath = "..\MPR.RestApiTemplate.Infrastructure\Context"
+$startupProject = "..\MPR.RestApiTemplate.Api"
+$project = "..\MPR.RestApiTemplate.Infrastructure"
 
 # Asegura que el CLI esté disponible
 if (-not (Get-Command "dotnet-ef" -ErrorAction SilentlyContinue)) {
@@ -18,12 +18,20 @@ Get-ChildItem -Path $contextsPath -Recurse -Filter *.cs | ForEach-Object {
         $outputDir = "Migrations\$contextShortName"
         $migrationName = "AutoMigration_${contextName}_$timestamp"
 
-        Write-Host "Generating migration for $contextName into $outputDir..."
+        Write-Host "Generating migration for $contextName into $outputDir..." -ForegroundColor Cyan
 
-        dotnet ef migrations add $migrationName `
+        & dotnet ef migrations add $migrationName `
             --project $project `
             --startup-project $startupProject `
             --context $contextName `
             --output-dir $outputDir
+
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "Migration generated successfully for $contextName" -ForegroundColor Green
+        } else {
+            Write-Host "Migration failed for $contextName" -ForegroundColor Red
+        }
+
+        Write-Host "--------------------------------------------"
     }
 }

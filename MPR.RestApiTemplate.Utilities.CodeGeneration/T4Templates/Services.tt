@@ -1,0 +1,109 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".generated.cs" #>
+using AutoMapper;
+using MPR.RestApiTemplate.Application.Models;
+using MPR.RestApiTemplate.Domain.Entities;
+using MPR.RestApiTemplate.Domain.Interfaces;
+
+<#
+	var entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Domain\Entities");
+	var files = Directory.GetFiles(entitiesPath, "*.cs");
+#>
+namespace MPR.RestApiTemplate.Application.Services
+{
+<#
+	foreach (var file in files)
+	{
+		var entity = Path.GetFileNameWithoutExtension(file);
+		var lines = File.ReadAllLines(file);
+
+		// Extraer propiedades con [Key]
+		List<(string Type, string Name)> keyProperties = new();
+		bool nextIsKey = false;
+
+		foreach (var line in lines)
+		{
+			string trimmed = line.Trim();
+			if (trimmed.StartsWith("[Key]"))
+			{
+				nextIsKey = true;
+				continue;
+			}
+			if (nextIsKey && trimmed.StartsWith("public") && trimmed.Contains("{ get;") && !trimmed.Contains("class"))
+			{
+				var parts = trimmed.Split(new[] {' ','\t'}, StringSplitOptions.RemoveEmptyEntries);
+				if (parts.Length >= 3)
+				{
+					string type = parts[1];
+					string name = parts[2];
+					if (name.Contains("{")) name = name.Substring(0, name.IndexOf("{"));
+					if (name.EndsWith(";")) name = name.Substring(0, name.Length - 1);
+					keyProperties.Add((type, name));
+				}
+				nextIsKey = false;
+			}
+		}
+
+		var methodParams = string.Join(", ", keyProperties.Select(p => $"{p.Type} {char.ToLower(p.Name[0]) + p.Name.Substring(1)}"));
+		var methodKeys = string.Join(", ", keyProperties.Select(p => char.ToLower(p.Name[0]) + p.Name.Substring(1)));
+#>
+	public partial class <#= entity #>Service
+	{
+		private readonly IUnitOfWork _unitOfWork;
+		private readonly IMapper _mapper;
+
+		public <#= entity #>Service(IUnitOfWork unitOfWork, IMapper mapper)
+		{
+			_unitOfWork = unitOfWork;
+			_mapper = mapper;
+		}
+
+		public virtual async Task<IEnumerable<<#= entity #>Model>> GetAllAsync()
+		{
+			var entities = await _unitOfWork.<#= entity #>Repository.GetAllAsync();
+			return _mapper.Map<IEnumerable<<#= entity #>Model>>(entities);
+		}
+
+<#
+	if (keyProperties.Count > 0)
+	{
+#>
+		public virtual async Task<<#= entity #>Model> GetByIdAsync(<#= methodParams #>)
+		{
+			var entity = await _unitOfWork.<#= entity #>Repository.GetByIdAsync(<#= methodKeys #>);
+			return _mapper.Map<<#= entity #>Model>(entity);
+		}
+
+		public virtual async Task DeleteAsync(<#= methodParams #>)
+		{
+			await _unitOfWork.<#= entity #>Repository.DeleteAsync(<#= methodKeys #>);
+			await _unitOfWork.SaveChangesAsync();
+		}
+<#
+	}
+#>
+		public virtual async Task<<#= entity #>Model> AddAsync(<#= entity #>Model model)
+		{
+			var entity = _mapper.Map<<#= entity #>>(model);
+			entity = await _unitOfWork.<#= entity #>Repository.AddAsync(entity);
+			await _unitOfWork.SaveChangesAsync();
+			return _mapper.Map<<#= entity #>Model>(entity);
+		}
+
+		public virtual async Task<<#= entity #>Model> UpdateAsync(<#= entity #>Model model)
+		{
+			var entity = _mapper.Map<<#= entity #>>(model);
+			entity = await _unitOfWork.<#= entity #>Repository.UpdateAsync(entity);
+			await _unitOfWork.SaveChangesAsync();
+			return _mapper.Map<<#= entity #>Model>(entity);
+		}
+	}
+<#
+	}
+#>
+}

@@ -1,19 +1,20 @@
-<#@ template debug="true" hostspecific="true" language="C#" #>
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
 <#@ output extension=".cs" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Text.RegularExpressions" #>
 <#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
 
 <#
-    string mappingsFile = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), "MappingProfiles.generated.cs");
+    string mappingsFile = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Application\Mappings\MappingProfiles.generated.cs");
 
     if (!File.Exists(mappingsFile))
     {
 #>
 // ERROR: MappingProfiles.generated.cs no encontrado
 <#
-        return;
+        return "ERROR: MappingProfiles.generated.cs no encontrado";
     }
 
     var lines = File.ReadAllLines(mappingsFile);
@@ -32,6 +33,7 @@
 #>
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
+using MPR.RestApiTemplate.Application.Models;
 
 namespace MPR.RestApiTemplate.Application.Mappings;
 
@@ -47,6 +49,7 @@ public static class AutoMapperRegistration
 <#
     }
 #>
+        
         services.AddAutoMapper(
 <#
     for (int i = 0; i < mappings.Count; i++)
