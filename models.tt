@@ -41,17 +41,24 @@ namespace MPR.RestApiTemplate.Application.Models
 if (parts.Length >= 3)
 {
     string rawType = parts[1];
-    string rawName = parts[2];
+string rawName = parts[2];
 
-    // Reparar tipo nullable
-    string type = rawType.EndsWith("?") ? rawType : rawType.TrimEnd('?');
-    if (rawType.EndsWith("?")) type += "?";
+// Ver si es nullable
+bool isNullable = rawType.EndsWith("?");
+string baseType = rawType.TrimEnd('?');
 
-    // Limpiar nombre
-    string name = rawName.Split(new[] { '{', ';' }, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
+// Ver si es entidad
+bool isEntity = entityNames.Contains(baseType);
 
-    // Convertir Entity a Model si aplica
-    string modelType = entityNames.Contains(type.TrimEnd('?')) ? type.Replace(type.TrimEnd('?'), type.TrimEnd('?') + "Model") : type;
+// Si es entidad, convertir a Model
+string modelType = isEntity ? baseType + "Model" : baseType;
+
+// Si era nullable, agregar el signo ?
+if (isNullable) modelType += "?";
+
+// Limpiar nombre
+string name = rawName.Split(new[] { '{', ';' }, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
+
 
                     if (nextIsKey)
                     {
