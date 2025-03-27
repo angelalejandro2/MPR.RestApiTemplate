@@ -1,16 +1,14 @@
-﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ template debug="true" hostspecific="true" language="C#" #>
 <#@ output extension=".generated.cs" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Collections.Generic" #>
-using System.ComponentModel.DataAnnotations;
+<#@ import namespace="System.Text.RegularExpressions" #>
 
-namespace MPR.RestApiTemplate.Application.Models
-{
 <#
-    string entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Domain\Entities");
+    string entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\..\MPR.RestApiTemplate.Domain\Entities");
     var entityFiles = Directory.GetFiles(entitiesPath, "*.cs");
     var entityNames = entityFiles.Select(f => Path.GetFileNameWithoutExtension(f)).ToHashSet();
 
@@ -21,6 +19,10 @@ namespace MPR.RestApiTemplate.Application.Models
 
         bool nextIsKey = false;
 #>
+using System.ComponentModel.DataAnnotations;
+
+namespace MPR.RestApiTemplate.Application.Models
+{
     public class <#= className #>Model
     {
 <#
@@ -38,37 +40,47 @@ namespace MPR.RestApiTemplate.Application.Models
             {
                 // Eliminar 'virtual' si existe
                 var cleanLine = trimmed.Replace("virtual", "").Trim();
-
                 var parts = cleanLine.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+
                 if (parts.Length >= 3)
                 {
                     string rawType = parts[1];
                     string rawName = parts[2];
 
-                    // Ver si es nullable
-                    bool isNullable = rawType.EndsWith("?");
-                    string baseType = rawType.TrimEnd('?');
+                    // Nullable check
+                    string type = rawType;
+                    if (type.EndsWith("?"))
+                        type = type.TrimEnd('?') + "?";
 
-                    // Ver si es entidad
-                    bool isEntity = entityNames.Contains(baseType);
-
-                    // Si es entidad, convertir a Model
-                    string modelType = isEntity ? baseType + "Model" : baseType;
-
-                    // Si era nullable, agregar el signo ?
-                    if (isNullable) modelType += "?";
-
-                    // Limpiar nombre
                     string name = rawName.Split(new[] { '{', ';' }, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
+
+                    // Convertir Entity a Model si aplica
+                    string modelType;
+
+                    var match = Regex.Match(type, @"^(?<collection>\w+)<(?<inner>\w+)>$");
+                    if (match.Success)
+                    {
+                        var collectionType = match.Groups["collection"].Value;
+                        var innerType = match.Groups["inner"].Value;
+                        var mappedInnerType = entityNames.Contains(innerType) ? innerType + "Model" : innerType;
+                        modelType = $"{collectionType}<{mappedInnerType}>";
+                    }
+                    else
+                    {
+                        string baseType = type.TrimEnd('?');
+                        modelType = entityNames.Contains(baseType)
+                            ? type.Replace(baseType, baseType + "Model")
+                            : type;
+                    }
 
                     if (nextIsKey)
                     {
-#>        
+#>
         [Key]
 <#
                         nextIsKey = false;
                     }
-#>        
+#>
         public <#= modelType #> <#= name #> { get; set; }
 <#
                 }
@@ -76,7 +88,7 @@ namespace MPR.RestApiTemplate.Application.Models
         }
 #>
     }
+}
 <#
     }
 #>
-}
