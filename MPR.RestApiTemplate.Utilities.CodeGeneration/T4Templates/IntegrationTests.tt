@@ -42,20 +42,45 @@ string GetCompositeKeyUrl(IEnumerable<PropertyDef> keys, string instanceName)
 
 <#
 var entityPath = Path.Combine(Host.ResolvePath("."), @"..\..\MPR.RestApiTemplate.Domain\Entities");
-var modelPath = Path.Combine(Host.ResolvePath("."), @"..\..\MPR.RestApiTemplate.Application\Models");
+var modelsFile = Path.Combine(Host.ResolvePath("."), @"..\..\MPR.RestApiTemplate.Application\Models\Models.generated.cs");
+
 var dtoTypes = new Dictionary<string, List<PropertyDef>>();
 
-// Parse models
-foreach (var dtoFile in Directory.GetFiles(modelPath, "*.cs"))
+// Parse all models from the single generated file
+if (File.Exists(modelsFile))
 {
-    var lines = File.ReadAllLines(dtoFile);
-    var className = Path.GetFileNameWithoutExtension(dtoFile);
-    var properties = new List<PropertyDef>();
+    var lines = File.ReadAllLines(modelsFile);
+    string currentModel = null;
+    var currentProps = new List<PropertyDef>();
+    bool inModel = false;
 
     for (int i = 0; i < lines.Length; i++)
     {
         var line = lines[i].Trim();
-        if (line.StartsWith("public "))
+
+        if (line.StartsWith("public class ") && line.Contains("Model"))
+        {
+            if (currentModel != null)
+                dtoTypes[currentModel] = currentProps;
+
+            currentModel = Regex.Match(line, @"public class (\w+)").Groups[1].Value;
+            currentProps = new List<PropertyDef>();
+            inModel = true;
+            continue;
+        }
+
+        if (inModel && line.StartsWith("}"))
+        {
+            if (currentModel != null)
+                dtoTypes[currentModel] = currentProps;
+
+            currentModel = null;
+            currentProps = new List<PropertyDef>();
+            inModel = false;
+            continue;
+        }
+
+        if (inModel && line.StartsWith("public "))
         {
             var match = Regex.Match(line, @"public\s+([\w\?\<\>]+)\s+(\w+)\s*\{");
             if (match.Success)
@@ -63,7 +88,6 @@ foreach (var dtoFile in Directory.GetFiles(modelPath, "*.cs"))
                 string type = match.Groups[1].Value;
                 string name = match.Groups[2].Value;
 
-                // Look backwards for [Key] attribute
                 bool isKey = false;
                 for (int j = i - 1; j >= 0; j--)
                 {
@@ -73,19 +97,22 @@ foreach (var dtoFile in Directory.GetFiles(modelPath, "*.cs"))
                         isKey = true;
                         break;
                     }
-                    if (previousLine.StartsWith("[") && !previousLine.StartsWith("[Key]")) continue;
-                    break;
+                    if (!previousLine.StartsWith("["))
+                        break;
                 }
 
-                properties.Add(new PropertyDef { Type = type, Name = name, IsKey = isKey || name == "Id" });
+                currentProps.Add(new PropertyDef
+                {
+                    Type = type,
+                    Name = name,
+                    IsKey = isKey || name == "Id"
+                });
             }
         }
     }
-
-    dtoTypes[className] = properties;
 }
 
-// Generate test per entity
+// Procesar entidades
 foreach (var file in Directory.GetFiles(entityPath, "*.cs"))
 {
     var entityName = Path.GetFileNameWithoutExtension(file);
