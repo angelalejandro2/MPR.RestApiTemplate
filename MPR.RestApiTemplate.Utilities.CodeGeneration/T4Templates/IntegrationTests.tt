@@ -11,6 +11,32 @@ public class PropertyDef
 {
     public string Type { get; set; }
     public string Name { get; set; }
+    public bool IsKey { get; set; }
+}
+
+string GetDefaultValue(string type, string version)
+{
+    type = type.TrimEnd('?');
+    return type switch
+    {
+        "string" => $"\"Test{version}\"",
+        "int" => version,
+        "long" => $"{version}L",
+        "bool" => version == "1" ? "true" : "false",
+        "DateTime" => "DateTime.UtcNow",
+        "Guid" => "Guid.NewGuid()",
+        _ => $"/* TODO: set value for {type} */ default"
+    };
+}
+
+string GetCompositeKeyRoute(IEnumerable<PropertyDef> keys, string instanceName)
+{
+    return string.Join("/", keys.Select(k => $"{{{instanceName}.{k.Name}}}"));
+}
+
+string GetCompositeKeyUrl(IEnumerable<PropertyDef> keys, string instanceName)
+{
+    return string.Join(" + \"/\" + ", keys.Select(k => $"{instanceName}.{k.Name}"));
 }
 #>
 
@@ -19,25 +45,39 @@ var entityPath = Path.Combine(Host.ResolvePath("."), @"..\..\MPR.RestApiTemplate
 var modelPath = Path.Combine(Host.ResolvePath("."), @"..\..\MPR.RestApiTemplate.Application\Models");
 var dtoTypes = new Dictionary<string, List<PropertyDef>>();
 
+// Parse models
 foreach (var dtoFile in Directory.GetFiles(modelPath, "*.cs"))
 {
     var lines = File.ReadAllLines(dtoFile);
     var className = Path.GetFileNameWithoutExtension(dtoFile);
     var properties = new List<PropertyDef>();
 
-    foreach (var line in lines)
+    for (int i = 0; i < lines.Length; i++)
     {
-        var trimmed = line.Trim();
-        if (trimmed.StartsWith("public "))
+        var line = lines[i].Trim();
+        if (line.StartsWith("public "))
         {
-            var match = Regex.Match(trimmed, @"public\s+([\w\?\<\>]+)\s+(\w+)\s*\{");
+            var match = Regex.Match(line, @"public\s+([\w\?\<\>]+)\s+(\w+)\s*\{");
             if (match.Success)
             {
-                properties.Add(new PropertyDef
+                string type = match.Groups[1].Value;
+                string name = match.Groups[2].Value;
+
+                // Look backwards for [Key] attribute
+                bool isKey = false;
+                for (int j = i - 1; j >= 0; j--)
                 {
-                    Type = match.Groups[1].Value,
-                    Name = match.Groups[2].Value
-                });
+                    var previousLine = lines[j].Trim();
+                    if (previousLine.StartsWith("[Key]"))
+                    {
+                        isKey = true;
+                        break;
+                    }
+                    if (previousLine.StartsWith("[") && !previousLine.StartsWith("[Key]")) continue;
+                    break;
+                }
+
+                properties.Add(new PropertyDef { Type = type, Name = name, IsKey = isKey || name == "Id" });
             }
         }
     }
@@ -45,12 +85,20 @@ foreach (var dtoFile in Directory.GetFiles(modelPath, "*.cs"))
     dtoTypes[className] = properties;
 }
 
+// Generate test per entity
 foreach (var file in Directory.GetFiles(entityPath, "*.cs"))
 {
     var entityName = Path.GetFileNameWithoutExtension(file);
-    var dtoName = entityName + "Dto";
+    var modelName = entityName + "Model";
     var route = entityName.ToLower() + "s";
-    var props = dtoTypes.ContainsKey(dtoName) ? dtoTypes[dtoName] : new List<PropertyDef>();
+    if (!dtoTypes.ContainsKey(modelName)) continue;
+
+    var props = dtoTypes[modelName];
+    var keys = props.Where(p => p.IsKey).ToList();
+    if (keys.Count == 0) continue;
+
+    var routeTemplate = GetCompositeKeyRoute(keys, "created");
+    var urlTemplate = GetCompositeKeyUrl(keys, "created");
 #>
 using System.Net;
 using System.Net.Http.Json;
@@ -76,13 +124,12 @@ namespace MPR.RestApiTemplate.IntegrationTests
         public async Task Full_Crud_For_<#= entityName #>()
         {
             // CREATE
-            var createDto = new <#= dtoName #>
+            var createDto = new <#= modelName #>
             {
 <#
-    foreach (var prop in props.Where(p => p.Name != "Id"))
+    foreach (var prop in props.Where(p => !p.IsKey))
     {
-        var value = GetDefaultValue(prop.Type, "1");
-#>                <#= prop.Name #> = <#= value #>,
+#>                <#= prop.Name #> = <#= GetDefaultValue(prop.Type, "1") #>,
 <#
     }
 #>            };
@@ -90,62 +137,59 @@ namespace MPR.RestApiTemplate.IntegrationTests
             var postResponse = await _client.PostAsJsonAsync("/api/<#= route #>", createDto);
             postResponse.EnsureSuccessStatusCode();
 
-            var created = await postResponse.Content.ReadFromJsonAsync<<#= dtoName #>>();
+            var created = await postResponse.Content.ReadFromJsonAsync<<#= modelName #>>();
 
             // READ
-            var getResponse = await _client.GetAsync($"/api/<#= route #>/{created!.Id}");
+            var getResponse = await _client.GetAsync($"/api/<#= route #>/<#= routeTemplate #>");
             getResponse.EnsureSuccessStatusCode();
-            var retrieved = await getResponse.Content.ReadFromJsonAsync<<#= dtoName #>>();
-            Assert.Equal(created.Id, retrieved!.Id);
+            var retrieved = await getResponse.Content.ReadFromJsonAsync<<#= modelName #>>();
+<#
+    foreach (var key in keys)
+    {
+#>            Assert.Equal(created.<#= key.Name #>, retrieved!.<#= key.Name #>);
+<#
+    }
+#>
 
             // UPDATE
-            var updateDto = new <#= dtoName #>
+            var updateDto = new <#= modelName #>
             {
-                Id = created.Id,
 <#
-    foreach (var prop in props.Where(p => p.Name != "Id"))
+    foreach (var key in keys)
     {
-        var updatedValue = GetDefaultValue(prop.Type, "2");
-#>                <#= prop.Name #> = <#= updatedValue #>,
+#>                <#= key.Name #> = created.<#= key.Name #>,
+<#
+    }
+    foreach (var prop in props.Where(p => !p.IsKey))
+    {
+#>                <#= prop.Name #> = <#= GetDefaultValue(prop.Type, "2") #>,
 <#
     }
 #>            };
 
-            var putResponse = await _client.PutAsJsonAsync("/api/<#= route #>/" + created.Id, updateDto);
+            var putResponse = await _client.PutAsJsonAsync($"/api/<#= route #>/"+<#= urlTemplate #>, updateDto);
             putResponse.EnsureSuccessStatusCode();
 
-            var getAfterPut = await _client.GetAsync($"/api/<#= route #>/{created.Id}");
+            var getAfterPut = await _client.GetAsync($"/api/<#= route #>/"+<#= urlTemplate #>);
             getAfterPut.EnsureSuccessStatusCode();
-            var updated = await getAfterPut.Content.ReadFromJsonAsync<<#= dtoName #>>();
-            Assert.Equal(created.Id, updated!.Id);
+            var updated = await getAfterPut.Content.ReadFromJsonAsync<<#= modelName #>>();
+<#
+    foreach (var key in keys)
+    {
+#>            Assert.Equal(created.<#= key.Name #>, updated!.<#= key.Name #>);
+<#
+    }
+#>
 
             // DELETE
-            var deleteResponse = await _client.DeleteAsync($"/api/<#= route #>/{created.Id}");
+            var deleteResponse = await _client.DeleteAsync($"/api/<#= route #>/"+<#= urlTemplate #>);
             deleteResponse.EnsureSuccessStatusCode();
 
-            var getAfterDelete = await _client.GetAsync($"/api/<#= route #>/{created.Id}");
+            var getAfterDelete = await _client.GetAsync($"/api/<#= route #>/"+<#= urlTemplate #>);
             Assert.Equal(HttpStatusCode.NotFound, getAfterDelete.StatusCode);
         }
     }
 }
 <#
-}
-#>
-
-<#+
-string GetDefaultValue(string type, string version)
-{
-    type = type.TrimEnd('?');
-
-    return type switch
-    {
-        "string" => $"\"Test{version}\"",
-        "int" => version,
-        "long" => version + "L",
-        "bool" => version == "1" ? "true" : "false",
-        "DateTime" => "DateTime.UtcNow",
-        "Guid" => "Guid.NewGuid()",
-        _ => $"/* TODO: set value for {type} */ default"
-    };
 }
 #>
