@@ -4,30 +4,33 @@ Get-ChildItem -Path $folderPath -Filter *.cs -Recurse | ForEach-Object {
     $filePath = $_.FullName
     $lines = Get-Content $filePath
 
-    # Convertimos a una lista mutable
-    $mutableLines = [System.Collections.Generic.List[string]]::new()
-    $mutableLines.AddRange($lines)
+    # Convertir a lista de strings explícitamente
+    $mutableLines = New-Object System.Collections.Generic.List[string]
+    foreach ($line in $lines) {
+        $mutableLines.Add([string]$line)
+    }
 
     # Eliminar 'using Microsoft.EntityFrameworkCore;'
     $mutableLines = $mutableLines | Where-Object { $_ -notmatch '^\s*using\s+Microsoft\.EntityFrameworkCore\s*;' }
 
-    # Buscar línea con patrón 'public partial class Nombre'
+    # Buscar la línea con 'public partial class Nombre'
     $classMatch = $mutableLines | Select-String -Pattern '^\s*public\s+partial\s+class\s+\w+' | Select-Object -First 1
 
     if ($classMatch) {
         $classLineIndex = $classMatch.LineNumber - 1
 
-        # Separar antes y después de la definición de clase
+        # Separar antes y después de la clase
         $before = $mutableLines[0..($classLineIndex - 1)]
         $after = $mutableLines[$classLineIndex..($mutableLines.Count - 1)]
 
-        # Quitar solo las líneas que parezcan atributos (entre corchetes)
+        # Eliminar solo líneas de atributos [Algo]
         $cleanBefore = $before | Where-Object { $_ -notmatch '^\s*\[.*\]\s*$' }
 
-        # Unir y sobrescribir
+        # Reunir contenido final
         $finalContent = $cleanBefore + $after
-        Set-Content -Path $filePath -Value $finalContent
 
+        # Guardar el archivo
+        Set-Content -Path $filePath -Value $finalContent
         Write-Host "Limpio: $filePath"
     } else {
         Write-Host "No se encontró clase parcial en: $filePath"
