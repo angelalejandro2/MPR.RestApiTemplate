@@ -1,28 +1,34 @@
 $folderPath = "Entities"
 
-# Buscar todos los archivos .cs en la carpeta (recursivamente si lo deseas)
 Get-ChildItem -Path $folderPath -Filter *.cs -Recurse | ForEach-Object {
     $filePath = $_.FullName
     $lines = Get-Content $filePath
 
-    # Eliminar línea que contenga using Microsoft.EntityFrameworkCore;
-    $lines = $lines | Where-Object { $_ -notmatch '^\s*using\s+Microsoft\.EntityFrameworkCore\s*;' }
+    # Convertir a lista mutable
+    $mutableLines = [System.Collections.Generic.List[string]]::new()
+    $mutableLines.AddRange($lines)
 
-    # Buscar la línea que contiene 'public partial class'
-    $classIndex = $lines | Select-String -Pattern 'public\s+partial\s+class' | Select-Object -First 1
+    # Eliminar using Microsoft.EntityFrameworkCore;
+    $mutableLines = $mutableLines | Where-Object { $_ -notmatch '^\s*using\s+Microsoft\.EntityFrameworkCore\s*;' }
+
+    # Buscar la línea de la clase
+    $classIndex = $mutableLines | Select-String -Pattern 'public\s+partial\s+class' | Select-Object -First 1
 
     if ($classIndex) {
         $index = $classIndex.LineNumber - 1
 
-        # Recorre desde el principio hasta la línea anterior al class
-        for ($i = $index - 1; $i -ge 0; $i--) {
-            if ($lines[$i] -match '^\s*\[.*\]\s*$') {
-                $lines.RemoveAt($i)
-            }
-        }
+        # Filtrar las líneas anteriores al public partial class
+        $linesBeforeClass = $mutableLines[0..($index - 1)]
+        $linesAfterClass = $mutableLines[$index..($mutableLines.Count - 1)]
 
-        # Sobrescribe el archivo con el nuevo contenido
-        Set-Content -Path $filePath -Value $lines
+        # Conservar solo las líneas que no sean atributos
+        $linesBeforeClassCleaned = $linesBeforeClass | Where-Object { $_ -notmatch '^\s*\[.*\]\s*$' }
+
+        # Reconstruir el contenido
+        $finalContent = $linesBeforeClassCleaned + $linesAfterClass
+
+        # Sobrescribir el archivo
+        Set-Content -Path $filePath -Value $finalContent
         Write-Host "Limpio: $filePath"
     } else {
         Write-Host "Clase no encontrada en: $filePath"
