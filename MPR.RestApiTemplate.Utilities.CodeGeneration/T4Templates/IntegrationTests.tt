@@ -1,0 +1,139 @@
+<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ output extension=".generated.cs" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+
+<#
+var entityPath = Path.Combine(Host.ResolvePath("."), @"..\..\MPR.RestApiTemplate.Domain\Entities");
+var modelPath = Path.Combine(Host.ResolvePath("."), @"..\..\MPR.RestApiTemplate.Application\Models");
+var dtoTypes = new Dictionary<string, List<(string Type, string Name)>>();
+
+foreach (var dtoFile in Directory.GetFiles(modelPath, "*.cs"))
+{
+    var lines = File.ReadAllLines(dtoFile);
+    var className = Path.GetFileNameWithoutExtension(dtoFile);
+    var properties = new List<(string Type, string Name)>();
+
+    foreach (var line in lines)
+    {
+        var trimmed = line.Trim();
+        if (trimmed.StartsWith("public "))
+        {
+            var match = Regex.Match(trimmed, @"public\\s+([\\w\\?\\<\\>]+)\\s+(\\w+)\\s*\\{");
+            if (match.Success)
+            {
+                properties.Add((match.Groups[1].Value, match.Groups[2].Value));
+            }
+        }
+    }
+
+    dtoTypes[className] = properties;
+}
+
+foreach (var file in Directory.GetFiles(entityPath, "*.cs"))
+{
+    var entityName = Path.GetFileNameWithoutExtension(file);
+    var dtoName = entityName + "Dto";
+    var route = entityName.ToLower() + "s";
+    var props = dtoTypes.ContainsKey(dtoName) ? dtoTypes[dtoName] : new List<(string, string)>();
+#>
+using System.Net;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Xunit;
+using MPR.RestApiTemplate.Api;
+using MPR.RestApiTemplate.Application.Models;
+using System;
+
+namespace MPR.RestApiTemplate.IntegrationTests
+{
+    public class <#= entityName #>IntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+    {
+        private readonly HttpClient _client;
+
+        public <#= entityName #>IntegrationTests(WebApplicationFactory<Program> factory)
+        {
+            _client = factory.CreateClient();
+        }
+
+        [Fact]
+        public async Task Full_Crud_For_<#= entityName #>()
+        {
+            // CREATE
+            var createDto = new <#= dtoName #>
+            {
+<#
+    foreach (var (type, name) in props.Where(p => p.Name != "Id"))
+    {
+        var value = GetDefaultValue(type, "1");
+#>                <#= name #> = <#= value #>,
+<#
+    }
+#>            };
+
+            var postResponse = await _client.PostAsJsonAsync("/api/<#= route #>", createDto);
+            postResponse.EnsureSuccessStatusCode();
+
+            var created = await postResponse.Content.ReadFromJsonAsync<<#= dtoName #>>();
+
+            // READ
+            var getResponse = await _client.GetAsync($"/api/<#= route #>/{created!.Id}");
+            getResponse.EnsureSuccessStatusCode();
+            var retrieved = await getResponse.Content.ReadFromJsonAsync<<#= dtoName #>>();
+            Assert.Equal(created.Id, retrieved!.Id);
+
+            // UPDATE
+            var updateDto = new <#= dtoName #>
+            {
+                Id = created.Id,
+<#
+    foreach (var (type, name) in props.Where(p => p.Name != "Id"))
+    {
+        var updatedValue = GetDefaultValue(type, "2");
+#>                <#= name #> = <#= updatedValue #>,
+<#
+    }
+#>            };
+
+            var putResponse = await _client.PutAsJsonAsync("/api/<#= route #>/" + created.Id, updateDto);
+            putResponse.EnsureSuccessStatusCode();
+
+            var getAfterPut = await _client.GetAsync($"/api/<#= route #>/{created.Id}");
+            getAfterPut.EnsureSuccessStatusCode();
+            var updated = await getAfterPut.Content.ReadFromJsonAsync<<#= dtoName #>>();
+            Assert.Equal(created.Id, updated!.Id);
+
+            // DELETE
+            var deleteResponse = await _client.DeleteAsync($"/api/<#= route #>/{created.Id}");
+            deleteResponse.EnsureSuccessStatusCode();
+
+            var getAfterDelete = await _client.GetAsync($"/api/<#= route #>/{created.Id}");
+            Assert.Equal(HttpStatusCode.NotFound, getAfterDelete.StatusCode);
+        }
+    }
+}
+<#
+}
+#>
+
+<#+
+string GetDefaultValue(string type, string version)
+{
+    type = type.TrimEnd('?');
+
+    return type switch
+    {
+        "string" => $"\"Test{version}\"",
+        "int" => version,
+        "long" => version + "L",
+        "bool" => version == "1" ? "true" : "false",
+        "DateTime" => "DateTime.UtcNow",
+        "Guid" => "Guid.NewGuid()",
+        _ => $"/* TODO: set value for {type} */ default"
+    };
+}
+#>
