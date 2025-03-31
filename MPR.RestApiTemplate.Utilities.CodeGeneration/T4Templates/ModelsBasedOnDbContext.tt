@@ -18,7 +18,10 @@ using System.ComponentModel.DataAnnotations;
 namespace Your.Namespace.Models
 {
 <#
-    var assembly = Assembly.LoadFrom(Host.ResolveAssemblyReference("MPR.RestApiTemplate.Utilities.CodeGeneration.dll"));
+    // Ruta relativa al ensamblado de MPR.RestApiTemplate.Infrastructure
+    string infraDllPath = Host.ResolvePath(@"..\MPR.RestApiTemplate.Infrastructure\bin\Debug\net6.0\MPR.RestApiTemplate.Infrastructure.dll");
+
+    var assembly = Assembly.LoadFrom(infraDllPath);
 
     var dbContextTypes = assembly.GetTypes()
         .Where(t => typeof(DbContext).IsAssignableFrom(t) && !t.IsAbstract)
@@ -33,8 +36,7 @@ namespace Your.Namespace.Models
         }
         catch
         {
-            // Skip contexts that require constructor parameters
-            continue;
+            continue; // Ignora contextos sin constructor por defecto
         }
 
         var objectContext = ((IObjectContextAdapter)context).ObjectContext;
