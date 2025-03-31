@@ -9,44 +9,67 @@
 <#@ import namespace="System.Data.Entity.Core.Metadata.Edm" #>
 <#@ import namespace="System.Data.Entity.Core.Objects" #>
 <#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Reflection" #>
 
-// Auto-generado desde T4 a partir del DbContext
+// Auto-generado desde T4 a partir de múltiples DbContext
 
 using System.ComponentModel.DataAnnotations;
 
 namespace Your.Namespace.Models
 {
 <#
-    var contextType = typeof(MPR.RestApiTemplate.Utilities.CodeGeneration.NorthwindDbContext);
-    var context = (DbContext)Activator.CreateInstance(contextType);
-    var objectContext = ((IObjectContextAdapter)context).ObjectContext;
-    var metadata = objectContext.MetadataWorkspace;
+    var assembly = Assembly.LoadFrom(Host.ResolveAssemblyReference("MPR.RestApiTemplate.Utilities.CodeGeneration.dll"));
 
-    var entityTypes = metadata.GetItems<EntityType>(DataSpace.CSpace);
+    var dbContextTypes = assembly.GetTypes()
+        .Where(t => typeof(DbContext).IsAssignableFrom(t) && !t.IsAbstract)
+        .ToList();
 
-    foreach (var entity in entityTypes)
+    foreach (var contextType in dbContextTypes)
     {
-        var entityName = entity.Name;
-        var modelName = entityName + "Model";
+        DbContext context = null;
+        try
+        {
+            context = (DbContext)Activator.CreateInstance(contextType);
+        }
+        catch
+        {
+            // Skip contexts that require constructor parameters
+            continue;
+        }
 
+        var objectContext = ((IObjectContextAdapter)context).ObjectContext;
+        var metadata = objectContext.MetadataWorkspace;
+
+        var entityTypes = metadata.GetItems<EntityType>(DataSpace.CSpace);
+
+#>
+    // ===== Contexto: <#= contextType.Name #> =====
+<#
+        foreach (var entity in entityTypes)
+        {
+            var entityName = entity.Name;
+            var modelName = entityName + "Model";
 #>
     public class <#= modelName #>
     {
 <#
-        var keyProps = entity.KeyProperties.Select(k => k.Name).ToHashSet();
-        foreach (var prop in entity.Properties)
-        {
-            if (keyProps.Contains(prop.Name))
+            var keyProps = entity.KeyProperties.Select(k => k.Name).ToHashSet();
+            foreach (var prop in entity.Properties)
             {
+                if (keyProps.Contains(prop.Name))
+                {
 #>        [Key]
 <#
-            }
+                }
 #>        public <#= GetClrType(prop.TypeUsage) #> <#= prop.Name #> { get; set; }
 <#
-        }
+            }
 #>    }
 
 <#
+        }
+
+        context.Dispose();
     }
 #>
 }
