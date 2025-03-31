@@ -1,33 +1,31 @@
 <#@ template debug="false" hostspecific="true" language="C#" #>
 <#@ output extension=".generated.cs" #>
 <#@ assembly name="System.Core" #>
-<#@ assembly name="System.Data.Entity" #>
+<#@ assembly name="Microsoft.EntityFrameworkCore" #>
 <#@ import namespace="System" #>
-<#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="System.Data.Entity" #>
-<#@ import namespace="System.Data.Entity.Infrastructure" #>
-<#@ import namespace="System.Data.Entity.Core.Metadata.Edm" #>
-<#@ import namespace="System.Data.Entity.Core.Objects" #>
+<#@ import namespace="System.IO" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Reflection" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Microsoft.EntityFrameworkCore" #>
+<#@ import namespace="Microsoft.EntityFrameworkCore.Metadata" #>
 
-// Auto-generado desde T4 a partir de múltiples DbContext
+// Auto-generado desde DbContexts en EF Core (.NET 9)
 
 using System.ComponentModel.DataAnnotations;
 
 namespace Your.Namespace.Models
 {
 <#
-    // Ruta relativa al ensamblado de MPR.RestApiTemplate.Infrastructure
-    string infraDllPath = Host.ResolvePath(@"..\MPR.RestApiTemplate.Infrastructure\bin\Debug\net6.0\MPR.RestApiTemplate.Infrastructure.dll");
+    // Ruta a tu ensamblado de infraestructura compilado
+    string infraPath = Host.ResolvePath(@"..\MPR.RestApiTemplate.Infrastructure\bin\Debug\net9.0\MPR.RestApiTemplate.Infrastructure.dll");
+    Assembly infraAssembly = Assembly.LoadFrom(infraPath);
 
-    var assembly = Assembly.LoadFrom(infraDllPath);
-
-    var dbContextTypes = assembly.GetTypes()
+    var dbContexts = infraAssembly.GetTypes()
         .Where(t => typeof(DbContext).IsAssignableFrom(t) && !t.IsAbstract)
         .ToList();
 
-    foreach (var contextType in dbContextTypes)
+    foreach (var contextType in dbContexts)
     {
         DbContext context = null;
         try
@@ -36,34 +34,28 @@ namespace Your.Namespace.Models
         }
         catch
         {
-            continue; // Ignora contextos sin constructor por defecto
+            continue;
         }
 
-        var objectContext = ((IObjectContextAdapter)context).ObjectContext;
-        var metadata = objectContext.MetadataWorkspace;
-
-        var entityTypes = metadata.GetItems<EntityType>(DataSpace.CSpace);
-
-#>
-    // ===== Contexto: <#= contextType.Name #> =====
-<#
-        foreach (var entity in entityTypes)
+        var model = context.Model;
+        foreach (var entityType in model.GetEntityTypes())
         {
-            var entityName = entity.Name;
+            var entityName = entityType.ClrType.Name;
             var modelName = entityName + "Model";
+
+            var keyProperties = entityType.FindPrimaryKey()?.Properties.Select(p => p.Name).ToHashSet() ?? new HashSet<string>();
 #>
     public class <#= modelName #>
     {
 <#
-            var keyProps = entity.KeyProperties.Select(k => k.Name).ToHashSet();
-            foreach (var prop in entity.Properties)
+            foreach (var property in entityType.GetProperties())
             {
-                if (keyProps.Contains(prop.Name))
+                if (keyProperties.Contains(property.Name))
                 {
 #>        [Key]
 <#
                 }
-#>        public <#= GetClrType(prop.TypeUsage) #> <#= prop.Name #> { get; set; }
+#>        public <#= property.ClrType.FullName.Replace("+", ".") + (property.IsNullable && property.ClrType.IsValueType ? "?" : "") #> <#= property.Name #> { get; set; }
 <#
             }
 #>    }
