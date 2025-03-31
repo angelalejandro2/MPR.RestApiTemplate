@@ -1,0 +1,76 @@
+<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ output extension=".generated.cs" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Data.Entity" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Data.Entity" #>
+<#@ import namespace="System.Data.Entity.Infrastructure" #>
+<#@ import namespace="System.Data.Entity.Core.Metadata.Edm" #>
+<#@ import namespace="System.Data.Entity.Core.Objects" #>
+<#@ import namespace="System.Linq" #>
+
+// Auto-generado desde T4 a partir del DbContext
+
+using System.ComponentModel.DataAnnotations;
+
+namespace Your.Namespace.Models
+{
+<#
+    var contextType = typeof(MPR.RestApiTemplate.Utilities.CodeGeneration.NorthwindDbContext);
+    var context = (DbContext)Activator.CreateInstance(contextType);
+    var objectContext = ((IObjectContextAdapter)context).ObjectContext;
+    var metadata = objectContext.MetadataWorkspace;
+
+    var entityTypes = metadata.GetItems<EntityType>(DataSpace.CSpace);
+
+    foreach (var entity in entityTypes)
+    {
+        var entityName = entity.Name;
+        var modelName = entityName + "Model";
+
+#>
+    public class <#= modelName #>
+    {
+<#
+        var keyProps = entity.KeyProperties.Select(k => k.Name).ToHashSet();
+        foreach (var prop in entity.Properties)
+        {
+            if (keyProps.Contains(prop.Name))
+            {
+#>        [Key]
+<#
+            }
+#>        public <#= GetClrType(prop.TypeUsage) #> <#= prop.Name #> { get; set; }
+<#
+        }
+#>    }
+
+<#
+    }
+#>
+}
+
+<#+
+    string GetClrType(TypeUsage typeUsage)
+    {
+        string typeName = typeUsage.EdmType.Name;
+        bool isNullable = typeUsage.Facets.Any(f => f.Name == "Nullable" && (bool)f.Value == true);
+
+        switch (typeName)
+        {
+            case "String": return "string";
+            case "Int32": return isNullable ? "int?" : "int";
+            case "Int16": return isNullable ? "short?" : "short";
+            case "Int64": return isNullable ? "long?" : "long";
+            case "Boolean": return isNullable ? "bool?" : "bool";
+            case "Decimal": return isNullable ? "decimal?" : "decimal";
+            case "Double": return isNullable ? "double?" : "double";
+            case "Single": return isNullable ? "float?" : "float";
+            case "DateTime": return isNullable ? "DateTime?" : "DateTime";
+            case "Byte": return isNullable ? "byte?" : "byte";
+            case "Guid": return isNullable ? "Guid?" : "Guid";
+            default: return typeName;
+        }
+    }
+#>
