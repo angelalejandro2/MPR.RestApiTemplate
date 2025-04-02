@@ -7,6 +7,31 @@ using MPR.RestApiTemplate.Infrastructure.Context;
 
 namespace MPR.RestApiTemplate.Infrastructure.Repositories
 {
-	public partial class CustomerRepository(DefaultDbContext defaultDbContext) : GenericRepository<Customer>(defaultDbContext), ICustomerRepository { }
-	public partial class CustomerTypeRepository(DefaultDbContext defaultDbContext) : GenericRepository<CustomerType>(defaultDbContext), ICustomerTypeRepository { }
+	public partial class AlphabeticalListOfProductsRepository(NorthwindContext northwindContext) : GenericRepository<AlphabeticalListOfProducts>(northwindContext), IAlphabeticalListOfProductsRepository { }
+	public partial class CategoriesRepository(NorthwindContext northwindContext) : GenericRepository<Categories>(northwindContext), ICategoriesRepository { }
+	public partial class CategorySalesFor1997Repository(NorthwindContext northwindContext) : GenericRepository<CategorySalesFor1997>(northwindContext), ICategorySalesFor1997Repository { }
+	public partial class CurrentProductListRepository(NorthwindContext northwindContext) : GenericRepository<CurrentProductList>(northwindContext), ICurrentProductListRepository { }
+	public partial class CustomerAndSuppliersByCityRepository(NorthwindContext northwindContext) : GenericRepository<CustomerAndSuppliersByCity>(northwindContext), ICustomerAndSuppliersByCityRepository { }
+	public partial class CustomerDemographicsRepository(NorthwindContext northwindContext) : GenericRepository<CustomerDemographics>(northwindContext), ICustomerDemographicsRepository { }
+	public partial class CustomersRepository(NorthwindContext northwindContext) : GenericRepository<Customers>(northwindContext), ICustomersRepository { }
+	public partial class EmployeesRepository(NorthwindContext northwindContext) : GenericRepository<Employees>(northwindContext), IEmployeesRepository { }
+	public partial class InvoicesRepository(NorthwindContext northwindContext) : GenericRepository<Invoices>(northwindContext), IInvoicesRepository { }
+	public partial class OrderDetailsRepository(NorthwindContext northwindContext) : GenericRepository<OrderDetails>(northwindContext), IOrderDetailsRepository { }
+	public partial class OrderDetailsExtendedRepository(NorthwindContext northwindContext) : GenericRepository<OrderDetailsExtended>(northwindContext), IOrderDetailsExtendedRepository { }
+	public partial class OrderSubtotalsRepository(NorthwindContext northwindContext) : GenericRepository<OrderSubtotals>(northwindContext), IOrderSubtotalsRepository { }
+	public partial class OrdersRepository(NorthwindContext northwindContext) : GenericRepository<Orders>(northwindContext), IOrdersRepository { }
+	public partial class OrdersQryRepository(NorthwindContext northwindContext) : GenericRepository<OrdersQry>(northwindContext), IOrdersQryRepository { }
+	public partial class ProductSalesFor1997Repository(NorthwindContext northwindContext) : GenericRepository<ProductSalesFor1997>(northwindContext), IProductSalesFor1997Repository { }
+	public partial class ProductsRepository(NorthwindContext northwindContext) : GenericRepository<Products>(northwindContext), IProductsRepository { }
+	public partial class ProductsAboveAveragePriceRepository(NorthwindContext northwindContext) : GenericRepository<ProductsAboveAveragePrice>(northwindContext), IProductsAboveAveragePriceRepository { }
+	public partial class ProductsByCategoryRepository(NorthwindContext northwindContext) : GenericRepository<ProductsByCategory>(northwindContext), IProductsByCategoryRepository { }
+	public partial class QuarterlyOrdersRepository(NorthwindContext northwindContext) : GenericRepository<QuarterlyOrders>(northwindContext), IQuarterlyOrdersRepository { }
+	public partial class RegionRepository(NorthwindContext northwindContext) : GenericRepository<Region>(northwindContext), IRegionRepository { }
+	public partial class SalesByCategoryRepository(NorthwindContext northwindContext) : GenericRepository<SalesByCategory>(northwindContext), ISalesByCategoryRepository { }
+	public partial class SalesTotalsByAmountRepository(NorthwindContext northwindContext) : GenericRepository<SalesTotalsByAmount>(northwindContext), ISalesTotalsByAmountRepository { }
+	public partial class ShippersRepository(NorthwindContext northwindContext) : GenericRepository<Shippers>(northwindContext), IShippersRepository { }
+	public partial class SummaryOfSalesByQuarterRepository(NorthwindContext northwindContext) : GenericRepository<SummaryOfSalesByQuarter>(northwindContext), ISummaryOfSalesByQuarterRepository { }
+	public partial class SummaryOfSalesByYearRepository(NorthwindContext northwindContext) : GenericRepository<SummaryOfSalesByYear>(northwindContext), ISummaryOfSalesByYearRepository { }
+	public partial class SuppliersRepository(NorthwindContext northwindContext) : GenericRepository<Suppliers>(northwindContext), ISuppliersRepository { }
+	public partial class TerritoriesRepository(NorthwindContext northwindContext) : GenericRepository<Territories>(northwindContext), ITerritoriesRepository { }
 }

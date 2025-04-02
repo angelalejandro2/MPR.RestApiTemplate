@@ -5,10 +5,19 @@
 <#@ import namespace="System.Text.RegularExpressions" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Linq" #>
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
+namespace MPR.RestApiTemplate.Infrastructure.Context;
+
+public static class DbContextRegistration
+{
+    public static IServiceCollection AddInfrastructureDbContexts(this IServiceCollection services, IConfiguration configuration)
+    {
 <#
     string contextPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Infrastructure\Context");
-    var contextFiles = Directory.GetFiles(contextPath, "*DbContext.cs");
+    var contextFiles = Directory.GetFiles(contextPath, "*Context.cs");
 
     var contextInfo = new List<(string ClassName, string Provider)>();
 
@@ -22,13 +31,15 @@
         {
             string line = lines[i].Trim();
 
+            line = line.Replace("partial", "").Trim();
+
             var attrMatch = Regex.Match(line, @"\[DbProvider\(DbProvider\.(\w+)\)\]");
             if (attrMatch.Success)
             {
                 provider = attrMatch.Groups[1].Value;
             }
 
-            var classMatch = Regex.Match(line, @"public\s+class\s+(\w+DbContext)");
+            var classMatch = Regex.Match(line, @"public\s+class\s+(\w+Context)");
             if (classMatch.Success)
             {
                 className = classMatch.Groups[1].Value;
@@ -40,16 +51,7 @@
             contextInfo.Add((className, provider));
     }
 #>
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace MPR.RestApiTemplate.Infrastructure.Context;
-
-public static class DbContextRegistration
-{
-    public static IServiceCollection AddInfrastructureDbContexts(this IServiceCollection services, IConfiguration configuration)
-    {
 <#
     foreach (var ctxInfo in contextInfo)
     {
@@ -63,7 +65,7 @@ public static class DbContextRegistration
             _ => "UseOracle"
         };
 
-        string connName = ctx.Replace("DbContext", "Connection");
+        string connName = ctx.Replace("Context", "Connection");
 #>
         services.AddDbContext<<#= ctx #>>(options =>
             options.<#= useCall #>(

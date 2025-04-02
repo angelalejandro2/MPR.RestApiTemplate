@@ -1,5 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,10 +8,11 @@ public static class DbContextRegistration
 {
     public static IServiceCollection AddInfrastructureDbContexts(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<DefaultDbContext>(options =>
+
+        services.AddDbContext<NorthwindContext>(options =>
             options.UseSqlServer(
-                configuration.GetConnectionString("DefaultConnection"),
-                optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(DefaultDbContext).Assembly.FullName)
+                configuration.GetConnectionString("NorthwindConnection"),
+                optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(NorthwindContext).Assembly.FullName)
             )
         );
         return services;

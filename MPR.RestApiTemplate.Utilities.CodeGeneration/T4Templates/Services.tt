@@ -26,6 +26,8 @@ namespace MPR.RestApiTemplate.Application.Services
 		List<(string Type, string Name)> keyProperties = new();
 		bool nextIsKey = false;
 
+		bool isKeyless = lines.Any(l => l.Trim().StartsWith("[Keyless]"));
+
 		foreach (var line in lines)
 		{
 			string trimmed = line.Trim();
@@ -70,7 +72,7 @@ namespace MPR.RestApiTemplate.Application.Services
 		}
 
 <#
-	if (keyProperties.Count > 0)
+	if (!isKeyless && keyProperties.Count > 0)
 	{
 #>
 		public virtual async Task<<#= entity #>Model> GetByIdAsync(<#= methodParams #>)
@@ -84,9 +86,7 @@ namespace MPR.RestApiTemplate.Application.Services
 			await _unitOfWork.<#= entity #>Repository.DeleteAsync(<#= methodKeys #>);
 			await _unitOfWork.SaveChangesAsync();
 		}
-<#
-	}
-#>
+
 		public virtual async Task<<#= entity #>Model> AddAsync(<#= entity #>Model model)
 		{
 			var entity = _mapper.Map<<#= entity #>>(model);
@@ -102,6 +102,9 @@ namespace MPR.RestApiTemplate.Application.Services
 			await _unitOfWork.SaveChangesAsync();
 			return _mapper.Map<<#= entity #>Model>(entity);
 		}
+<#
+	}
+#>
 	}
 <#
 	}

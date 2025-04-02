@@ -5,10 +5,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+	  <PreserveCompilationContext>true</PreserveCompilationContext>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
@@ -16,6 +18,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MPR.RestApiTemplate.Api\MPR.RestApiTemplate.Api.csproj" />
+    <ProjectReference Include="..\MPR.RestApiTemplate.Application\MPR.RestApiTemplate.Application.csproj" />
+    <ProjectReference Include="..\MPR.RestApiTemplate.Domain\MPR.RestApiTemplate.Domain.csproj" />
+    <ProjectReference Include="..\MPR.RestApiTemplate.Infrastructure\MPR.RestApiTemplate.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

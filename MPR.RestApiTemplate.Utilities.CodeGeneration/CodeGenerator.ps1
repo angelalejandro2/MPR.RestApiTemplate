@@ -18,7 +18,8 @@ if ($confirmation -ne "Y") {
 # $tt = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\TextTransform.exe"
 $tt = "C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\TextTransform.exe"
 
-Write-Host "Delete previously generated cs code files"
+Write-Host "Delete previously generated cs code files" -ForegroundColor Cyan
+Remove-Item -Force "..\MPR.RestApiTemplate.Tests.Integration\IntegrationTests.generated.cs"
 Remove-Item -Force "..\MPR.RestApiTemplate.Api\Startup\DbContextRegistration.generated.cs"
 Remove-Item -Force "..\MPR.RestApiTemplate.Api\Startup\AutoMapperServiceRegistration.generated.cs"
 Remove-Item -Force "..\MPR.RestApiTemplate.Api\Startup\ApplicationServiceRegistration.generated.cs"
@@ -32,7 +33,7 @@ Remove-Item -Force "..\MPR.RestApiTemplate.Domain\Interfaces\IUnitOfWork.generat
 Remove-Item -Force "..\MPR.RestApiTemplate.Domain\Interfaces\Repositories\RepositoryInterfaces.generated.cs"
 
 Write-Host "."
-Write-Host "Run all T4s..."
+Write-Host "Run all T4s..." -ForegroundColor Cyan
 Write-Host (Get-Location)
 
 Write-Host "1. Generate Repository Interfaces"
@@ -68,4 +69,7 @@ Write-Host "10. Generate Startup AutoMapper Service Registration"
 Write-Host "11. Generate Startup Db Context Registration"
 & $tt ".\T4Templates\DbContextRegistration.tt" -out "..\MPR.RestApiTemplate.Api\Startup\DbContextRegistration.generated.cs"
 
-Write-Host "T4s completed."
+Write-Host "12. Generate Integration Tests"
+& $tt ".\T4Templates\IntegrationTests.tt" -out "..\MPR.RestApiTemplate.Tests.Integration\IntegrationTests.generated.cs"
+
+Write-Host "T4s completed." -ForegroundColor Green

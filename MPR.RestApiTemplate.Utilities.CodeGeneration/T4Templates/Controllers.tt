@@ -23,6 +23,8 @@ namespace MPR.RestApiTemplate.Api.Controllers
         string lowerName = char.ToLower(className[0]) + className.Substring(1);
         var lines = File.ReadAllLines(file);
 
+        bool isKeyless = lines.Any(l => l.Trim().StartsWith("[Keyless]"));
+
         // Leer [Key] properties
         var keyProps = new List<(string Type, string Name)>();
         bool nextIsKey = false;
@@ -73,7 +75,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Ok(result);
         }
 <#
-    if (keyProps.Any())
+    if (!isKeyless && keyProps.Any())
     {
 #>
         [HttpGet("<#= routeParams #>")]
@@ -91,9 +93,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             await _service.DeleteAsync(<#= paramArgs #>);
             return NoContent();
         }
-<#
-    }
-#>
+
         [HttpPut]
         public virtual async Task<ActionResult<<#= modelName #>>> UpdateAsync([FromBody] <#= modelName #> model)
         {
@@ -107,6 +107,9 @@ namespace MPR.RestApiTemplate.Api.Controllers
             var result = await _service.AddAsync(model);
             return CreatedAtAction(nameof(GetById), new { <#= keyObject #> }, model);
         }
+<#
+    }
+#>
     }
 <#
     }
