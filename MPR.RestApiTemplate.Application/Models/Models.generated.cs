@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPR.RestApiTemplate.Application.Models
 {
@@ -21,6 +22,7 @@ namespace MPR.RestApiTemplate.Application.Models
     public class CategoriesModel
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
         public string? Description { get; set; }
@@ -77,6 +79,7 @@ namespace MPR.RestApiTemplate.Application.Models
     public class EmployeesModel
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int EmployeeId { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
@@ -158,6 +161,7 @@ namespace MPR.RestApiTemplate.Application.Models
     public class OrdersModel
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int OrderId { get; set; }
         public string? CustomerId { get; set; }
         public int? EmployeeId { get; set; }
@@ -211,6 +215,7 @@ namespace MPR.RestApiTemplate.Application.Models
     public class ProductsModel
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ProductId { get; set; }
         public string ProductName { get; set; }
         public int? SupplierId { get; set; }
@@ -283,6 +288,7 @@ namespace MPR.RestApiTemplate.Application.Models
     public class ShippersModel
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ShipperId { get; set; }
         public string CompanyName { get; set; }
         public string? Phone { get; set; }
@@ -306,6 +312,7 @@ namespace MPR.RestApiTemplate.Application.Models
     public class SuppliersModel
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int SupplierId { get; set; }
         public string CompanyName { get; set; }
         public string? ContactName { get; set; }

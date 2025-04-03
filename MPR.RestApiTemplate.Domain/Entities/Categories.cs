@@ -10,6 +10,7 @@ namespace MPR.RestApiTemplate.Domain.Entities;
 public partial class Categories
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("CategoryID")]
     public int CategoryId { get; set; }
 

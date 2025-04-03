@@ -11,6 +11,7 @@ namespace MPR.RestApiTemplate.Domain.Entities;
 public partial class Suppliers
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("SupplierID")]
     public int SupplierId { get; set; }
 

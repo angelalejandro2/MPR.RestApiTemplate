@@ -9,6 +9,7 @@ namespace MPR.RestApiTemplate.Domain.Entities;
 public partial class Shippers
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("ShipperID")]
     public int ShipperId { get; set; }
 

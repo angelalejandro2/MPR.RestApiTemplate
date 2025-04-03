@@ -58,9 +58,12 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
-        [HttpPut]
-        public virtual async Task<ActionResult<CategoriesModel>> UpdateAsync([FromBody] CategoriesModel model)
+        [HttpPut("{categoryId}")]
+        public virtual async Task<ActionResult<CategoriesModel>> UpdateAsync(int categoryId, [FromBody] CategoriesModel model)
         {
+            if (model.CategoryId != categoryId)
+                return BadRequest("Key mismatch between route and payload");
+
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
@@ -69,7 +72,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         public virtual async Task<ActionResult<CategoriesModel>> AddASync([FromBody] CategoriesModel model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { model.CategoryId }, model);
+            return CreatedAtAction(nameof(GetById), new { result.CategoryId }, result);
         }
     }
     [ApiController]
@@ -163,9 +166,12 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
-        [HttpPut]
-        public virtual async Task<ActionResult<CustomerDemographicsModel>> UpdateAsync([FromBody] CustomerDemographicsModel model)
+        [HttpPut("{customerTypeId}")]
+        public virtual async Task<ActionResult<CustomerDemographicsModel>> UpdateAsync(string customerTypeId, [FromBody] CustomerDemographicsModel model)
         {
+            if (model.CustomerTypeId != customerTypeId)
+                return BadRequest("Key mismatch between route and payload");
+
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
@@ -174,7 +180,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         public virtual async Task<ActionResult<CustomerDemographicsModel>> AddASync([FromBody] CustomerDemographicsModel model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { model.CustomerTypeId }, model);
+            return CreatedAtAction(nameof(GetById), new { result.CustomerTypeId }, result);
         }
     }
     [ApiController]
@@ -211,9 +217,12 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
-        [HttpPut]
-        public virtual async Task<ActionResult<CustomersModel>> UpdateAsync([FromBody] CustomersModel model)
+        [HttpPut("{customerId}")]
+        public virtual async Task<ActionResult<CustomersModel>> UpdateAsync(string customerId, [FromBody] CustomersModel model)
         {
+            if (model.CustomerId != customerId)
+                return BadRequest("Key mismatch between route and payload");
+
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
@@ -222,7 +231,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         public virtual async Task<ActionResult<CustomersModel>> AddASync([FromBody] CustomersModel model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { model.CustomerId }, model);
+            return CreatedAtAction(nameof(GetById), new { result.CustomerId }, result);
         }
     }
     [ApiController]
@@ -259,9 +268,12 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
-        [HttpPut]
-        public virtual async Task<ActionResult<EmployeesModel>> UpdateAsync([FromBody] EmployeesModel model)
+        [HttpPut("{employeeId}")]
+        public virtual async Task<ActionResult<EmployeesModel>> UpdateAsync(int employeeId, [FromBody] EmployeesModel model)
         {
+            if (model.EmployeeId != employeeId)
+                return BadRequest("Key mismatch between route and payload");
+
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
@@ -270,7 +282,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         public virtual async Task<ActionResult<EmployeesModel>> AddASync([FromBody] EmployeesModel model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { model.EmployeeId }, model);
+            return CreatedAtAction(nameof(GetById), new { result.EmployeeId }, result);
         }
     }
     [ApiController]
@@ -326,9 +338,14 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
-        [HttpPut]
-        public virtual async Task<ActionResult<OrderDetailsModel>> UpdateAsync([FromBody] OrderDetailsModel model)
+        [HttpPut("{orderId}/{productId}")]
+        public virtual async Task<ActionResult<OrderDetailsModel>> UpdateAsync(int orderId, int productId, [FromBody] OrderDetailsModel model)
         {
+            if (model.OrderId != orderId)
+                return BadRequest("Key mismatch between route and payload");
+            if (model.ProductId != productId)
+                return BadRequest("Key mismatch between route and payload");
+
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
@@ -337,7 +354,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         public virtual async Task<ActionResult<OrderDetailsModel>> AddASync([FromBody] OrderDetailsModel model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { model.OrderId, model.ProductId }, model);
+            return CreatedAtAction(nameof(GetById), new { result.OrderId, result.ProductId }, result);
         }
     }
     [ApiController]
@@ -393,9 +410,12 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
-        [HttpPut]
-        public virtual async Task<ActionResult<OrdersModel>> UpdateAsync([FromBody] OrdersModel model)
+        [HttpPut("{orderId}")]
+        public virtual async Task<ActionResult<OrdersModel>> UpdateAsync(int orderId, [FromBody] OrdersModel model)
         {
+            if (model.OrderId != orderId)
+                return BadRequest("Key mismatch between route and payload");
+
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
@@ -404,7 +424,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         public virtual async Task<ActionResult<OrdersModel>> AddASync([FromBody] OrdersModel model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { model.OrderId }, model);
+            return CreatedAtAction(nameof(GetById), new { result.OrderId }, result);
         }
     }
     [ApiController]
@@ -479,9 +499,12 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
-        [HttpPut]
-        public virtual async Task<ActionResult<ProductsModel>> UpdateAsync([FromBody] ProductsModel model)
+        [HttpPut("{productId}")]
+        public virtual async Task<ActionResult<ProductsModel>> UpdateAsync(int productId, [FromBody] ProductsModel model)
         {
+            if (model.ProductId != productId)
+                return BadRequest("Key mismatch between route and payload");
+
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
@@ -490,7 +513,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         public virtual async Task<ActionResult<ProductsModel>> AddASync([FromBody] ProductsModel model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { model.ProductId }, model);
+            return CreatedAtAction(nameof(GetById), new { result.ProductId }, result);
         }
     }
     [ApiController]
@@ -603,9 +626,12 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
-        [HttpPut]
-        public virtual async Task<ActionResult<RegionModel>> UpdateAsync([FromBody] RegionModel model)
+        [HttpPut("{regionId}")]
+        public virtual async Task<ActionResult<RegionModel>> UpdateAsync(int regionId, [FromBody] RegionModel model)
         {
+            if (model.RegionId != regionId)
+                return BadRequest("Key mismatch between route and payload");
+
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
@@ -614,7 +640,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         public virtual async Task<ActionResult<RegionModel>> AddASync([FromBody] RegionModel model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { model.RegionId }, model);
+            return CreatedAtAction(nameof(GetById), new { result.RegionId }, result);
         }
     }
     [ApiController]
@@ -689,9 +715,12 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
-        [HttpPut]
-        public virtual async Task<ActionResult<ShippersModel>> UpdateAsync([FromBody] ShippersModel model)
+        [HttpPut("{shipperId}")]
+        public virtual async Task<ActionResult<ShippersModel>> UpdateAsync(int shipperId, [FromBody] ShippersModel model)
         {
+            if (model.ShipperId != shipperId)
+                return BadRequest("Key mismatch between route and payload");
+
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
@@ -700,7 +729,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         public virtual async Task<ActionResult<ShippersModel>> AddASync([FromBody] ShippersModel model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { model.ShipperId }, model);
+            return CreatedAtAction(nameof(GetById), new { result.ShipperId }, result);
         }
     }
     [ApiController]
@@ -775,9 +804,12 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
-        [HttpPut]
-        public virtual async Task<ActionResult<SuppliersModel>> UpdateAsync([FromBody] SuppliersModel model)
+        [HttpPut("{supplierId}")]
+        public virtual async Task<ActionResult<SuppliersModel>> UpdateAsync(int supplierId, [FromBody] SuppliersModel model)
         {
+            if (model.SupplierId != supplierId)
+                return BadRequest("Key mismatch between route and payload");
+
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
@@ -786,7 +818,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         public virtual async Task<ActionResult<SuppliersModel>> AddASync([FromBody] SuppliersModel model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { model.SupplierId }, model);
+            return CreatedAtAction(nameof(GetById), new { result.SupplierId }, result);
         }
     }
     [ApiController]
@@ -823,9 +855,12 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
-        [HttpPut]
-        public virtual async Task<ActionResult<TerritoriesModel>> UpdateAsync([FromBody] TerritoriesModel model)
+        [HttpPut("{territoryId}")]
+        public virtual async Task<ActionResult<TerritoriesModel>> UpdateAsync(string territoryId, [FromBody] TerritoriesModel model)
         {
+            if (model.TerritoryId != territoryId)
+                return BadRequest("Key mismatch between route and payload");
+
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
@@ -834,7 +869,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         public virtual async Task<ActionResult<TerritoriesModel>> AddASync([FromBody] TerritoriesModel model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { model.TerritoryId }, model);
+            return CreatedAtAction(nameof(GetById), new { result.TerritoryId }, result);
         }
     }
 }

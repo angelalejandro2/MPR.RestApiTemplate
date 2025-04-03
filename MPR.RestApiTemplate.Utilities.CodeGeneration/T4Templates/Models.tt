@@ -7,6 +7,7 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Text.RegularExpressions" #>
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPR.RestApiTemplate.Application.Models
 {
@@ -21,6 +22,7 @@ namespace MPR.RestApiTemplate.Application.Models
         var lines = File.ReadAllLines(file);
 
         bool nextIsKey = false;
+        string nextDatabaseGenerated = null;
 #>
 
     public class <#= className #>Model
@@ -33,6 +35,12 @@ namespace MPR.RestApiTemplate.Application.Models
             if (trimmed.StartsWith("[Key]"))
             {
                 nextIsKey = true;
+                continue;
+            }
+
+            if (trimmed.StartsWith("[DatabaseGenerated"))
+            {
+                nextDatabaseGenerated = trimmed;
                 continue;
             }
 
@@ -79,6 +87,13 @@ namespace MPR.RestApiTemplate.Application.Models
         [Key]
 <#
                         nextIsKey = false;
+                    }
+                    if (!string.IsNullOrEmpty(nextDatabaseGenerated))
+                    {
+#>
+        <#= nextDatabaseGenerated #>
+<#
+                        nextDatabaseGenerated = null;
                     }
 #>
         public <#= modelType #> <#= name #> { get; set; }

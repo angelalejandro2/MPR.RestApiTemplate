@@ -54,7 +54,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         string routeParams = string.Join("/", keyProps.Select(p => $"{{{char.ToLower(p.Name[0]) + p.Name.Substring(1)}}}"));
         string methodParams = string.Join(", ", keyProps.Select(p => $"{p.Type} {char.ToLower(p.Name[0]) + p.Name.Substring(1)}"));
         string paramArgs = string.Join(", ", keyProps.Select(p => $"{char.ToLower(p.Name[0]) + p.Name.Substring(1)}"));
-        string keyObject = string.Join(", ", keyProps.Select(p => $"model.{p.Name}"));
+        string keyObject = string.Join(", ", keyProps.Select(p => $"result.{p.Name}"));
 #>
     [ApiController]
     [ApiVersion("1.0")]
@@ -94,9 +94,20 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
-        [HttpPut]
-        public virtual async Task<ActionResult<<#= modelName #>>> UpdateAsync([FromBody] <#= modelName #> model)
+        [HttpPut("<#= routeParams #>")]
+        public virtual async Task<ActionResult<<#= modelName #>>> UpdateAsync(<#= methodParams #>, [FromBody] <#= modelName #> model)
         {
+<# 
+    foreach (var key in keyProps)
+    {
+        var paramName = char.ToLower(key.Name[0]) + key.Name.Substring(1);
+#>
+            if (model.<#= key.Name #> != <#= paramName #>)
+                return BadRequest("Key mismatch between route and payload");
+<#
+    }
+    #>
+
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
@@ -105,7 +116,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         public virtual async Task<ActionResult<<#= modelName #>>> AddASync([FromBody] <#= modelName #> model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { <#= keyObject #> }, model);
+            return CreatedAtAction(nameof(GetById), new { <#= keyObject #> }, result);
         }
 <#
     }

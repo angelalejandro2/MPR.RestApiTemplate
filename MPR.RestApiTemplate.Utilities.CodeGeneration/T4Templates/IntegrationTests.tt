@@ -62,15 +62,21 @@ if (File.Exists(modelsFile))
                 string name = match.Groups[2].Value;
 
                 bool isKey = false;
+                bool isDbGenerated = false;
+
                 for (int j = i - 1; j >= 0; j--)
                 {
                     var previousLine = lines[j].Trim();
-                    if (previousLine.StartsWith("[Key]"))
+
+                    if (previousLine.StartsWith("[") && previousLine.EndsWith("]"))
                     {
-                        isKey = true;
-                        break;
+                        if (previousLine.Contains("Key"))                  
+                            isKey = true;
+
+                        if (previousLine.Contains("DatabaseGenerated") && previousLine.Contains("Identity"))
+                            isDbGenerated = true;
                     }
-                    if (!previousLine.StartsWith("["))
+                    else if (!previousLine.StartsWith("["))
                         break;
                 }
 
@@ -78,7 +84,8 @@ if (File.Exists(modelsFile))
                 {
                     Type = type,
                     Name = name,
-                    IsKey = isKey || name == "Id"
+                    IsKey = isKey,
+                    IsDbGenerated = isDbGenerated
                 });
             }
         }
@@ -90,7 +97,7 @@ foreach (var file in Directory.GetFiles(entityPath, "*.cs"))
 {
     var entityName = Path.GetFileNameWithoutExtension(file);
     var modelName = entityName + "Model";
-    var route = entityName.ToLower() + "s";
+    var route = entityName.ToLower();
     if (!dtoTypes.ContainsKey(modelName)) continue;
 
     var props = dtoTypes[modelName];
@@ -116,20 +123,22 @@ foreach (var file in Directory.GetFiles(entityPath, "*.cs"))
             var createDto = new <#= modelName #>
             {
 <#
-    foreach (var prop in props.Where(p => !p.IsKey))
+    foreach (var prop in props)
     {
+        if (prop.IsKey && prop.IsDbGenerated)
+            continue;
 #>                <#= prop.Name #> = <#= GetDefaultValue(prop.Type, "1") #>,
 <#
-    }
+   }
 #>            };
 
-            var postResponse = await _client.PostAsJsonAsync("/api/<#= route #>", createDto);
+            var postResponse = await _client.PostAsJsonAsync("/api/v1/<#= route #>", createDto);
             postResponse.EnsureSuccessStatusCode();
 
             var created = await postResponse.Content.ReadFromJsonAsync<<#= modelName #>>();
 
             // READ
-            var getResponse = await _client.GetAsync($"/api/<#= route #>/<#= routeTemplate #>");
+            var getResponse = await _client.GetAsync($"/api/v1/<#= route #>/<#= routeTemplate #>");
             getResponse.EnsureSuccessStatusCode();
             var retrieved = await getResponse.Content.ReadFromJsonAsync<<#= modelName #>>();
 <#
@@ -156,10 +165,10 @@ foreach (var file in Directory.GetFiles(entityPath, "*.cs"))
     }
 #>            };
 
-            var putResponse = await _client.PutAsJsonAsync($"/api/<#= route #>/"+<#= urlTemplate #>, updateDto);
+            var putResponse = await _client.PutAsJsonAsync($"/api/v1/<#= route #>/"+<#= urlTemplate #>, updateDto);
             putResponse.EnsureSuccessStatusCode();
 
-            var getAfterPut = await _client.GetAsync($"/api/<#= route #>/"+<#= urlTemplate #>);
+            var getAfterPut = await _client.GetAsync($"/api/v1/<#= route #>/"+<#= urlTemplate #>);
             getAfterPut.EnsureSuccessStatusCode();
             var updated = await getAfterPut.Content.ReadFromJsonAsync<<#= modelName #>>();
 <#
@@ -171,10 +180,10 @@ foreach (var file in Directory.GetFiles(entityPath, "*.cs"))
 #>
 
             // DELETE
-            var deleteResponse = await _client.DeleteAsync($"/api/<#= route #>/"+<#= urlTemplate #>);
+            var deleteResponse = await _client.DeleteAsync($"/api/v1/<#= route #>/"+<#= urlTemplate #>);
             deleteResponse.EnsureSuccessStatusCode();
 
-            var getAfterDelete = await _client.GetAsync($"/api/<#= route #>/"+<#= urlTemplate #>);
+            var getAfterDelete = await _client.GetAsync($"/api/v1/<#= route #>/"+<#= urlTemplate #>);
             Assert.Equal(HttpStatusCode.NotFound, getAfterDelete.StatusCode);
         }
     }
@@ -188,6 +197,7 @@ public class PropertyDef
     public string Type { get; set; }
     public string Name { get; set; }
     public bool IsKey { get; set; }
+    public bool IsDbGenerated { get; set; }
 }
 
 string GetDefaultValue(string type, string version)

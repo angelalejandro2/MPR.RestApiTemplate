@@ -14,6 +14,7 @@ namespace MPR.RestApiTemplate.Domain.Entities;
 public partial class Products
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("ProductID")]
     public int ProductId { get; set; }
 

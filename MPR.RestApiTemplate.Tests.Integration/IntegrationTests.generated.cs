@@ -26,13 +26,13 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 Products = /* TODO: set value for ICollection<ProductsModel> */ default,
             };
 
-            var postResponse = await _client.PostAsJsonAsync("/api/categoriess", createDto);
+            var postResponse = await _client.PostAsJsonAsync("/api/v1/categories", createDto);
             postResponse.EnsureSuccessStatusCode();
 
             var created = await postResponse.Content.ReadFromJsonAsync<CategoriesModel>();
 
             // READ
-            var getResponse = await _client.GetAsync($"/api/categoriess/{created.CategoryId}");
+            var getResponse = await _client.GetAsync($"/api/v1/categories/{created.CategoryId}");
             getResponse.EnsureSuccessStatusCode();
             var retrieved = await getResponse.Content.ReadFromJsonAsync<CategoriesModel>();
             Assert.Equal(created.CategoryId, retrieved!.CategoryId);
@@ -46,19 +46,19 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 Products = /* TODO: set value for ICollection<ProductsModel> */ default,
             };
 
-            var putResponse = await _client.PutAsJsonAsync($"/api/categoriess/"+created.CategoryId, updateDto);
+            var putResponse = await _client.PutAsJsonAsync($"/api/v1/categories/"+created.CategoryId, updateDto);
             putResponse.EnsureSuccessStatusCode();
 
-            var getAfterPut = await _client.GetAsync($"/api/categoriess/"+created.CategoryId);
+            var getAfterPut = await _client.GetAsync($"/api/v1/categories/"+created.CategoryId);
             getAfterPut.EnsureSuccessStatusCode();
             var updated = await getAfterPut.Content.ReadFromJsonAsync<CategoriesModel>();
             Assert.Equal(created.CategoryId, updated!.CategoryId);
 
             // DELETE
-            var deleteResponse = await _client.DeleteAsync($"/api/categoriess/"+created.CategoryId);
+            var deleteResponse = await _client.DeleteAsync($"/api/v1/categories/"+created.CategoryId);
             deleteResponse.EnsureSuccessStatusCode();
 
-            var getAfterDelete = await _client.GetAsync($"/api/categoriess/"+created.CategoryId);
+            var getAfterDelete = await _client.GetAsync($"/api/v1/categories/"+created.CategoryId);
             Assert.Equal(HttpStatusCode.NotFound, getAfterDelete.StatusCode);
         }
     }
@@ -77,17 +77,18 @@ namespace MPR.RestApiTemplate.IntegrationTests
             // CREATE
             var createDto = new CustomerDemographicsModel
             {
+                CustomerTypeId = "Test1",
                 CustomerDesc = "Test1",
                 Customer = /* TODO: set value for ICollection<CustomersModel> */ default,
             };
 
-            var postResponse = await _client.PostAsJsonAsync("/api/customerdemographicss", createDto);
+            var postResponse = await _client.PostAsJsonAsync("/api/v1/customerdemographics", createDto);
             postResponse.EnsureSuccessStatusCode();
 
             var created = await postResponse.Content.ReadFromJsonAsync<CustomerDemographicsModel>();
 
             // READ
-            var getResponse = await _client.GetAsync($"/api/customerdemographicss/{created.CustomerTypeId}");
+            var getResponse = await _client.GetAsync($"/api/v1/customerdemographics/{created.CustomerTypeId}");
             getResponse.EnsureSuccessStatusCode();
             var retrieved = await getResponse.Content.ReadFromJsonAsync<CustomerDemographicsModel>();
             Assert.Equal(created.CustomerTypeId, retrieved!.CustomerTypeId);
@@ -100,19 +101,19 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 Customer = /* TODO: set value for ICollection<CustomersModel> */ default,
             };
 
-            var putResponse = await _client.PutAsJsonAsync($"/api/customerdemographicss/"+created.CustomerTypeId, updateDto);
+            var putResponse = await _client.PutAsJsonAsync($"/api/v1/customerdemographics/"+created.CustomerTypeId, updateDto);
             putResponse.EnsureSuccessStatusCode();
 
-            var getAfterPut = await _client.GetAsync($"/api/customerdemographicss/"+created.CustomerTypeId);
+            var getAfterPut = await _client.GetAsync($"/api/v1/customerdemographics/"+created.CustomerTypeId);
             getAfterPut.EnsureSuccessStatusCode();
             var updated = await getAfterPut.Content.ReadFromJsonAsync<CustomerDemographicsModel>();
             Assert.Equal(created.CustomerTypeId, updated!.CustomerTypeId);
 
             // DELETE
-            var deleteResponse = await _client.DeleteAsync($"/api/customerdemographicss/"+created.CustomerTypeId);
+            var deleteResponse = await _client.DeleteAsync($"/api/v1/customerdemographics/"+created.CustomerTypeId);
             deleteResponse.EnsureSuccessStatusCode();
 
-            var getAfterDelete = await _client.GetAsync($"/api/customerdemographicss/"+created.CustomerTypeId);
+            var getAfterDelete = await _client.GetAsync($"/api/v1/customerdemographics/"+created.CustomerTypeId);
             Assert.Equal(HttpStatusCode.NotFound, getAfterDelete.StatusCode);
         }
     }
@@ -131,6 +132,7 @@ namespace MPR.RestApiTemplate.IntegrationTests
             // CREATE
             var createDto = new CustomersModel
             {
+                CustomerId = "Test1",
                 CompanyName = "Test1",
                 ContactName = "Test1",
                 ContactTitle = "Test1",
@@ -145,13 +147,13 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 CustomerType = /* TODO: set value for ICollection<CustomerDemographicsModel> */ default,
             };
 
-            var postResponse = await _client.PostAsJsonAsync("/api/customerss", createDto);
+            var postResponse = await _client.PostAsJsonAsync("/api/v1/customers", createDto);
             postResponse.EnsureSuccessStatusCode();
 
             var created = await postResponse.Content.ReadFromJsonAsync<CustomersModel>();
 
             // READ
-            var getResponse = await _client.GetAsync($"/api/customerss/{created.CustomerId}");
+            var getResponse = await _client.GetAsync($"/api/v1/customers/{created.CustomerId}");
             getResponse.EnsureSuccessStatusCode();
             var retrieved = await getResponse.Content.ReadFromJsonAsync<CustomersModel>();
             Assert.Equal(created.CustomerId, retrieved!.CustomerId);
@@ -174,19 +176,19 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 CustomerType = /* TODO: set value for ICollection<CustomerDemographicsModel> */ default,
             };
 
-            var putResponse = await _client.PutAsJsonAsync($"/api/customerss/"+created.CustomerId, updateDto);
+            var putResponse = await _client.PutAsJsonAsync($"/api/v1/customers/"+created.CustomerId, updateDto);
             putResponse.EnsureSuccessStatusCode();
 
-            var getAfterPut = await _client.GetAsync($"/api/customerss/"+created.CustomerId);
+            var getAfterPut = await _client.GetAsync($"/api/v1/customers/"+created.CustomerId);
             getAfterPut.EnsureSuccessStatusCode();
             var updated = await getAfterPut.Content.ReadFromJsonAsync<CustomersModel>();
             Assert.Equal(created.CustomerId, updated!.CustomerId);
 
             // DELETE
-            var deleteResponse = await _client.DeleteAsync($"/api/customerss/"+created.CustomerId);
+            var deleteResponse = await _client.DeleteAsync($"/api/v1/customers/"+created.CustomerId);
             deleteResponse.EnsureSuccessStatusCode();
 
-            var getAfterDelete = await _client.GetAsync($"/api/customerss/"+created.CustomerId);
+            var getAfterDelete = await _client.GetAsync($"/api/v1/customers/"+created.CustomerId);
             Assert.Equal(HttpStatusCode.NotFound, getAfterDelete.StatusCode);
         }
     }
@@ -227,13 +229,13 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 Territory = /* TODO: set value for ICollection<TerritoriesModel> */ default,
             };
 
-            var postResponse = await _client.PostAsJsonAsync("/api/employeess", createDto);
+            var postResponse = await _client.PostAsJsonAsync("/api/v1/employees", createDto);
             postResponse.EnsureSuccessStatusCode();
 
             var created = await postResponse.Content.ReadFromJsonAsync<EmployeesModel>();
 
             // READ
-            var getResponse = await _client.GetAsync($"/api/employeess/{created.EmployeeId}");
+            var getResponse = await _client.GetAsync($"/api/v1/employees/{created.EmployeeId}");
             getResponse.EnsureSuccessStatusCode();
             var retrieved = await getResponse.Content.ReadFromJsonAsync<EmployeesModel>();
             Assert.Equal(created.EmployeeId, retrieved!.EmployeeId);
@@ -264,19 +266,19 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 Territory = /* TODO: set value for ICollection<TerritoriesModel> */ default,
             };
 
-            var putResponse = await _client.PutAsJsonAsync($"/api/employeess/"+created.EmployeeId, updateDto);
+            var putResponse = await _client.PutAsJsonAsync($"/api/v1/employees/"+created.EmployeeId, updateDto);
             putResponse.EnsureSuccessStatusCode();
 
-            var getAfterPut = await _client.GetAsync($"/api/employeess/"+created.EmployeeId);
+            var getAfterPut = await _client.GetAsync($"/api/v1/employees/"+created.EmployeeId);
             getAfterPut.EnsureSuccessStatusCode();
             var updated = await getAfterPut.Content.ReadFromJsonAsync<EmployeesModel>();
             Assert.Equal(created.EmployeeId, updated!.EmployeeId);
 
             // DELETE
-            var deleteResponse = await _client.DeleteAsync($"/api/employeess/"+created.EmployeeId);
+            var deleteResponse = await _client.DeleteAsync($"/api/v1/employees/"+created.EmployeeId);
             deleteResponse.EnsureSuccessStatusCode();
 
-            var getAfterDelete = await _client.GetAsync($"/api/employeess/"+created.EmployeeId);
+            var getAfterDelete = await _client.GetAsync($"/api/v1/employees/"+created.EmployeeId);
             Assert.Equal(HttpStatusCode.NotFound, getAfterDelete.StatusCode);
         }
     }
@@ -295,6 +297,8 @@ namespace MPR.RestApiTemplate.IntegrationTests
             // CREATE
             var createDto = new OrderDetailsModel
             {
+                OrderId = 1,
+                ProductId = 1,
                 UnitPrice = /* TODO: set value for decimal */ default,
                 Quantity = /* TODO: set value for short */ default,
                 Discount = /* TODO: set value for float */ default,
@@ -302,13 +306,13 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 Product = /* TODO: set value for ProductsModel */ default,
             };
 
-            var postResponse = await _client.PostAsJsonAsync("/api/orderdetailss", createDto);
+            var postResponse = await _client.PostAsJsonAsync("/api/v1/orderdetails", createDto);
             postResponse.EnsureSuccessStatusCode();
 
             var created = await postResponse.Content.ReadFromJsonAsync<OrderDetailsModel>();
 
             // READ
-            var getResponse = await _client.GetAsync($"/api/orderdetailss/{created.OrderId}/{created.ProductId}");
+            var getResponse = await _client.GetAsync($"/api/v1/orderdetails/{created.OrderId}/{created.ProductId}");
             getResponse.EnsureSuccessStatusCode();
             var retrieved = await getResponse.Content.ReadFromJsonAsync<OrderDetailsModel>();
             Assert.Equal(created.OrderId, retrieved!.OrderId);
@@ -326,20 +330,20 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 Product = /* TODO: set value for ProductsModel */ default,
             };
 
-            var putResponse = await _client.PutAsJsonAsync($"/api/orderdetailss/"+created.OrderId + "/" + created.ProductId, updateDto);
+            var putResponse = await _client.PutAsJsonAsync($"/api/v1/orderdetails/"+created.OrderId + "/" + created.ProductId, updateDto);
             putResponse.EnsureSuccessStatusCode();
 
-            var getAfterPut = await _client.GetAsync($"/api/orderdetailss/"+created.OrderId + "/" + created.ProductId);
+            var getAfterPut = await _client.GetAsync($"/api/v1/orderdetails/"+created.OrderId + "/" + created.ProductId);
             getAfterPut.EnsureSuccessStatusCode();
             var updated = await getAfterPut.Content.ReadFromJsonAsync<OrderDetailsModel>();
             Assert.Equal(created.OrderId, updated!.OrderId);
             Assert.Equal(created.ProductId, updated!.ProductId);
 
             // DELETE
-            var deleteResponse = await _client.DeleteAsync($"/api/orderdetailss/"+created.OrderId + "/" + created.ProductId);
+            var deleteResponse = await _client.DeleteAsync($"/api/v1/orderdetails/"+created.OrderId + "/" + created.ProductId);
             deleteResponse.EnsureSuccessStatusCode();
 
-            var getAfterDelete = await _client.GetAsync($"/api/orderdetailss/"+created.OrderId + "/" + created.ProductId);
+            var getAfterDelete = await _client.GetAsync($"/api/v1/orderdetails/"+created.OrderId + "/" + created.ProductId);
             Assert.Equal(HttpStatusCode.NotFound, getAfterDelete.StatusCode);
         }
     }
@@ -377,13 +381,13 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 ShipViaNavigation = /* TODO: set value for ShippersModel */ default,
             };
 
-            var postResponse = await _client.PostAsJsonAsync("/api/orderss", createDto);
+            var postResponse = await _client.PostAsJsonAsync("/api/v1/orders", createDto);
             postResponse.EnsureSuccessStatusCode();
 
             var created = await postResponse.Content.ReadFromJsonAsync<OrdersModel>();
 
             // READ
-            var getResponse = await _client.GetAsync($"/api/orderss/{created.OrderId}");
+            var getResponse = await _client.GetAsync($"/api/v1/orders/{created.OrderId}");
             getResponse.EnsureSuccessStatusCode();
             var retrieved = await getResponse.Content.ReadFromJsonAsync<OrdersModel>();
             Assert.Equal(created.OrderId, retrieved!.OrderId);
@@ -411,19 +415,19 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 ShipViaNavigation = /* TODO: set value for ShippersModel */ default,
             };
 
-            var putResponse = await _client.PutAsJsonAsync($"/api/orderss/"+created.OrderId, updateDto);
+            var putResponse = await _client.PutAsJsonAsync($"/api/v1/orders/"+created.OrderId, updateDto);
             putResponse.EnsureSuccessStatusCode();
 
-            var getAfterPut = await _client.GetAsync($"/api/orderss/"+created.OrderId);
+            var getAfterPut = await _client.GetAsync($"/api/v1/orders/"+created.OrderId);
             getAfterPut.EnsureSuccessStatusCode();
             var updated = await getAfterPut.Content.ReadFromJsonAsync<OrdersModel>();
             Assert.Equal(created.OrderId, updated!.OrderId);
 
             // DELETE
-            var deleteResponse = await _client.DeleteAsync($"/api/orderss/"+created.OrderId);
+            var deleteResponse = await _client.DeleteAsync($"/api/v1/orders/"+created.OrderId);
             deleteResponse.EnsureSuccessStatusCode();
 
-            var getAfterDelete = await _client.GetAsync($"/api/orderss/"+created.OrderId);
+            var getAfterDelete = await _client.GetAsync($"/api/v1/orders/"+created.OrderId);
             Assert.Equal(HttpStatusCode.NotFound, getAfterDelete.StatusCode);
         }
     }
@@ -456,13 +460,13 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 Supplier = /* TODO: set value for SuppliersModel */ default,
             };
 
-            var postResponse = await _client.PostAsJsonAsync("/api/productss", createDto);
+            var postResponse = await _client.PostAsJsonAsync("/api/v1/products", createDto);
             postResponse.EnsureSuccessStatusCode();
 
             var created = await postResponse.Content.ReadFromJsonAsync<ProductsModel>();
 
             // READ
-            var getResponse = await _client.GetAsync($"/api/productss/{created.ProductId}");
+            var getResponse = await _client.GetAsync($"/api/v1/products/{created.ProductId}");
             getResponse.EnsureSuccessStatusCode();
             var retrieved = await getResponse.Content.ReadFromJsonAsync<ProductsModel>();
             Assert.Equal(created.ProductId, retrieved!.ProductId);
@@ -485,19 +489,19 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 Supplier = /* TODO: set value for SuppliersModel */ default,
             };
 
-            var putResponse = await _client.PutAsJsonAsync($"/api/productss/"+created.ProductId, updateDto);
+            var putResponse = await _client.PutAsJsonAsync($"/api/v1/products/"+created.ProductId, updateDto);
             putResponse.EnsureSuccessStatusCode();
 
-            var getAfterPut = await _client.GetAsync($"/api/productss/"+created.ProductId);
+            var getAfterPut = await _client.GetAsync($"/api/v1/products/"+created.ProductId);
             getAfterPut.EnsureSuccessStatusCode();
             var updated = await getAfterPut.Content.ReadFromJsonAsync<ProductsModel>();
             Assert.Equal(created.ProductId, updated!.ProductId);
 
             // DELETE
-            var deleteResponse = await _client.DeleteAsync($"/api/productss/"+created.ProductId);
+            var deleteResponse = await _client.DeleteAsync($"/api/v1/products/"+created.ProductId);
             deleteResponse.EnsureSuccessStatusCode();
 
-            var getAfterDelete = await _client.GetAsync($"/api/productss/"+created.ProductId);
+            var getAfterDelete = await _client.GetAsync($"/api/v1/products/"+created.ProductId);
             Assert.Equal(HttpStatusCode.NotFound, getAfterDelete.StatusCode);
         }
     }
@@ -516,17 +520,18 @@ namespace MPR.RestApiTemplate.IntegrationTests
             // CREATE
             var createDto = new RegionModel
             {
+                RegionId = 1,
                 RegionDescription = "Test1",
                 Territories = /* TODO: set value for ICollection<TerritoriesModel> */ default,
             };
 
-            var postResponse = await _client.PostAsJsonAsync("/api/regions", createDto);
+            var postResponse = await _client.PostAsJsonAsync("/api/v1/region", createDto);
             postResponse.EnsureSuccessStatusCode();
 
             var created = await postResponse.Content.ReadFromJsonAsync<RegionModel>();
 
             // READ
-            var getResponse = await _client.GetAsync($"/api/regions/{created.RegionId}");
+            var getResponse = await _client.GetAsync($"/api/v1/region/{created.RegionId}");
             getResponse.EnsureSuccessStatusCode();
             var retrieved = await getResponse.Content.ReadFromJsonAsync<RegionModel>();
             Assert.Equal(created.RegionId, retrieved!.RegionId);
@@ -539,19 +544,19 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 Territories = /* TODO: set value for ICollection<TerritoriesModel> */ default,
             };
 
-            var putResponse = await _client.PutAsJsonAsync($"/api/regions/"+created.RegionId, updateDto);
+            var putResponse = await _client.PutAsJsonAsync($"/api/v1/region/"+created.RegionId, updateDto);
             putResponse.EnsureSuccessStatusCode();
 
-            var getAfterPut = await _client.GetAsync($"/api/regions/"+created.RegionId);
+            var getAfterPut = await _client.GetAsync($"/api/v1/region/"+created.RegionId);
             getAfterPut.EnsureSuccessStatusCode();
             var updated = await getAfterPut.Content.ReadFromJsonAsync<RegionModel>();
             Assert.Equal(created.RegionId, updated!.RegionId);
 
             // DELETE
-            var deleteResponse = await _client.DeleteAsync($"/api/regions/"+created.RegionId);
+            var deleteResponse = await _client.DeleteAsync($"/api/v1/region/"+created.RegionId);
             deleteResponse.EnsureSuccessStatusCode();
 
-            var getAfterDelete = await _client.GetAsync($"/api/regions/"+created.RegionId);
+            var getAfterDelete = await _client.GetAsync($"/api/v1/region/"+created.RegionId);
             Assert.Equal(HttpStatusCode.NotFound, getAfterDelete.StatusCode);
         }
     }
@@ -575,13 +580,13 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 Orders = /* TODO: set value for ICollection<OrdersModel> */ default,
             };
 
-            var postResponse = await _client.PostAsJsonAsync("/api/shipperss", createDto);
+            var postResponse = await _client.PostAsJsonAsync("/api/v1/shippers", createDto);
             postResponse.EnsureSuccessStatusCode();
 
             var created = await postResponse.Content.ReadFromJsonAsync<ShippersModel>();
 
             // READ
-            var getResponse = await _client.GetAsync($"/api/shipperss/{created.ShipperId}");
+            var getResponse = await _client.GetAsync($"/api/v1/shippers/{created.ShipperId}");
             getResponse.EnsureSuccessStatusCode();
             var retrieved = await getResponse.Content.ReadFromJsonAsync<ShippersModel>();
             Assert.Equal(created.ShipperId, retrieved!.ShipperId);
@@ -595,19 +600,19 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 Orders = /* TODO: set value for ICollection<OrdersModel> */ default,
             };
 
-            var putResponse = await _client.PutAsJsonAsync($"/api/shipperss/"+created.ShipperId, updateDto);
+            var putResponse = await _client.PutAsJsonAsync($"/api/v1/shippers/"+created.ShipperId, updateDto);
             putResponse.EnsureSuccessStatusCode();
 
-            var getAfterPut = await _client.GetAsync($"/api/shipperss/"+created.ShipperId);
+            var getAfterPut = await _client.GetAsync($"/api/v1/shippers/"+created.ShipperId);
             getAfterPut.EnsureSuccessStatusCode();
             var updated = await getAfterPut.Content.ReadFromJsonAsync<ShippersModel>();
             Assert.Equal(created.ShipperId, updated!.ShipperId);
 
             // DELETE
-            var deleteResponse = await _client.DeleteAsync($"/api/shipperss/"+created.ShipperId);
+            var deleteResponse = await _client.DeleteAsync($"/api/v1/shippers/"+created.ShipperId);
             deleteResponse.EnsureSuccessStatusCode();
 
-            var getAfterDelete = await _client.GetAsync($"/api/shipperss/"+created.ShipperId);
+            var getAfterDelete = await _client.GetAsync($"/api/v1/shippers/"+created.ShipperId);
             Assert.Equal(HttpStatusCode.NotFound, getAfterDelete.StatusCode);
         }
     }
@@ -640,13 +645,13 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 Products = /* TODO: set value for ICollection<ProductsModel> */ default,
             };
 
-            var postResponse = await _client.PostAsJsonAsync("/api/supplierss", createDto);
+            var postResponse = await _client.PostAsJsonAsync("/api/v1/suppliers", createDto);
             postResponse.EnsureSuccessStatusCode();
 
             var created = await postResponse.Content.ReadFromJsonAsync<SuppliersModel>();
 
             // READ
-            var getResponse = await _client.GetAsync($"/api/supplierss/{created.SupplierId}");
+            var getResponse = await _client.GetAsync($"/api/v1/suppliers/{created.SupplierId}");
             getResponse.EnsureSuccessStatusCode();
             var retrieved = await getResponse.Content.ReadFromJsonAsync<SuppliersModel>();
             Assert.Equal(created.SupplierId, retrieved!.SupplierId);
@@ -669,19 +674,19 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 Products = /* TODO: set value for ICollection<ProductsModel> */ default,
             };
 
-            var putResponse = await _client.PutAsJsonAsync($"/api/supplierss/"+created.SupplierId, updateDto);
+            var putResponse = await _client.PutAsJsonAsync($"/api/v1/suppliers/"+created.SupplierId, updateDto);
             putResponse.EnsureSuccessStatusCode();
 
-            var getAfterPut = await _client.GetAsync($"/api/supplierss/"+created.SupplierId);
+            var getAfterPut = await _client.GetAsync($"/api/v1/suppliers/"+created.SupplierId);
             getAfterPut.EnsureSuccessStatusCode();
             var updated = await getAfterPut.Content.ReadFromJsonAsync<SuppliersModel>();
             Assert.Equal(created.SupplierId, updated!.SupplierId);
 
             // DELETE
-            var deleteResponse = await _client.DeleteAsync($"/api/supplierss/"+created.SupplierId);
+            var deleteResponse = await _client.DeleteAsync($"/api/v1/suppliers/"+created.SupplierId);
             deleteResponse.EnsureSuccessStatusCode();
 
-            var getAfterDelete = await _client.GetAsync($"/api/supplierss/"+created.SupplierId);
+            var getAfterDelete = await _client.GetAsync($"/api/v1/suppliers/"+created.SupplierId);
             Assert.Equal(HttpStatusCode.NotFound, getAfterDelete.StatusCode);
         }
     }
@@ -700,19 +705,20 @@ namespace MPR.RestApiTemplate.IntegrationTests
             // CREATE
             var createDto = new TerritoriesModel
             {
+                TerritoryId = "Test1",
                 TerritoryDescription = "Test1",
                 RegionId = 1,
                 Region = /* TODO: set value for RegionModel */ default,
                 Employee = /* TODO: set value for ICollection<EmployeesModel> */ default,
             };
 
-            var postResponse = await _client.PostAsJsonAsync("/api/territoriess", createDto);
+            var postResponse = await _client.PostAsJsonAsync("/api/v1/territories", createDto);
             postResponse.EnsureSuccessStatusCode();
 
             var created = await postResponse.Content.ReadFromJsonAsync<TerritoriesModel>();
 
             // READ
-            var getResponse = await _client.GetAsync($"/api/territoriess/{created.TerritoryId}");
+            var getResponse = await _client.GetAsync($"/api/v1/territories/{created.TerritoryId}");
             getResponse.EnsureSuccessStatusCode();
             var retrieved = await getResponse.Content.ReadFromJsonAsync<TerritoriesModel>();
             Assert.Equal(created.TerritoryId, retrieved!.TerritoryId);
@@ -727,19 +733,19 @@ namespace MPR.RestApiTemplate.IntegrationTests
                 Employee = /* TODO: set value for ICollection<EmployeesModel> */ default,
             };
 
-            var putResponse = await _client.PutAsJsonAsync($"/api/territoriess/"+created.TerritoryId, updateDto);
+            var putResponse = await _client.PutAsJsonAsync($"/api/v1/territories/"+created.TerritoryId, updateDto);
             putResponse.EnsureSuccessStatusCode();
 
-            var getAfterPut = await _client.GetAsync($"/api/territoriess/"+created.TerritoryId);
+            var getAfterPut = await _client.GetAsync($"/api/v1/territories/"+created.TerritoryId);
             getAfterPut.EnsureSuccessStatusCode();
             var updated = await getAfterPut.Content.ReadFromJsonAsync<TerritoriesModel>();
             Assert.Equal(created.TerritoryId, updated!.TerritoryId);
 
             // DELETE
-            var deleteResponse = await _client.DeleteAsync($"/api/territoriess/"+created.TerritoryId);
+            var deleteResponse = await _client.DeleteAsync($"/api/v1/territories/"+created.TerritoryId);
             deleteResponse.EnsureSuccessStatusCode();
 
-            var getAfterDelete = await _client.GetAsync($"/api/territoriess/"+created.TerritoryId);
+            var getAfterDelete = await _client.GetAsync($"/api/v1/territories/"+created.TerritoryId);
             Assert.Equal(HttpStatusCode.NotFound, getAfterDelete.StatusCode);
         }
     }

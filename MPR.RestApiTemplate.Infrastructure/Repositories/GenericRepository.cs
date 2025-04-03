@@ -20,9 +20,7 @@ namespace MPR.RestApiTemplate.Infrastructure.Repositories
         public virtual async Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate) => await _dbSet.Where(predicate).ToListAsync();
         public virtual async Task<TEntity?> GetByIdAsync(params object[] keys) => await _dbSet.FindAsync(keys);
         public virtual async Task<TEntity> AddAsync(TEntity entity) => (await _dbSet.AddAsync(entity)).Entity;
-        public virtual async Task AddRangeAsync(IEnumerable<TEntity> entities) => await _dbSet.AddRangeAsync(entities);
         public virtual async Task<TEntity> UpdateAsync(TEntity entity) => await Task.Run(() => _dbSet.Update(entity).Entity);
-        public virtual async Task UpdateRangeAsync(IEnumerable<TEntity> entities) => await Task.Run(() => _dbSet.UpdateRange(entities));
         public virtual async Task DeleteAsync(params object[] keys)
         {
             var entity = await _dbSet.FindAsync(keys);

@@ -11,6 +11,7 @@ namespace MPR.RestApiTemplate.Domain.Entities;
 public partial class Employees
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("EmployeeID")]
     public int EmployeeId { get; set; }
 
