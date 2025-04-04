@@ -1,4 +1,4 @@
-﻿using Asp.Versioning;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,27 +12,59 @@ namespace MPR.RestApiTemplate.Api.Controllers
     {
         public IConfiguration Configuration { get; } = configuration;
 
-        //get info
         [AllowAnonymous]
         [HttpGet]
         [Produces("application/json")]
         public IActionResult ApiInfo()
         {
-            return Content("<html><head><link href='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh' crossorigin='anonymous'></head><body>" +
+            var info = new
+            {
+                name = "MPR.RestApiTemplate",
+                version = "1.0",
+                description = "Reusable REST API template for building .NET 9 APIs using Clean Architecture.",
+                documentation = new
+                {
+                    scalar = $"{Request.Scheme}://{Request.Host}/scalar",
+                    swagger = $"{Request.Scheme}://{Request.Host}/swagger"
+                },
+                domains = new[] { "Customers", "Orders", "Products" }, // Reemplazar según corresponda
+                serverTime = DateTime.UtcNow,
+                message = "Welcome to the MPR REST API Template. Customize this endpoint as needed."
+            };
 
-                "<div class='jumbotron'>" +
-                "<h1><i class='fab fa-centercode' fa-2x></i>  MPR.RestApiTemplate Api v.1</h1>" +
-                "<h4>Lorem Ipsum</h4>" +
-                "<br/>" +
-                 "<a class='btn btn-outline-primary' role='button' href='/scalar'><b>API specifications</b></a><br>" +
-                "</div>" +
-                "<div class='row'>" +
-                "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>" +
-                "</div>" +
-                "</body></html>"
-               , "text/html");
-
+            return Ok(info);
         }
 
+        [AllowAnonymous]
+        [HttpGet("html")]
+        [Produces("text/html")]
+        public IActionResult ApiInfoHtml()
+        {
+            var html = $"""
+            <html>
+            <head>
+                <title>MPR.RestApiTemplate API</title>
+                <link href='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css' rel='stylesheet'>
+            </head>
+            <body>
+                <div class='container mt-5'>
+                    <div class='jumbotron'>
+                        <h1 class='display-4'>MPR.RestApiTemplate API v1.0</h1>
+                        <p class='lead'>Reusable REST API template for building .NET 9 APIs using Clean Architecture.</p>
+                        <hr class='my-4'>
+                        <p>Explore the API documentation below:</p>
+                        <a class='btn btn-primary btn-lg' href='/scalar' role='button'>Scalar Docs</a>
+                        <a class='btn btn-outline-secondary btn-lg ml-2' href='/swagger' role='button'>Swagger UI</a>
+                    </div>
+                    <footer class='text-muted text-center'>
+                        <small>Server time (UTC): {DateTime.UtcNow}</small>
+                    </footer>
+                </div>
+            </body>
+            </html>
+            """;
+
+            return Content(html, "text/html");
+        }
     }
 }
