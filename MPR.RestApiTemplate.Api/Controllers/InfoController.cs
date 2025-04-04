@@ -21,7 +21,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             {
                 name = "MPR.RestApiTemplate",
                 version = "1.0",
-                description = "Reusable REST API template for building .NET 9 APIs using Clean Architecture.",
+                description = "Reusable REST API template for building .NET 9 APIs.",
                 documentation = new
                 {
                     scalar = $"{Request.Scheme}://{Request.Host}/scalar",
@@ -50,7 +50,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
                 <div class='container mt-5'>
                     <div class='jumbotron'>
                         <h1 class='display-4'>MPR.RestApiTemplate API v1.0</h1>
-                        <p class='lead'>Reusable REST API template for building .NET 9 APIs using Clean Architecture.</p>
+                        <p class='lead'>Reusable REST API template for building .NET 9 APIs.</p>
                         <hr class='my-4'>
                         <p>Explore the API documentation below:</p>
                         <a class='btn btn-primary btn-lg' href='/scalar' role='button'>Scalar Docs</a>

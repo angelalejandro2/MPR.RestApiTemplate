@@ -69,11 +69,11 @@ public partial class Program
         {
             endpoints.MapGet("/", async http =>
             {
-                http.Response.Redirect("api/info", true);
+                http.Response.Redirect("api/info/html", true);
             });
             endpoints.MapGet("/api", async http =>
             {
-                http.Response.Redirect("api/info", true);
+                http.Response.Redirect("api/info/html", true);
             });
         });
 

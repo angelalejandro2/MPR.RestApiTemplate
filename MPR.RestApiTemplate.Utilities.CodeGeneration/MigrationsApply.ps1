@@ -2,6 +2,8 @@
 $startupProject = "..\MPR.RestApiTemplate.Api"
 $project = "..\MPR.RestApiTemplate.Infrastructure"
 
+Write-Host "Applying migrations..." -ForegroundColor Yellow
+
 # Verifica que dotnet ef esté instalado
 if (-not (Get-Command "dotnet-ef" -ErrorAction SilentlyContinue)) {
     Write-Error "dotnet-ef is not installed. Run 'dotnet tool install --global dotnet-ef'"
@@ -10,7 +12,7 @@ if (-not (Get-Command "dotnet-ef" -ErrorAction SilentlyContinue)) {
 
 Get-ChildItem -Path $contextsPath -Recurse -Filter *.cs | ForEach-Object {
     $fileContent = Get-Content $_.FullName -Raw
-    $regex = '(?s)class\s+(\w+DbContext)\b.*?:\s*[\w<>,\s]*DbContext\b'
+    $regex = '(?s)class\s+(\w+Context)\b.*?:\s*[\w<>,\s]*Context\b'
     if ($fileContent -match $regex) {
         $contextName = $matches[1]
 

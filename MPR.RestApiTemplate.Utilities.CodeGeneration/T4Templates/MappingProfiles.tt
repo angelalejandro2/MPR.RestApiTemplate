@@ -23,7 +23,6 @@ namespace MPR.RestApiTemplate.Application.DTOs
 
 		// Detectar si tiene al menos una [Key]
 		bool hasKey = false;
-		bool nextIsKey = false;
 
 		foreach (var line in lines)
 		{

@@ -100,7 +100,7 @@
     // Directorio donde se encuentran las entidades
     string entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Domain\Entities");
     // Directorio donde se guardarán los controladores generados
-    string outputPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"GeneratedControllers");
+    string outputPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Api\Controllers\GeneratedControllers");
     
     // Crear el directorio de salida si no existe
     if (!Directory.Exists(outputPath))

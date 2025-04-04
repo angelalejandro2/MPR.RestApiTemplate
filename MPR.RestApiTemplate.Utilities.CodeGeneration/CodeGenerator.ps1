@@ -48,7 +48,7 @@ Write-Host "3. Generate Repository Implementations"
 Write-Host "4. Generate UnitOfWork Implementation"
 & $tt ".\T4Templates\UnitOfWork.tt" -out "..\MPR.RestApiTemplate.Infrastructure\UnitOfWork.generated.cs"
 
-Write-Host "5. Generate Application Models"
+Write-Host "5. Generate Application Dtos"
 & $tt ".\T4Templates\Dtos.tt" -out "..\MPR.RestApiTemplate.Application\Dtos\Dtos.generated.cs"
 
 Write-Host "6. Generate Entity-Model Mappings"
