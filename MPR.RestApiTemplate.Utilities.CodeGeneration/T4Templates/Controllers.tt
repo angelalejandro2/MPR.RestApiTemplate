@@ -1,4 +1,4 @@
-﻿<#@ template language="C#" debug="true" hostSpecific="true" #>
+<#@ template language="C#" debug="true" hostSpecific="true" #>
 <#@ output extension=".generated.cs" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System" #>
@@ -7,7 +7,7 @@
 <#@ import namespace="System.Collections.Generic" #>
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
-using MPR.RestApiTemplate.Application.Models;
+using MPR.RestApiTemplate.Application.DTOs;
 using MPR.RestApiTemplate.Application.Services;
 
 namespace MPR.RestApiTemplate.Api.Controllers
@@ -19,13 +19,14 @@ namespace MPR.RestApiTemplate.Api.Controllers
     foreach (var file in entityFiles)
     {
         string className = Path.GetFileNameWithoutExtension(file);
-        string modelName = className + "Model";
+        string dtoName = className + "Dto";
+        string createDto = className + "CreateDto";
+        string updateDto = className + "UpdateDto";
         string lowerName = char.ToLower(className[0]) + className.Substring(1);
         var lines = File.ReadAllLines(file);
 
         bool isKeyless = lines.Any(l => l.Trim().StartsWith("[Keyless]"));
 
-        // Leer [Key] properties
         var keyProps = new List<(string Type, string Name)>();
         bool nextIsKey = false;
 
@@ -54,7 +55,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         string routeParams = string.Join("/", keyProps.Select(p => $"{{{char.ToLower(p.Name[0]) + p.Name.Substring(1)}}}"));
         string methodParams = string.Join(", ", keyProps.Select(p => $"{p.Type} {char.ToLower(p.Name[0]) + p.Name.Substring(1)}"));
         string paramArgs = string.Join(", ", keyProps.Select(p => $"{char.ToLower(p.Name[0]) + p.Name.Substring(1)}"));
-        string keyObject = string.Join(", ", keyProps.Select(p => $"result.{p.Name}"));
+        string keyObject = string.Join(", ", keyProps.Select(p => $"{p.Name} = result.{p.Name}"));
 #>
     [ApiController]
     [ApiVersion("1.0")]
@@ -69,7 +70,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<<#= modelName #>>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<<#= dtoName #>>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
@@ -79,7 +80,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
     {
 #>
         [HttpGet("<#= routeParams #>")]
-        public virtual async Task<ActionResult<<#= modelName #>>> GetById(<#= methodParams #>)
+        public virtual async Task<ActionResult<<#= dtoName #>>> GetById(<#= methodParams #>)
         {
             var result = await _service.GetByIdAsync(<#= paramArgs #>);
             if (result == null)
@@ -95,9 +96,9 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpPut("<#= routeParams #>")]
-        public virtual async Task<ActionResult<<#= modelName #>>> UpdateAsync(<#= methodParams #>, [FromBody] <#= modelName #> model)
+        public virtual async Task<ActionResult<<#= dtoName #>>> UpdateAsync(<#= methodParams #>, [FromBody] <#= updateDto #> model)
         {
-<# 
+<#
     foreach (var key in keyProps)
     {
         var paramName = char.ToLower(key.Name[0]) + key.Name.Substring(1);
@@ -106,14 +107,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
                 return BadRequest("Key mismatch between route and payload");
 <#
     }
-    #>
-
+#>
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
 
         [HttpPost]
-        public virtual async Task<ActionResult<<#= modelName #>>> AddASync([FromBody] <#= modelName #> model)
+        public virtual async Task<ActionResult<<#= dtoName #>>> AddAsync([FromBody] <#= createDto #> model)
         {
             var result = await _service.AddAsync(model);
             return CreatedAtAction(nameof(GetById), new { <#= keyObject #> }, result);
