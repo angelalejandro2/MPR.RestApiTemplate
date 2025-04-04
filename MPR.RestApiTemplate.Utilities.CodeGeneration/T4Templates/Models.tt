@@ -21,7 +21,7 @@ namespace MPR.RestApiTemplate.Application.DTOs
         var className = Path.GetFileNameWithoutExtension(file);
         var lines = File.ReadAllLines(file);
 
-        var properties = new List<(string Type, string Name, bool IsKey, string? DbGenerated)>();
+        var properties = new List<(string Type, string Name, bool IsKey, string? DbGenerated, bool IsEntityReference)>();
 
         bool nextIsKey = false;
         string? nextDatabaseGenerated = null;
@@ -59,26 +59,28 @@ namespace MPR.RestApiTemplate.Application.DTOs
                     string type = rawType.EndsWith("?") ? rawType : rawType;
 
                     string modelType;
+                    string baseType = type.TrimEnd('?');
+                    bool isEntityReference = false;
+
                     var match = Regex.Match(type, @"^(?<collection>\w+)<(?<inner>\w+)>$");
                     if (match.Success)
                     {
                         var collectionType = match.Groups["collection"].Value;
                         var innerType = match.Groups["inner"].Value;
-                        var mappedInnerType = entityNames.Contains(innerType) ? innerType + "Dto" : innerType;
+                        isEntityReference = entityNames.Contains(innerType);
+                        var mappedInnerType = isEntityReference ? innerType + "Dto" : innerType;
                         modelType = $"{collectionType}<{mappedInnerType}>";
                     }
                     else
                     {
-                        string baseType = type.TrimEnd('?');
-                        modelType = entityNames.Contains(baseType)
-                            ? type.Replace(baseType, baseType + "Dto")
-                            : type;
+                        isEntityReference = entityNames.Contains(baseType);
+                        modelType = isEntityReference ? baseType + "Dto" : type;
                     }
 
                     bool isKey = nextIsKey;
                     string? dbGenerated = nextDatabaseGenerated;
 
-                    properties.Add((modelType, rawName, isKey, dbGenerated));
+                    properties.Add((modelType, rawName, isKey, dbGenerated, isEntityReference));
 
                     nextIsKey = false;
                     nextDatabaseGenerated = null;
@@ -106,8 +108,8 @@ namespace MPR.RestApiTemplate.Application.DTOs
         }
 #>
     }
+
 <#
-    // Solo generar CreateDto y UpdateDto si hay al menos una Key
     if (properties.Any(p => p.IsKey))
     {
 #>
@@ -115,7 +117,10 @@ namespace MPR.RestApiTemplate.Application.DTOs
     public class <#= className #>CreateDto
     {
 <#
-        foreach (var prop in properties.Where(p => !p.IsKey && string.IsNullOrEmpty(p.DbGenerated)))
+        foreach (var prop in properties.Where(p =>
+            !p.IsKey &&
+            string.IsNullOrEmpty(p.DbGenerated) &&
+            !p.IsEntityReference))
         {
 #>
         public <#= prop.Type #> <#= prop.Name #> { get; set; }
@@ -127,7 +132,10 @@ namespace MPR.RestApiTemplate.Application.DTOs
     public class <#= className #>UpdateDto
     {
 <#
-        foreach (var prop in properties.Where(p => !p.IsKey && string.IsNullOrEmpty(p.DbGenerated)))
+        foreach (var prop in properties.Where(p =>
+            !p.IsKey &&
+            string.IsNullOrEmpty(p.DbGenerated) &&
+            !p.IsEntityReference))
         {
 #>
         public <#= prop.Type #> <#= prop.Name #> { get; set; }
@@ -136,10 +144,10 @@ namespace MPR.RestApiTemplate.Application.DTOs
 #>
     }
 <#
-    } // Fin condicional para generar Create/Update
+    }
 #>
 
 <#
-    } // Fin foreach entidad
+    } // fin foreach entidad
 #>
 }
