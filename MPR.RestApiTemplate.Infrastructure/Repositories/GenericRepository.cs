@@ -18,6 +18,19 @@ namespace MPR.RestApiTemplate.Infrastructure.Repositories
 
         public virtual async Task<IEnumerable<TEntity>> GetAllAsync() => await _dbSet.ToListAsync();
 
+public virtual async Task<IEnumerable<TEntity>> GetAllAsync(
+    params Expression<Func<TEntity, object>>[] includes)
+{
+    IQueryable<TEntity> query = _dbSet;
+
+    foreach (var include in includes)
+    {
+        query = query.Include(include);
+    }
+
+    return await query.ToListAsync();
+}
+
         public virtual async Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate)
             => await _dbSet.Where(predicate).ToListAsync();
 
