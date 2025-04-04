@@ -1,4 +1,4 @@
-﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ template debug="true" hostspecific="true" language="C#" #>
 <#@ output extension=".generated.cs" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System" #>
@@ -9,7 +9,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MPR.RestApiTemplate.Application.Models
+namespace MPR.RestApiTemplate.Application.DTOs
 {
 <#
     string entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Domain\Entities");
@@ -21,11 +21,13 @@ namespace MPR.RestApiTemplate.Application.Models
         var className = Path.GetFileNameWithoutExtension(file);
         var lines = File.ReadAllLines(file);
 
+        var properties = new List<(string Type, string Name, bool IsKey, string? DbGenerated)>();
+
         bool nextIsKey = false;
-        string nextDatabaseGenerated = null;
+        string? nextDatabaseGenerated = null;
 #>
 
-    public class <#= className #>Model
+    public class <#= className #>Dto
     {
 <#
         foreach (var line in lines)
@@ -46,64 +48,90 @@ namespace MPR.RestApiTemplate.Application.Models
 
             if (trimmed.StartsWith("public") && trimmed.Contains("{ get;") && !trimmed.Contains("class"))
             {
-                // Eliminar 'virtual' si existe
                 var cleanLine = trimmed.Replace("virtual", "").Trim();
                 var parts = cleanLine.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
 
                 if (parts.Length >= 3)
                 {
                     string rawType = parts[1];
-                    string rawName = parts[2];
+                    string rawName = parts[2].Split(new[] { '{', ';' }, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
 
-                    // Nullable check
-                    string type = rawType;
-                    if (type.EndsWith("?"))
-                        type = type.TrimEnd('?') + "?";
+                    string type = rawType.EndsWith("?") ? rawType : rawType;
 
-                    string name = rawName.Split(new[] { '{', ';' }, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
-
-                    // Convertir Entity a Model si aplica
                     string modelType;
-
                     var match = Regex.Match(type, @"^(?<collection>\w+)<(?<inner>\w+)>$");
                     if (match.Success)
                     {
                         var collectionType = match.Groups["collection"].Value;
                         var innerType = match.Groups["inner"].Value;
-                        var mappedInnerType = entityNames.Contains(innerType) ? innerType + "Model" : innerType;
+                        var mappedInnerType = entityNames.Contains(innerType) ? innerType + "Dto" : innerType;
                         modelType = $"{collectionType}<{mappedInnerType}>";
                     }
                     else
                     {
                         string baseType = type.TrimEnd('?');
                         modelType = entityNames.Contains(baseType)
-                            ? type.Replace(baseType, baseType + "Model")
+                            ? type.Replace(baseType, baseType + "Dto")
                             : type;
                     }
 
-                    if (nextIsKey)
-                    {
-#>
-        [Key]
-<#
-                        nextIsKey = false;
-                    }
-                    if (!string.IsNullOrEmpty(nextDatabaseGenerated))
-                    {
-#>
-        <#= nextDatabaseGenerated #>
-<#
-                        nextDatabaseGenerated = null;
-                    }
-#>
-        public <#= modelType #> <#= name #> { get; set; }
-<#
+                    bool isKey = nextIsKey;
+                    string? dbGenerated = nextDatabaseGenerated;
+
+                    properties.Add((modelType, rawName, isKey, dbGenerated));
+
+                    nextIsKey = false;
+                    nextDatabaseGenerated = null;
                 }
             }
         }
+
+        foreach (var prop in properties)
+        {
+            if (prop.IsKey)
+            {
+#>
+        [Key]
+<#
+            }
+            if (!string.IsNullOrEmpty(prop.DbGenerated))
+            {
+#>
+        <#= prop.DbGenerated #>
+<#
+            }
+#>
+        public <#= prop.Type #> <#= prop.Name #> { get; set; }
+<#
+        }
 #>
     }
+
+    public class <#= className #>CreateDto
+    {
 <#
+        foreach (var prop in properties.Where(p => !p.IsKey && string.IsNullOrEmpty(p.DbGenerated)))
+        {
+#>
+        public <#= prop.Type #> <#= prop.Name #> { get; set; }
+<#
+        }
+#>
     }
+
+    public class <#= className #>UpdateDto
+    {
+<#
+        foreach (var prop in properties.Where(p => !p.IsKey && string.IsNullOrEmpty(p.DbGenerated)))
+        {
+#>
+        public <#= prop.Type #> <#= prop.Name #> { get; set; }
+<#
+        }
+#>
+    }
+
+<#
+    } // fin foreach entidades
 #>
 }
