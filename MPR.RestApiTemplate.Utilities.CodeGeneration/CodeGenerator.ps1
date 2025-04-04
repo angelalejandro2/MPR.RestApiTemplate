@@ -26,7 +26,7 @@ Remove-Item -Force "..\MPR.RestApiTemplate.Api\Startup\ApplicationServiceRegistr
 Remove-Item -Force "..\MPR.RestApiTemplate.Api\Controllers\Controllers.generated.cs"
 Remove-Item -Force "..\MPR.RestApiTemplate.Application\Services\Services.generated.cs"
 Remove-Item -Force "..\MPR.RestApiTemplate.Application\Mappings\MappingProfiles.generated.cs"
-Remove-Item -Force "..\MPR.RestApiTemplate.Application\Models\Models.generated.cs"
+Remove-Item -Force "..\MPR.RestApiTemplate.Application\Dtos\Dtos.generated.cs"
 Remove-Item -Force "..\MPR.RestApiTemplate.Infrastructure\UnitOfWork.generated.cs"
 Remove-Item -Force "..\MPR.RestApiTemplate.Infrastructure\Repositories\RepositoryImplementation.generated.cs"
 Remove-Item -Force "..\MPR.RestApiTemplate.Domain\Interfaces\IUnitOfWork.generated.cs"
@@ -49,7 +49,7 @@ Write-Host "4. Generate UnitOfWork Implementation"
 & $tt ".\T4Templates\UnitOfWork.tt" -out "..\MPR.RestApiTemplate.Infrastructure\UnitOfWork.generated.cs"
 
 Write-Host "5. Generate Application Models"
-& $tt ".\T4Templates\Models.tt" -out "..\MPR.RestApiTemplate.Application\Models\Models.generated.cs"
+& $tt ".\T4Templates\Dtos.tt" -out "..\MPR.RestApiTemplate.Application\Dtos\Dtos.generated.cs"
 
 Write-Host "6. Generate Entity-Model Mappings"
 & $tt ".\T4Templates\MappingProfiles.tt" -out "..\MPR.RestApiTemplate.Application\Mappings\MappingProfiles.generated.cs"

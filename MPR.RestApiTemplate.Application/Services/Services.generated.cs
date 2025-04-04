@@ -1,7 +1,8 @@
-﻿using AutoMapper;
-using MPR.RestApiTemplate.Application.Models;
+using AutoMapper;
+using MPR.RestApiTemplate.Application.DTOs;
 using MPR.RestApiTemplate.Domain.Entities;
 using MPR.RestApiTemplate.Domain.Interfaces;
+using System.Linq.Expressions;
 
 namespace MPR.RestApiTemplate.Application.Services
 {
@@ -16,10 +17,10 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<AlphabeticalListOfProductsModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<AlphabeticalListOfProductsDto>> GetAllAsync(params Expression<Func<AlphabeticalListOfProducts, object>>[] includes)
 		{
-			var entities = await _unitOfWork.AlphabeticalListOfProductsRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<AlphabeticalListOfProductsModel>>(entities);
+			var entities = await _unitOfWork.AlphabeticalListOfProductsRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<AlphabeticalListOfProductsDto>>(entities);
 		}
 
 	}
@@ -34,16 +35,16 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<CategoriesModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<CategoriesDto>> GetAllAsync(params Expression<Func<Categories, object>>[] includes)
 		{
-			var entities = await _unitOfWork.CategoriesRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<CategoriesModel>>(entities);
+			var entities = await _unitOfWork.CategoriesRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<CategoriesDto>>(entities);
 		}
 
-		public virtual async Task<CategoriesModel> GetByIdAsync(int categoryId)
+		public virtual async Task<CategoriesDto> GetByIdAsync(int categoryId, params Expression<Func<Categories, object>>[] includes)
 		{
-			var entity = await _unitOfWork.CategoriesRepository.GetByIdAsync(categoryId);
-			return _mapper.Map<CategoriesModel>(entity);
+			var entity = await _unitOfWork.CategoriesRepository.GetByIdAsync(new object[] { categoryId }, includes);
+			return _mapper.Map<CategoriesDto>(entity);
 		}
 
 		public virtual async Task DeleteAsync(int categoryId)
@@ -52,20 +53,20 @@ namespace MPR.RestApiTemplate.Application.Services
 			await _unitOfWork.SaveChangesAsync();
 		}
 
-		public virtual async Task<CategoriesModel> AddAsync(CategoriesModel model)
+		public virtual async Task<CategoriesDto> AddAsync(CategoriesCreateDto model)
 		{
 			var entity = _mapper.Map<Categories>(model);
 			entity = await _unitOfWork.CategoriesRepository.AddAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<CategoriesModel>(entity);
+			return _mapper.Map<CategoriesDto>(entity);
 		}
 
-		public virtual async Task<CategoriesModel> UpdateAsync(CategoriesModel model)
+		public virtual async Task<CategoriesDto> UpdateAsync(CategoriesUpdateDto model)
 		{
 			var entity = _mapper.Map<Categories>(model);
 			entity = await _unitOfWork.CategoriesRepository.UpdateAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<CategoriesModel>(entity);
+			return _mapper.Map<CategoriesDto>(entity);
 		}
 	}
 	public partial class CategorySalesFor1997Service
@@ -79,10 +80,10 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<CategorySalesFor1997Model>> GetAllAsync()
+		public virtual async Task<IEnumerable<CategorySalesFor1997Dto>> GetAllAsync(params Expression<Func<CategorySalesFor1997, object>>[] includes)
 		{
-			var entities = await _unitOfWork.CategorySalesFor1997Repository.GetAllAsync();
-			return _mapper.Map<IEnumerable<CategorySalesFor1997Model>>(entities);
+			var entities = await _unitOfWork.CategorySalesFor1997Repository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<CategorySalesFor1997Dto>>(entities);
 		}
 
 	}
@@ -97,10 +98,10 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<CurrentProductListModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<CurrentProductListDto>> GetAllAsync(params Expression<Func<CurrentProductList, object>>[] includes)
 		{
-			var entities = await _unitOfWork.CurrentProductListRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<CurrentProductListModel>>(entities);
+			var entities = await _unitOfWork.CurrentProductListRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<CurrentProductListDto>>(entities);
 		}
 
 	}
@@ -115,10 +116,10 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<CustomerAndSuppliersByCityModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<CustomerAndSuppliersByCityDto>> GetAllAsync(params Expression<Func<CustomerAndSuppliersByCity, object>>[] includes)
 		{
-			var entities = await _unitOfWork.CustomerAndSuppliersByCityRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<CustomerAndSuppliersByCityModel>>(entities);
+			var entities = await _unitOfWork.CustomerAndSuppliersByCityRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<CustomerAndSuppliersByCityDto>>(entities);
 		}
 
 	}
@@ -133,16 +134,16 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<CustomerDemographicsModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<CustomerDemographicsDto>> GetAllAsync(params Expression<Func<CustomerDemographics, object>>[] includes)
 		{
-			var entities = await _unitOfWork.CustomerDemographicsRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<CustomerDemographicsModel>>(entities);
+			var entities = await _unitOfWork.CustomerDemographicsRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<CustomerDemographicsDto>>(entities);
 		}
 
-		public virtual async Task<CustomerDemographicsModel> GetByIdAsync(string customerTypeId)
+		public virtual async Task<CustomerDemographicsDto> GetByIdAsync(string customerTypeId, params Expression<Func<CustomerDemographics, object>>[] includes)
 		{
-			var entity = await _unitOfWork.CustomerDemographicsRepository.GetByIdAsync(customerTypeId);
-			return _mapper.Map<CustomerDemographicsModel>(entity);
+			var entity = await _unitOfWork.CustomerDemographicsRepository.GetByIdAsync(new object[] { customerTypeId }, includes);
+			return _mapper.Map<CustomerDemographicsDto>(entity);
 		}
 
 		public virtual async Task DeleteAsync(string customerTypeId)
@@ -151,20 +152,20 @@ namespace MPR.RestApiTemplate.Application.Services
 			await _unitOfWork.SaveChangesAsync();
 		}
 
-		public virtual async Task<CustomerDemographicsModel> AddAsync(CustomerDemographicsModel model)
+		public virtual async Task<CustomerDemographicsDto> AddAsync(CustomerDemographicsCreateDto model)
 		{
 			var entity = _mapper.Map<CustomerDemographics>(model);
 			entity = await _unitOfWork.CustomerDemographicsRepository.AddAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<CustomerDemographicsModel>(entity);
+			return _mapper.Map<CustomerDemographicsDto>(entity);
 		}
 
-		public virtual async Task<CustomerDemographicsModel> UpdateAsync(CustomerDemographicsModel model)
+		public virtual async Task<CustomerDemographicsDto> UpdateAsync(CustomerDemographicsUpdateDto model)
 		{
 			var entity = _mapper.Map<CustomerDemographics>(model);
 			entity = await _unitOfWork.CustomerDemographicsRepository.UpdateAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<CustomerDemographicsModel>(entity);
+			return _mapper.Map<CustomerDemographicsDto>(entity);
 		}
 	}
 	public partial class CustomersService
@@ -178,16 +179,16 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<CustomersModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<CustomersDto>> GetAllAsync(params Expression<Func<Customers, object>>[] includes)
 		{
-			var entities = await _unitOfWork.CustomersRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<CustomersModel>>(entities);
+			var entities = await _unitOfWork.CustomersRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<CustomersDto>>(entities);
 		}
 
-		public virtual async Task<CustomersModel> GetByIdAsync(string customerId)
+		public virtual async Task<CustomersDto> GetByIdAsync(string customerId, params Expression<Func<Customers, object>>[] includes)
 		{
-			var entity = await _unitOfWork.CustomersRepository.GetByIdAsync(customerId);
-			return _mapper.Map<CustomersModel>(entity);
+			var entity = await _unitOfWork.CustomersRepository.GetByIdAsync(new object[] { customerId }, includes);
+			return _mapper.Map<CustomersDto>(entity);
 		}
 
 		public virtual async Task DeleteAsync(string customerId)
@@ -196,20 +197,20 @@ namespace MPR.RestApiTemplate.Application.Services
 			await _unitOfWork.SaveChangesAsync();
 		}
 
-		public virtual async Task<CustomersModel> AddAsync(CustomersModel model)
+		public virtual async Task<CustomersDto> AddAsync(CustomersCreateDto model)
 		{
 			var entity = _mapper.Map<Customers>(model);
 			entity = await _unitOfWork.CustomersRepository.AddAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<CustomersModel>(entity);
+			return _mapper.Map<CustomersDto>(entity);
 		}
 
-		public virtual async Task<CustomersModel> UpdateAsync(CustomersModel model)
+		public virtual async Task<CustomersDto> UpdateAsync(CustomersUpdateDto model)
 		{
 			var entity = _mapper.Map<Customers>(model);
 			entity = await _unitOfWork.CustomersRepository.UpdateAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<CustomersModel>(entity);
+			return _mapper.Map<CustomersDto>(entity);
 		}
 	}
 	public partial class EmployeesService
@@ -223,16 +224,16 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<EmployeesModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<EmployeesDto>> GetAllAsync(params Expression<Func<Employees, object>>[] includes)
 		{
-			var entities = await _unitOfWork.EmployeesRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<EmployeesModel>>(entities);
+			var entities = await _unitOfWork.EmployeesRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<EmployeesDto>>(entities);
 		}
 
-		public virtual async Task<EmployeesModel> GetByIdAsync(int employeeId)
+		public virtual async Task<EmployeesDto> GetByIdAsync(int employeeId, params Expression<Func<Employees, object>>[] includes)
 		{
-			var entity = await _unitOfWork.EmployeesRepository.GetByIdAsync(employeeId);
-			return _mapper.Map<EmployeesModel>(entity);
+			var entity = await _unitOfWork.EmployeesRepository.GetByIdAsync(new object[] { employeeId }, includes);
+			return _mapper.Map<EmployeesDto>(entity);
 		}
 
 		public virtual async Task DeleteAsync(int employeeId)
@@ -241,20 +242,20 @@ namespace MPR.RestApiTemplate.Application.Services
 			await _unitOfWork.SaveChangesAsync();
 		}
 
-		public virtual async Task<EmployeesModel> AddAsync(EmployeesModel model)
+		public virtual async Task<EmployeesDto> AddAsync(EmployeesCreateDto model)
 		{
 			var entity = _mapper.Map<Employees>(model);
 			entity = await _unitOfWork.EmployeesRepository.AddAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<EmployeesModel>(entity);
+			return _mapper.Map<EmployeesDto>(entity);
 		}
 
-		public virtual async Task<EmployeesModel> UpdateAsync(EmployeesModel model)
+		public virtual async Task<EmployeesDto> UpdateAsync(EmployeesUpdateDto model)
 		{
 			var entity = _mapper.Map<Employees>(model);
 			entity = await _unitOfWork.EmployeesRepository.UpdateAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<EmployeesModel>(entity);
+			return _mapper.Map<EmployeesDto>(entity);
 		}
 	}
 	public partial class InvoicesService
@@ -268,10 +269,10 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<InvoicesModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<InvoicesDto>> GetAllAsync(params Expression<Func<Invoices, object>>[] includes)
 		{
-			var entities = await _unitOfWork.InvoicesRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<InvoicesModel>>(entities);
+			var entities = await _unitOfWork.InvoicesRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<InvoicesDto>>(entities);
 		}
 
 	}
@@ -286,16 +287,16 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<OrderDetailsModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<OrderDetailsDto>> GetAllAsync(params Expression<Func<OrderDetails, object>>[] includes)
 		{
-			var entities = await _unitOfWork.OrderDetailsRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<OrderDetailsModel>>(entities);
+			var entities = await _unitOfWork.OrderDetailsRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<OrderDetailsDto>>(entities);
 		}
 
-		public virtual async Task<OrderDetailsModel> GetByIdAsync(int orderId, int productId)
+		public virtual async Task<OrderDetailsDto> GetByIdAsync(int orderId, int productId, params Expression<Func<OrderDetails, object>>[] includes)
 		{
-			var entity = await _unitOfWork.OrderDetailsRepository.GetByIdAsync(orderId, productId);
-			return _mapper.Map<OrderDetailsModel>(entity);
+			var entity = await _unitOfWork.OrderDetailsRepository.GetByIdAsync(new object[] { orderId, productId }, includes);
+			return _mapper.Map<OrderDetailsDto>(entity);
 		}
 
 		public virtual async Task DeleteAsync(int orderId, int productId)
@@ -304,20 +305,20 @@ namespace MPR.RestApiTemplate.Application.Services
 			await _unitOfWork.SaveChangesAsync();
 		}
 
-		public virtual async Task<OrderDetailsModel> AddAsync(OrderDetailsModel model)
+		public virtual async Task<OrderDetailsDto> AddAsync(OrderDetailsCreateDto model)
 		{
 			var entity = _mapper.Map<OrderDetails>(model);
 			entity = await _unitOfWork.OrderDetailsRepository.AddAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<OrderDetailsModel>(entity);
+			return _mapper.Map<OrderDetailsDto>(entity);
 		}
 
-		public virtual async Task<OrderDetailsModel> UpdateAsync(OrderDetailsModel model)
+		public virtual async Task<OrderDetailsDto> UpdateAsync(OrderDetailsUpdateDto model)
 		{
 			var entity = _mapper.Map<OrderDetails>(model);
 			entity = await _unitOfWork.OrderDetailsRepository.UpdateAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<OrderDetailsModel>(entity);
+			return _mapper.Map<OrderDetailsDto>(entity);
 		}
 	}
 	public partial class OrderDetailsExtendedService
@@ -331,10 +332,10 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<OrderDetailsExtendedModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<OrderDetailsExtendedDto>> GetAllAsync(params Expression<Func<OrderDetailsExtended, object>>[] includes)
 		{
-			var entities = await _unitOfWork.OrderDetailsExtendedRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<OrderDetailsExtendedModel>>(entities);
+			var entities = await _unitOfWork.OrderDetailsExtendedRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<OrderDetailsExtendedDto>>(entities);
 		}
 
 	}
@@ -349,16 +350,16 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<OrdersModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<OrdersDto>> GetAllAsync(params Expression<Func<Orders, object>>[] includes)
 		{
-			var entities = await _unitOfWork.OrdersRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<OrdersModel>>(entities);
+			var entities = await _unitOfWork.OrdersRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<OrdersDto>>(entities);
 		}
 
-		public virtual async Task<OrdersModel> GetByIdAsync(int orderId)
+		public virtual async Task<OrdersDto> GetByIdAsync(int orderId, params Expression<Func<Orders, object>>[] includes)
 		{
-			var entity = await _unitOfWork.OrdersRepository.GetByIdAsync(orderId);
-			return _mapper.Map<OrdersModel>(entity);
+			var entity = await _unitOfWork.OrdersRepository.GetByIdAsync(new object[] { orderId }, includes);
+			return _mapper.Map<OrdersDto>(entity);
 		}
 
 		public virtual async Task DeleteAsync(int orderId)
@@ -367,20 +368,20 @@ namespace MPR.RestApiTemplate.Application.Services
 			await _unitOfWork.SaveChangesAsync();
 		}
 
-		public virtual async Task<OrdersModel> AddAsync(OrdersModel model)
+		public virtual async Task<OrdersDto> AddAsync(OrdersCreateDto model)
 		{
 			var entity = _mapper.Map<Orders>(model);
 			entity = await _unitOfWork.OrdersRepository.AddAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<OrdersModel>(entity);
+			return _mapper.Map<OrdersDto>(entity);
 		}
 
-		public virtual async Task<OrdersModel> UpdateAsync(OrdersModel model)
+		public virtual async Task<OrdersDto> UpdateAsync(OrdersUpdateDto model)
 		{
 			var entity = _mapper.Map<Orders>(model);
 			entity = await _unitOfWork.OrdersRepository.UpdateAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<OrdersModel>(entity);
+			return _mapper.Map<OrdersDto>(entity);
 		}
 	}
 	public partial class OrdersQryService
@@ -394,10 +395,10 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<OrdersQryModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<OrdersQryDto>> GetAllAsync(params Expression<Func<OrdersQry, object>>[] includes)
 		{
-			var entities = await _unitOfWork.OrdersQryRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<OrdersQryModel>>(entities);
+			var entities = await _unitOfWork.OrdersQryRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<OrdersQryDto>>(entities);
 		}
 
 	}
@@ -412,10 +413,10 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<OrderSubtotalsModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<OrderSubtotalsDto>> GetAllAsync(params Expression<Func<OrderSubtotals, object>>[] includes)
 		{
-			var entities = await _unitOfWork.OrderSubtotalsRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<OrderSubtotalsModel>>(entities);
+			var entities = await _unitOfWork.OrderSubtotalsRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<OrderSubtotalsDto>>(entities);
 		}
 
 	}
@@ -430,16 +431,16 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<ProductsModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<ProductsDto>> GetAllAsync(params Expression<Func<Products, object>>[] includes)
 		{
-			var entities = await _unitOfWork.ProductsRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<ProductsModel>>(entities);
+			var entities = await _unitOfWork.ProductsRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<ProductsDto>>(entities);
 		}
 
-		public virtual async Task<ProductsModel> GetByIdAsync(int productId)
+		public virtual async Task<ProductsDto> GetByIdAsync(int productId, params Expression<Func<Products, object>>[] includes)
 		{
-			var entity = await _unitOfWork.ProductsRepository.GetByIdAsync(productId);
-			return _mapper.Map<ProductsModel>(entity);
+			var entity = await _unitOfWork.ProductsRepository.GetByIdAsync(new object[] { productId }, includes);
+			return _mapper.Map<ProductsDto>(entity);
 		}
 
 		public virtual async Task DeleteAsync(int productId)
@@ -448,20 +449,20 @@ namespace MPR.RestApiTemplate.Application.Services
 			await _unitOfWork.SaveChangesAsync();
 		}
 
-		public virtual async Task<ProductsModel> AddAsync(ProductsModel model)
+		public virtual async Task<ProductsDto> AddAsync(ProductsCreateDto model)
 		{
 			var entity = _mapper.Map<Products>(model);
 			entity = await _unitOfWork.ProductsRepository.AddAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<ProductsModel>(entity);
+			return _mapper.Map<ProductsDto>(entity);
 		}
 
-		public virtual async Task<ProductsModel> UpdateAsync(ProductsModel model)
+		public virtual async Task<ProductsDto> UpdateAsync(ProductsUpdateDto model)
 		{
 			var entity = _mapper.Map<Products>(model);
 			entity = await _unitOfWork.ProductsRepository.UpdateAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<ProductsModel>(entity);
+			return _mapper.Map<ProductsDto>(entity);
 		}
 	}
 	public partial class ProductsAboveAveragePriceService
@@ -475,10 +476,10 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<ProductsAboveAveragePriceModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<ProductsAboveAveragePriceDto>> GetAllAsync(params Expression<Func<ProductsAboveAveragePrice, object>>[] includes)
 		{
-			var entities = await _unitOfWork.ProductsAboveAveragePriceRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<ProductsAboveAveragePriceModel>>(entities);
+			var entities = await _unitOfWork.ProductsAboveAveragePriceRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<ProductsAboveAveragePriceDto>>(entities);
 		}
 
 	}
@@ -493,10 +494,10 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<ProductSalesFor1997Model>> GetAllAsync()
+		public virtual async Task<IEnumerable<ProductSalesFor1997Dto>> GetAllAsync(params Expression<Func<ProductSalesFor1997, object>>[] includes)
 		{
-			var entities = await _unitOfWork.ProductSalesFor1997Repository.GetAllAsync();
-			return _mapper.Map<IEnumerable<ProductSalesFor1997Model>>(entities);
+			var entities = await _unitOfWork.ProductSalesFor1997Repository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<ProductSalesFor1997Dto>>(entities);
 		}
 
 	}
@@ -511,10 +512,10 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<ProductsByCategoryModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<ProductsByCategoryDto>> GetAllAsync(params Expression<Func<ProductsByCategory, object>>[] includes)
 		{
-			var entities = await _unitOfWork.ProductsByCategoryRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<ProductsByCategoryModel>>(entities);
+			var entities = await _unitOfWork.ProductsByCategoryRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<ProductsByCategoryDto>>(entities);
 		}
 
 	}
@@ -529,10 +530,10 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<QuarterlyOrdersModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<QuarterlyOrdersDto>> GetAllAsync(params Expression<Func<QuarterlyOrders, object>>[] includes)
 		{
-			var entities = await _unitOfWork.QuarterlyOrdersRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<QuarterlyOrdersModel>>(entities);
+			var entities = await _unitOfWork.QuarterlyOrdersRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<QuarterlyOrdersDto>>(entities);
 		}
 
 	}
@@ -547,16 +548,16 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<RegionModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<RegionDto>> GetAllAsync(params Expression<Func<Region, object>>[] includes)
 		{
-			var entities = await _unitOfWork.RegionRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<RegionModel>>(entities);
+			var entities = await _unitOfWork.RegionRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<RegionDto>>(entities);
 		}
 
-		public virtual async Task<RegionModel> GetByIdAsync(int regionId)
+		public virtual async Task<RegionDto> GetByIdAsync(int regionId, params Expression<Func<Region, object>>[] includes)
 		{
-			var entity = await _unitOfWork.RegionRepository.GetByIdAsync(regionId);
-			return _mapper.Map<RegionModel>(entity);
+			var entity = await _unitOfWork.RegionRepository.GetByIdAsync(new object[] { regionId }, includes);
+			return _mapper.Map<RegionDto>(entity);
 		}
 
 		public virtual async Task DeleteAsync(int regionId)
@@ -565,20 +566,20 @@ namespace MPR.RestApiTemplate.Application.Services
 			await _unitOfWork.SaveChangesAsync();
 		}
 
-		public virtual async Task<RegionModel> AddAsync(RegionModel model)
+		public virtual async Task<RegionDto> AddAsync(RegionCreateDto model)
 		{
 			var entity = _mapper.Map<Region>(model);
 			entity = await _unitOfWork.RegionRepository.AddAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<RegionModel>(entity);
+			return _mapper.Map<RegionDto>(entity);
 		}
 
-		public virtual async Task<RegionModel> UpdateAsync(RegionModel model)
+		public virtual async Task<RegionDto> UpdateAsync(RegionUpdateDto model)
 		{
 			var entity = _mapper.Map<Region>(model);
 			entity = await _unitOfWork.RegionRepository.UpdateAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<RegionModel>(entity);
+			return _mapper.Map<RegionDto>(entity);
 		}
 	}
 	public partial class SalesByCategoryService
@@ -592,10 +593,10 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<SalesByCategoryModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<SalesByCategoryDto>> GetAllAsync(params Expression<Func<SalesByCategory, object>>[] includes)
 		{
-			var entities = await _unitOfWork.SalesByCategoryRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<SalesByCategoryModel>>(entities);
+			var entities = await _unitOfWork.SalesByCategoryRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<SalesByCategoryDto>>(entities);
 		}
 
 	}
@@ -610,10 +611,10 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<SalesTotalsByAmountModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<SalesTotalsByAmountDto>> GetAllAsync(params Expression<Func<SalesTotalsByAmount, object>>[] includes)
 		{
-			var entities = await _unitOfWork.SalesTotalsByAmountRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<SalesTotalsByAmountModel>>(entities);
+			var entities = await _unitOfWork.SalesTotalsByAmountRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<SalesTotalsByAmountDto>>(entities);
 		}
 
 	}
@@ -628,16 +629,16 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<ShippersModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<ShippersDto>> GetAllAsync(params Expression<Func<Shippers, object>>[] includes)
 		{
-			var entities = await _unitOfWork.ShippersRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<ShippersModel>>(entities);
+			var entities = await _unitOfWork.ShippersRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<ShippersDto>>(entities);
 		}
 
-		public virtual async Task<ShippersModel> GetByIdAsync(int shipperId)
+		public virtual async Task<ShippersDto> GetByIdAsync(int shipperId, params Expression<Func<Shippers, object>>[] includes)
 		{
-			var entity = await _unitOfWork.ShippersRepository.GetByIdAsync(shipperId);
-			return _mapper.Map<ShippersModel>(entity);
+			var entity = await _unitOfWork.ShippersRepository.GetByIdAsync(new object[] { shipperId }, includes);
+			return _mapper.Map<ShippersDto>(entity);
 		}
 
 		public virtual async Task DeleteAsync(int shipperId)
@@ -646,20 +647,20 @@ namespace MPR.RestApiTemplate.Application.Services
 			await _unitOfWork.SaveChangesAsync();
 		}
 
-		public virtual async Task<ShippersModel> AddAsync(ShippersModel model)
+		public virtual async Task<ShippersDto> AddAsync(ShippersCreateDto model)
 		{
 			var entity = _mapper.Map<Shippers>(model);
 			entity = await _unitOfWork.ShippersRepository.AddAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<ShippersModel>(entity);
+			return _mapper.Map<ShippersDto>(entity);
 		}
 
-		public virtual async Task<ShippersModel> UpdateAsync(ShippersModel model)
+		public virtual async Task<ShippersDto> UpdateAsync(ShippersUpdateDto model)
 		{
 			var entity = _mapper.Map<Shippers>(model);
 			entity = await _unitOfWork.ShippersRepository.UpdateAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<ShippersModel>(entity);
+			return _mapper.Map<ShippersDto>(entity);
 		}
 	}
 	public partial class SummaryOfSalesByQuarterService
@@ -673,10 +674,10 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<SummaryOfSalesByQuarterModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<SummaryOfSalesByQuarterDto>> GetAllAsync(params Expression<Func<SummaryOfSalesByQuarter, object>>[] includes)
 		{
-			var entities = await _unitOfWork.SummaryOfSalesByQuarterRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<SummaryOfSalesByQuarterModel>>(entities);
+			var entities = await _unitOfWork.SummaryOfSalesByQuarterRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<SummaryOfSalesByQuarterDto>>(entities);
 		}
 
 	}
@@ -691,10 +692,10 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<SummaryOfSalesByYearModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<SummaryOfSalesByYearDto>> GetAllAsync(params Expression<Func<SummaryOfSalesByYear, object>>[] includes)
 		{
-			var entities = await _unitOfWork.SummaryOfSalesByYearRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<SummaryOfSalesByYearModel>>(entities);
+			var entities = await _unitOfWork.SummaryOfSalesByYearRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<SummaryOfSalesByYearDto>>(entities);
 		}
 
 	}
@@ -709,16 +710,16 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<SuppliersModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<SuppliersDto>> GetAllAsync(params Expression<Func<Suppliers, object>>[] includes)
 		{
-			var entities = await _unitOfWork.SuppliersRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<SuppliersModel>>(entities);
+			var entities = await _unitOfWork.SuppliersRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<SuppliersDto>>(entities);
 		}
 
-		public virtual async Task<SuppliersModel> GetByIdAsync(int supplierId)
+		public virtual async Task<SuppliersDto> GetByIdAsync(int supplierId, params Expression<Func<Suppliers, object>>[] includes)
 		{
-			var entity = await _unitOfWork.SuppliersRepository.GetByIdAsync(supplierId);
-			return _mapper.Map<SuppliersModel>(entity);
+			var entity = await _unitOfWork.SuppliersRepository.GetByIdAsync(new object[] { supplierId }, includes);
+			return _mapper.Map<SuppliersDto>(entity);
 		}
 
 		public virtual async Task DeleteAsync(int supplierId)
@@ -727,20 +728,20 @@ namespace MPR.RestApiTemplate.Application.Services
 			await _unitOfWork.SaveChangesAsync();
 		}
 
-		public virtual async Task<SuppliersModel> AddAsync(SuppliersModel model)
+		public virtual async Task<SuppliersDto> AddAsync(SuppliersCreateDto model)
 		{
 			var entity = _mapper.Map<Suppliers>(model);
 			entity = await _unitOfWork.SuppliersRepository.AddAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<SuppliersModel>(entity);
+			return _mapper.Map<SuppliersDto>(entity);
 		}
 
-		public virtual async Task<SuppliersModel> UpdateAsync(SuppliersModel model)
+		public virtual async Task<SuppliersDto> UpdateAsync(SuppliersUpdateDto model)
 		{
 			var entity = _mapper.Map<Suppliers>(model);
 			entity = await _unitOfWork.SuppliersRepository.UpdateAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<SuppliersModel>(entity);
+			return _mapper.Map<SuppliersDto>(entity);
 		}
 	}
 	public partial class TerritoriesService
@@ -754,16 +755,16 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<TerritoriesModel>> GetAllAsync()
+		public virtual async Task<IEnumerable<TerritoriesDto>> GetAllAsync(params Expression<Func<Territories, object>>[] includes)
 		{
-			var entities = await _unitOfWork.TerritoriesRepository.GetAllAsync();
-			return _mapper.Map<IEnumerable<TerritoriesModel>>(entities);
+			var entities = await _unitOfWork.TerritoriesRepository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<TerritoriesDto>>(entities);
 		}
 
-		public virtual async Task<TerritoriesModel> GetByIdAsync(string territoryId)
+		public virtual async Task<TerritoriesDto> GetByIdAsync(string territoryId, params Expression<Func<Territories, object>>[] includes)
 		{
-			var entity = await _unitOfWork.TerritoriesRepository.GetByIdAsync(territoryId);
-			return _mapper.Map<TerritoriesModel>(entity);
+			var entity = await _unitOfWork.TerritoriesRepository.GetByIdAsync(new object[] { territoryId }, includes);
+			return _mapper.Map<TerritoriesDto>(entity);
 		}
 
 		public virtual async Task DeleteAsync(string territoryId)
@@ -772,20 +773,20 @@ namespace MPR.RestApiTemplate.Application.Services
 			await _unitOfWork.SaveChangesAsync();
 		}
 
-		public virtual async Task<TerritoriesModel> AddAsync(TerritoriesModel model)
+		public virtual async Task<TerritoriesDto> AddAsync(TerritoriesCreateDto model)
 		{
 			var entity = _mapper.Map<Territories>(model);
 			entity = await _unitOfWork.TerritoriesRepository.AddAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<TerritoriesModel>(entity);
+			return _mapper.Map<TerritoriesDto>(entity);
 		}
 
-		public virtual async Task<TerritoriesModel> UpdateAsync(TerritoriesModel model)
+		public virtual async Task<TerritoriesDto> UpdateAsync(TerritoriesUpdateDto model)
 		{
 			var entity = _mapper.Map<Territories>(model);
 			entity = await _unitOfWork.TerritoriesRepository.UpdateAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<TerritoriesModel>(entity);
+			return _mapper.Map<TerritoriesDto>(entity);
 		}
 	}
 }

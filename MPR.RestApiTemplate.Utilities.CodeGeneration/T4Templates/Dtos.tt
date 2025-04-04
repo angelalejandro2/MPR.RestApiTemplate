@@ -1,3 +1,4 @@
+#nullable enable
 <#@ template debug="true" hostspecific="true" language="C#" #>
 <#@ output extension=".generated.cs" #>
 <#@ assembly name="System.Core" #>

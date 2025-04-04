@@ -1,6 +1,6 @@
-﻿using Asp.Versioning;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
-using MPR.RestApiTemplate.Application.Models;
+using MPR.RestApiTemplate.Application.DTOs;
 using MPR.RestApiTemplate.Application.Services;
 
 namespace MPR.RestApiTemplate.Api.Controllers
@@ -18,7 +18,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<AlphabeticalListOfProductsModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<AlphabeticalListOfProductsDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
@@ -37,13 +37,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<CategoriesModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<CategoriesDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
         }
         [HttpGet("{categoryId}")]
-        public virtual async Task<ActionResult<CategoriesModel>> GetById(int categoryId)
+        public virtual async Task<ActionResult<CategoriesDto>> GetById(int categoryId)
         {
             var result = await _service.GetByIdAsync(categoryId);
             if (result == null)
@@ -59,20 +59,19 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpPut("{categoryId}")]
-        public virtual async Task<ActionResult<CategoriesModel>> UpdateAsync(int categoryId, [FromBody] CategoriesModel model)
+        public virtual async Task<ActionResult<CategoriesDto>> UpdateAsync(int categoryId, [FromBody] CategoriesUpdateDto model)
         {
             if (model.CategoryId != categoryId)
                 return BadRequest("Key mismatch between route and payload");
-
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
 
         [HttpPost]
-        public virtual async Task<ActionResult<CategoriesModel>> AddASync([FromBody] CategoriesModel model)
+        public virtual async Task<ActionResult<CategoriesDto>> AddAsync([FromBody] CategoriesCreateDto model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { result.CategoryId }, result);
+            return CreatedAtAction(nameof(GetById), new { CategoryId = result.CategoryId }, result);
         }
     }
     [ApiController]
@@ -88,7 +87,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<CategorySalesFor1997Model>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<CategorySalesFor1997Dto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
@@ -107,7 +106,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<CurrentProductListModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<CurrentProductListDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
@@ -126,7 +125,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<CustomerAndSuppliersByCityModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<CustomerAndSuppliersByCityDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
@@ -145,13 +144,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<CustomerDemographicsModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<CustomerDemographicsDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
         }
         [HttpGet("{customerTypeId}")]
-        public virtual async Task<ActionResult<CustomerDemographicsModel>> GetById(string customerTypeId)
+        public virtual async Task<ActionResult<CustomerDemographicsDto>> GetById(string customerTypeId)
         {
             var result = await _service.GetByIdAsync(customerTypeId);
             if (result == null)
@@ -167,20 +166,19 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpPut("{customerTypeId}")]
-        public virtual async Task<ActionResult<CustomerDemographicsModel>> UpdateAsync(string customerTypeId, [FromBody] CustomerDemographicsModel model)
+        public virtual async Task<ActionResult<CustomerDemographicsDto>> UpdateAsync(string customerTypeId, [FromBody] CustomerDemographicsUpdateDto model)
         {
             if (model.CustomerTypeId != customerTypeId)
                 return BadRequest("Key mismatch between route and payload");
-
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
 
         [HttpPost]
-        public virtual async Task<ActionResult<CustomerDemographicsModel>> AddASync([FromBody] CustomerDemographicsModel model)
+        public virtual async Task<ActionResult<CustomerDemographicsDto>> AddAsync([FromBody] CustomerDemographicsCreateDto model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { result.CustomerTypeId }, result);
+            return CreatedAtAction(nameof(GetById), new { CustomerTypeId = result.CustomerTypeId }, result);
         }
     }
     [ApiController]
@@ -196,13 +194,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<CustomersModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<CustomersDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
         }
         [HttpGet("{customerId}")]
-        public virtual async Task<ActionResult<CustomersModel>> GetById(string customerId)
+        public virtual async Task<ActionResult<CustomersDto>> GetById(string customerId)
         {
             var result = await _service.GetByIdAsync(customerId);
             if (result == null)
@@ -218,20 +216,19 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpPut("{customerId}")]
-        public virtual async Task<ActionResult<CustomersModel>> UpdateAsync(string customerId, [FromBody] CustomersModel model)
+        public virtual async Task<ActionResult<CustomersDto>> UpdateAsync(string customerId, [FromBody] CustomersUpdateDto model)
         {
             if (model.CustomerId != customerId)
                 return BadRequest("Key mismatch between route and payload");
-
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
 
         [HttpPost]
-        public virtual async Task<ActionResult<CustomersModel>> AddASync([FromBody] CustomersModel model)
+        public virtual async Task<ActionResult<CustomersDto>> AddAsync([FromBody] CustomersCreateDto model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { result.CustomerId }, result);
+            return CreatedAtAction(nameof(GetById), new { CustomerId = result.CustomerId }, result);
         }
     }
     [ApiController]
@@ -247,13 +244,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<EmployeesModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<EmployeesDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
         }
         [HttpGet("{employeeId}")]
-        public virtual async Task<ActionResult<EmployeesModel>> GetById(int employeeId)
+        public virtual async Task<ActionResult<EmployeesDto>> GetById(int employeeId)
         {
             var result = await _service.GetByIdAsync(employeeId);
             if (result == null)
@@ -269,20 +266,19 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpPut("{employeeId}")]
-        public virtual async Task<ActionResult<EmployeesModel>> UpdateAsync(int employeeId, [FromBody] EmployeesModel model)
+        public virtual async Task<ActionResult<EmployeesDto>> UpdateAsync(int employeeId, [FromBody] EmployeesUpdateDto model)
         {
             if (model.EmployeeId != employeeId)
                 return BadRequest("Key mismatch between route and payload");
-
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
 
         [HttpPost]
-        public virtual async Task<ActionResult<EmployeesModel>> AddASync([FromBody] EmployeesModel model)
+        public virtual async Task<ActionResult<EmployeesDto>> AddAsync([FromBody] EmployeesCreateDto model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { result.EmployeeId }, result);
+            return CreatedAtAction(nameof(GetById), new { EmployeeId = result.EmployeeId }, result);
         }
     }
     [ApiController]
@@ -298,7 +294,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<InvoicesModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<InvoicesDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
@@ -317,13 +313,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<OrderDetailsModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<OrderDetailsDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
         }
         [HttpGet("{orderId}/{productId}")]
-        public virtual async Task<ActionResult<OrderDetailsModel>> GetById(int orderId, int productId)
+        public virtual async Task<ActionResult<OrderDetailsDto>> GetById(int orderId, int productId)
         {
             var result = await _service.GetByIdAsync(orderId, productId);
             if (result == null)
@@ -339,22 +335,21 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpPut("{orderId}/{productId}")]
-        public virtual async Task<ActionResult<OrderDetailsModel>> UpdateAsync(int orderId, int productId, [FromBody] OrderDetailsModel model)
+        public virtual async Task<ActionResult<OrderDetailsDto>> UpdateAsync(int orderId, int productId, [FromBody] OrderDetailsUpdateDto model)
         {
             if (model.OrderId != orderId)
                 return BadRequest("Key mismatch between route and payload");
             if (model.ProductId != productId)
                 return BadRequest("Key mismatch between route and payload");
-
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
 
         [HttpPost]
-        public virtual async Task<ActionResult<OrderDetailsModel>> AddASync([FromBody] OrderDetailsModel model)
+        public virtual async Task<ActionResult<OrderDetailsDto>> AddAsync([FromBody] OrderDetailsCreateDto model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { result.OrderId, result.ProductId }, result);
+            return CreatedAtAction(nameof(GetById), new { OrderId = result.OrderId, ProductId = result.ProductId }, result);
         }
     }
     [ApiController]
@@ -370,7 +365,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<OrderDetailsExtendedModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<OrderDetailsExtendedDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
@@ -389,13 +384,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<OrdersModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<OrdersDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
         }
         [HttpGet("{orderId}")]
-        public virtual async Task<ActionResult<OrdersModel>> GetById(int orderId)
+        public virtual async Task<ActionResult<OrdersDto>> GetById(int orderId)
         {
             var result = await _service.GetByIdAsync(orderId);
             if (result == null)
@@ -411,20 +406,19 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpPut("{orderId}")]
-        public virtual async Task<ActionResult<OrdersModel>> UpdateAsync(int orderId, [FromBody] OrdersModel model)
+        public virtual async Task<ActionResult<OrdersDto>> UpdateAsync(int orderId, [FromBody] OrdersUpdateDto model)
         {
             if (model.OrderId != orderId)
                 return BadRequest("Key mismatch between route and payload");
-
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
 
         [HttpPost]
-        public virtual async Task<ActionResult<OrdersModel>> AddASync([FromBody] OrdersModel model)
+        public virtual async Task<ActionResult<OrdersDto>> AddAsync([FromBody] OrdersCreateDto model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { result.OrderId }, result);
+            return CreatedAtAction(nameof(GetById), new { OrderId = result.OrderId }, result);
         }
     }
     [ApiController]
@@ -440,7 +434,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<OrdersQryModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<OrdersQryDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
@@ -459,7 +453,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<OrderSubtotalsModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<OrderSubtotalsDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
@@ -478,13 +472,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<ProductsModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<ProductsDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
         }
         [HttpGet("{productId}")]
-        public virtual async Task<ActionResult<ProductsModel>> GetById(int productId)
+        public virtual async Task<ActionResult<ProductsDto>> GetById(int productId)
         {
             var result = await _service.GetByIdAsync(productId);
             if (result == null)
@@ -500,20 +494,19 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpPut("{productId}")]
-        public virtual async Task<ActionResult<ProductsModel>> UpdateAsync(int productId, [FromBody] ProductsModel model)
+        public virtual async Task<ActionResult<ProductsDto>> UpdateAsync(int productId, [FromBody] ProductsUpdateDto model)
         {
             if (model.ProductId != productId)
                 return BadRequest("Key mismatch between route and payload");
-
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
 
         [HttpPost]
-        public virtual async Task<ActionResult<ProductsModel>> AddASync([FromBody] ProductsModel model)
+        public virtual async Task<ActionResult<ProductsDto>> AddAsync([FromBody] ProductsCreateDto model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { result.ProductId }, result);
+            return CreatedAtAction(nameof(GetById), new { ProductId = result.ProductId }, result);
         }
     }
     [ApiController]
@@ -529,7 +522,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<ProductsAboveAveragePriceModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<ProductsAboveAveragePriceDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
@@ -548,7 +541,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<ProductSalesFor1997Model>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<ProductSalesFor1997Dto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
@@ -567,7 +560,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<ProductsByCategoryModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<ProductsByCategoryDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
@@ -586,7 +579,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<QuarterlyOrdersModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<QuarterlyOrdersDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
@@ -605,13 +598,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<RegionModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<RegionDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
         }
         [HttpGet("{regionId}")]
-        public virtual async Task<ActionResult<RegionModel>> GetById(int regionId)
+        public virtual async Task<ActionResult<RegionDto>> GetById(int regionId)
         {
             var result = await _service.GetByIdAsync(regionId);
             if (result == null)
@@ -627,20 +620,19 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpPut("{regionId}")]
-        public virtual async Task<ActionResult<RegionModel>> UpdateAsync(int regionId, [FromBody] RegionModel model)
+        public virtual async Task<ActionResult<RegionDto>> UpdateAsync(int regionId, [FromBody] RegionUpdateDto model)
         {
             if (model.RegionId != regionId)
                 return BadRequest("Key mismatch between route and payload");
-
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
 
         [HttpPost]
-        public virtual async Task<ActionResult<RegionModel>> AddASync([FromBody] RegionModel model)
+        public virtual async Task<ActionResult<RegionDto>> AddAsync([FromBody] RegionCreateDto model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { result.RegionId }, result);
+            return CreatedAtAction(nameof(GetById), new { RegionId = result.RegionId }, result);
         }
     }
     [ApiController]
@@ -656,7 +648,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<SalesByCategoryModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<SalesByCategoryDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
@@ -675,7 +667,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<SalesTotalsByAmountModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<SalesTotalsByAmountDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
@@ -694,13 +686,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<ShippersModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<ShippersDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
         }
         [HttpGet("{shipperId}")]
-        public virtual async Task<ActionResult<ShippersModel>> GetById(int shipperId)
+        public virtual async Task<ActionResult<ShippersDto>> GetById(int shipperId)
         {
             var result = await _service.GetByIdAsync(shipperId);
             if (result == null)
@@ -716,20 +708,19 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpPut("{shipperId}")]
-        public virtual async Task<ActionResult<ShippersModel>> UpdateAsync(int shipperId, [FromBody] ShippersModel model)
+        public virtual async Task<ActionResult<ShippersDto>> UpdateAsync(int shipperId, [FromBody] ShippersUpdateDto model)
         {
             if (model.ShipperId != shipperId)
                 return BadRequest("Key mismatch between route and payload");
-
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
 
         [HttpPost]
-        public virtual async Task<ActionResult<ShippersModel>> AddASync([FromBody] ShippersModel model)
+        public virtual async Task<ActionResult<ShippersDto>> AddAsync([FromBody] ShippersCreateDto model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { result.ShipperId }, result);
+            return CreatedAtAction(nameof(GetById), new { ShipperId = result.ShipperId }, result);
         }
     }
     [ApiController]
@@ -745,7 +736,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<SummaryOfSalesByQuarterModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<SummaryOfSalesByQuarterDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
@@ -764,7 +755,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<SummaryOfSalesByYearModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<SummaryOfSalesByYearDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
@@ -783,13 +774,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<SuppliersModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<SuppliersDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
         }
         [HttpGet("{supplierId}")]
-        public virtual async Task<ActionResult<SuppliersModel>> GetById(int supplierId)
+        public virtual async Task<ActionResult<SuppliersDto>> GetById(int supplierId)
         {
             var result = await _service.GetByIdAsync(supplierId);
             if (result == null)
@@ -805,20 +796,19 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpPut("{supplierId}")]
-        public virtual async Task<ActionResult<SuppliersModel>> UpdateAsync(int supplierId, [FromBody] SuppliersModel model)
+        public virtual async Task<ActionResult<SuppliersDto>> UpdateAsync(int supplierId, [FromBody] SuppliersUpdateDto model)
         {
             if (model.SupplierId != supplierId)
                 return BadRequest("Key mismatch between route and payload");
-
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
 
         [HttpPost]
-        public virtual async Task<ActionResult<SuppliersModel>> AddASync([FromBody] SuppliersModel model)
+        public virtual async Task<ActionResult<SuppliersDto>> AddAsync([FromBody] SuppliersCreateDto model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { result.SupplierId }, result);
+            return CreatedAtAction(nameof(GetById), new { SupplierId = result.SupplierId }, result);
         }
     }
     [ApiController]
@@ -834,13 +824,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<TerritoriesModel>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<TerritoriesDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
         }
         [HttpGet("{territoryId}")]
-        public virtual async Task<ActionResult<TerritoriesModel>> GetById(string territoryId)
+        public virtual async Task<ActionResult<TerritoriesDto>> GetById(string territoryId)
         {
             var result = await _service.GetByIdAsync(territoryId);
             if (result == null)
@@ -856,20 +846,19 @@ namespace MPR.RestApiTemplate.Api.Controllers
         }
 
         [HttpPut("{territoryId}")]
-        public virtual async Task<ActionResult<TerritoriesModel>> UpdateAsync(string territoryId, [FromBody] TerritoriesModel model)
+        public virtual async Task<ActionResult<TerritoriesDto>> UpdateAsync(string territoryId, [FromBody] TerritoriesUpdateDto model)
         {
             if (model.TerritoryId != territoryId)
                 return BadRequest("Key mismatch between route and payload");
-
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
         }
 
         [HttpPost]
-        public virtual async Task<ActionResult<TerritoriesModel>> AddASync([FromBody] TerritoriesModel model)
+        public virtual async Task<ActionResult<TerritoriesDto>> AddAsync([FromBody] TerritoriesCreateDto model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { result.TerritoryId }, result);
+            return CreatedAtAction(nameof(GetById), new { TerritoryId = result.TerritoryId }, result);
         }
     }
 }
