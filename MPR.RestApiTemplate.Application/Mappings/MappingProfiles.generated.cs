@@ -9,8 +9,6 @@ namespace MPR.RestApiTemplate.Application.DTOs
 		public AlphabeticalListOfProductsMapping()
 		{
 			CreateMap<AlphabeticalListOfProducts, AlphabeticalListOfProductsDto>().ReverseMap();
-			CreateMap<AlphabeticalListOfProducts, AlphabeticalListOfProductsCreateDto>().ReverseMap();
-			CreateMap<AlphabeticalListOfProducts, AlphabeticalListOfProductsUpdateDto>().ReverseMap();
 		}
 	}
 	public class CategoriesMapping : Profile
@@ -27,8 +25,6 @@ namespace MPR.RestApiTemplate.Application.DTOs
 		public CategorySalesFor1997Mapping()
 		{
 			CreateMap<CategorySalesFor1997, CategorySalesFor1997Dto>().ReverseMap();
-			CreateMap<CategorySalesFor1997, CategorySalesFor1997CreateDto>().ReverseMap();
-			CreateMap<CategorySalesFor1997, CategorySalesFor1997UpdateDto>().ReverseMap();
 		}
 	}
 	public class CurrentProductListMapping : Profile
@@ -36,8 +32,6 @@ namespace MPR.RestApiTemplate.Application.DTOs
 		public CurrentProductListMapping()
 		{
 			CreateMap<CurrentProductList, CurrentProductListDto>().ReverseMap();
-			CreateMap<CurrentProductList, CurrentProductListCreateDto>().ReverseMap();
-			CreateMap<CurrentProductList, CurrentProductListUpdateDto>().ReverseMap();
 		}
 	}
 	public class CustomerAndSuppliersByCityMapping : Profile
@@ -45,8 +39,6 @@ namespace MPR.RestApiTemplate.Application.DTOs
 		public CustomerAndSuppliersByCityMapping()
 		{
 			CreateMap<CustomerAndSuppliersByCity, CustomerAndSuppliersByCityDto>().ReverseMap();
-			CreateMap<CustomerAndSuppliersByCity, CustomerAndSuppliersByCityCreateDto>().ReverseMap();
-			CreateMap<CustomerAndSuppliersByCity, CustomerAndSuppliersByCityUpdateDto>().ReverseMap();
 		}
 	}
 	public class CustomerDemographicsMapping : Profile
@@ -81,8 +73,6 @@ namespace MPR.RestApiTemplate.Application.DTOs
 		public InvoicesMapping()
 		{
 			CreateMap<Invoices, InvoicesDto>().ReverseMap();
-			CreateMap<Invoices, InvoicesCreateDto>().ReverseMap();
-			CreateMap<Invoices, InvoicesUpdateDto>().ReverseMap();
 		}
 	}
 	public class OrderDetailsMapping : Profile
@@ -99,8 +89,6 @@ namespace MPR.RestApiTemplate.Application.DTOs
 		public OrderDetailsExtendedMapping()
 		{
 			CreateMap<OrderDetailsExtended, OrderDetailsExtendedDto>().ReverseMap();
-			CreateMap<OrderDetailsExtended, OrderDetailsExtendedCreateDto>().ReverseMap();
-			CreateMap<OrderDetailsExtended, OrderDetailsExtendedUpdateDto>().ReverseMap();
 		}
 	}
 	public class OrdersMapping : Profile
@@ -117,8 +105,6 @@ namespace MPR.RestApiTemplate.Application.DTOs
 		public OrdersQryMapping()
 		{
 			CreateMap<OrdersQry, OrdersQryDto>().ReverseMap();
-			CreateMap<OrdersQry, OrdersQryCreateDto>().ReverseMap();
-			CreateMap<OrdersQry, OrdersQryUpdateDto>().ReverseMap();
 		}
 	}
 	public class OrderSubtotalsMapping : Profile
@@ -126,8 +112,6 @@ namespace MPR.RestApiTemplate.Application.DTOs
 		public OrderSubtotalsMapping()
 		{
 			CreateMap<OrderSubtotals, OrderSubtotalsDto>().ReverseMap();
-			CreateMap<OrderSubtotals, OrderSubtotalsCreateDto>().ReverseMap();
-			CreateMap<OrderSubtotals, OrderSubtotalsUpdateDto>().ReverseMap();
 		}
 	}
 	public class ProductsMapping : Profile
@@ -144,8 +128,6 @@ namespace MPR.RestApiTemplate.Application.DTOs
 		public ProductsAboveAveragePriceMapping()
 		{
 			CreateMap<ProductsAboveAveragePrice, ProductsAboveAveragePriceDto>().ReverseMap();
-			CreateMap<ProductsAboveAveragePrice, ProductsAboveAveragePriceCreateDto>().ReverseMap();
-			CreateMap<ProductsAboveAveragePrice, ProductsAboveAveragePriceUpdateDto>().ReverseMap();
 		}
 	}
 	public class ProductSalesFor1997Mapping : Profile
@@ -153,8 +135,6 @@ namespace MPR.RestApiTemplate.Application.DTOs
 		public ProductSalesFor1997Mapping()
 		{
 			CreateMap<ProductSalesFor1997, ProductSalesFor1997Dto>().ReverseMap();
-			CreateMap<ProductSalesFor1997, ProductSalesFor1997CreateDto>().ReverseMap();
-			CreateMap<ProductSalesFor1997, ProductSalesFor1997UpdateDto>().ReverseMap();
 		}
 	}
 	public class ProductsByCategoryMapping : Profile
@@ -162,8 +142,6 @@ namespace MPR.RestApiTemplate.Application.DTOs
 		public ProductsByCategoryMapping()
 		{
 			CreateMap<ProductsByCategory, ProductsByCategoryDto>().ReverseMap();
-			CreateMap<ProductsByCategory, ProductsByCategoryCreateDto>().ReverseMap();
-			CreateMap<ProductsByCategory, ProductsByCategoryUpdateDto>().ReverseMap();
 		}
 	}
 	public class QuarterlyOrdersMapping : Profile
@@ -171,8 +149,6 @@ namespace MPR.RestApiTemplate.Application.DTOs
 		public QuarterlyOrdersMapping()
 		{
 			CreateMap<QuarterlyOrders, QuarterlyOrdersDto>().ReverseMap();
-			CreateMap<QuarterlyOrders, QuarterlyOrdersCreateDto>().ReverseMap();
-			CreateMap<QuarterlyOrders, QuarterlyOrdersUpdateDto>().ReverseMap();
 		}
 	}
 	public class RegionMapping : Profile
@@ -189,8 +165,6 @@ namespace MPR.RestApiTemplate.Application.DTOs
 		public SalesByCategoryMapping()
 		{
 			CreateMap<SalesByCategory, SalesByCategoryDto>().ReverseMap();
-			CreateMap<SalesByCategory, SalesByCategoryCreateDto>().ReverseMap();
-			CreateMap<SalesByCategory, SalesByCategoryUpdateDto>().ReverseMap();
 		}
 	}
 	public class SalesTotalsByAmountMapping : Profile
@@ -198,8 +172,6 @@ namespace MPR.RestApiTemplate.Application.DTOs
 		public SalesTotalsByAmountMapping()
 		{
 			CreateMap<SalesTotalsByAmount, SalesTotalsByAmountDto>().ReverseMap();
-			CreateMap<SalesTotalsByAmount, SalesTotalsByAmountCreateDto>().ReverseMap();
-			CreateMap<SalesTotalsByAmount, SalesTotalsByAmountUpdateDto>().ReverseMap();
 		}
 	}
 	public class ShippersMapping : Profile
@@ -216,8 +188,6 @@ namespace MPR.RestApiTemplate.Application.DTOs
 		public SummaryOfSalesByQuarterMapping()
 		{
 			CreateMap<SummaryOfSalesByQuarter, SummaryOfSalesByQuarterDto>().ReverseMap();
-			CreateMap<SummaryOfSalesByQuarter, SummaryOfSalesByQuarterCreateDto>().ReverseMap();
-			CreateMap<SummaryOfSalesByQuarter, SummaryOfSalesByQuarterUpdateDto>().ReverseMap();
 		}
 	}
 	public class SummaryOfSalesByYearMapping : Profile
@@ -225,8 +195,6 @@ namespace MPR.RestApiTemplate.Application.DTOs
 		public SummaryOfSalesByYearMapping()
 		{
 			CreateMap<SummaryOfSalesByYear, SummaryOfSalesByYearDto>().ReverseMap();
-			CreateMap<SummaryOfSalesByYear, SummaryOfSalesByYearCreateDto>().ReverseMap();
-			CreateMap<SummaryOfSalesByYear, SummaryOfSalesByYearUpdateDto>().ReverseMap();
 		}
 	}
 	public class SuppliersMapping : Profile

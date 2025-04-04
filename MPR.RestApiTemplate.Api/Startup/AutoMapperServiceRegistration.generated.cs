@@ -1,7 +1,7 @@
 ﻿
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
-using MPR.RestApiTemplate.Application.Models;
+using MPR.RestApiTemplate.Application.DTOs;
 
 namespace MPR.RestApiTemplate.Application.Mappings;
 

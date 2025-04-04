@@ -49,7 +49,7 @@
 			<LastGenOutput>MappingProfiles.generated.cs</LastGenOutput>
 			<Generator>TextTemplatingFileGenerator</Generator>
 		</None>
-		<None Update="T4Templates\Models.tt">
+		<None Update="T4Templates\Dtos.tt">
 			<LastGenOutput>Models.generated.cs</LastGenOutput>
 			<Generator>TextTemplatingFileGenerator</Generator>
 		</None>

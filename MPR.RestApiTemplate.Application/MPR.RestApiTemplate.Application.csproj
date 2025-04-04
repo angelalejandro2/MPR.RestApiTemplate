@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Folder Include="Mappings\" />
+    <Folder Include="Dtos\" />
     <Folder Include="Services\" />
   </ItemGroup>
 

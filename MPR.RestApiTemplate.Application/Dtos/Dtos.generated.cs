@@ -1,4 +1,3 @@
-#nullable enable
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -43,6 +42,7 @@ namespace MPR.RestApiTemplate.Application.DTOs
 
     public class CategoriesUpdateDto
     {
+        public int CategoryId { get; set; }
         public string CategoryName { get; set; }
         public string? Description { get; set; }
         public byte[]? Picture { get; set; }
@@ -86,11 +86,13 @@ namespace MPR.RestApiTemplate.Application.DTOs
 
     public class CustomerDemographicsCreateDto
     {
+        public string CustomerTypeId { get; set; }
         public string? CustomerDesc { get; set; }
     }
 
     public class CustomerDemographicsUpdateDto
     {
+        public string CustomerTypeId { get; set; }
         public string? CustomerDesc { get; set; }
     }
 
@@ -116,6 +118,7 @@ namespace MPR.RestApiTemplate.Application.DTOs
 
     public class CustomersCreateDto
     {
+        public string CustomerId { get; set; }
         public string CompanyName { get; set; }
         public string? ContactName { get; set; }
         public string? ContactTitle { get; set; }
@@ -130,6 +133,7 @@ namespace MPR.RestApiTemplate.Application.DTOs
 
     public class CustomersUpdateDto
     {
+        public string CustomerId { get; set; }
         public string CompanyName { get; set; }
         public string? ContactName { get; set; }
         public string? ContactTitle { get; set; }
@@ -195,6 +199,7 @@ namespace MPR.RestApiTemplate.Application.DTOs
 
     public class EmployeesUpdateDto
     {
+        public int EmployeeId { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
         public string? Title { get; set; }
@@ -264,6 +269,8 @@ namespace MPR.RestApiTemplate.Application.DTOs
 
     public class OrderDetailsCreateDto
     {
+        public int OrderId { get; set; }
+        public int ProductId { get; set; }
         public decimal UnitPrice { get; set; }
         public short Quantity { get; set; }
         public int Withhold { get; set; }
@@ -272,6 +279,8 @@ namespace MPR.RestApiTemplate.Application.DTOs
 
     public class OrderDetailsUpdateDto
     {
+        public int OrderId { get; set; }
+        public int ProductId { get; set; }
         public decimal UnitPrice { get; set; }
         public short Quantity { get; set; }
         public int Withhold { get; set; }
@@ -336,6 +345,7 @@ namespace MPR.RestApiTemplate.Application.DTOs
 
     public class OrdersUpdateDto
     {
+        public int OrderId { get; set; }
         public string? CustomerId { get; set; }
         public int? EmployeeId { get; set; }
         public DateTime? OrderDate { get; set; }
@@ -421,6 +431,7 @@ namespace MPR.RestApiTemplate.Application.DTOs
 
     public class ProductsUpdateDto
     {
+        public int ProductId { get; set; }
         public string ProductName { get; set; }
         public int? SupplierId { get; set; }
         public int? CategoryId { get; set; }
@@ -482,11 +493,13 @@ namespace MPR.RestApiTemplate.Application.DTOs
 
     public class RegionCreateDto
     {
+        public int RegionId { get; set; }
         public string RegionDescription { get; set; }
     }
 
     public class RegionUpdateDto
     {
+        public int RegionId { get; set; }
         public string RegionDescription { get; set; }
     }
 
@@ -530,6 +543,7 @@ namespace MPR.RestApiTemplate.Application.DTOs
 
     public class ShippersUpdateDto
     {
+        public int ShipperId { get; set; }
         public string CompanyName { get; set; }
         public string? Phone { get; set; }
     }
@@ -590,6 +604,7 @@ namespace MPR.RestApiTemplate.Application.DTOs
 
     public class SuppliersUpdateDto
     {
+        public int SupplierId { get; set; }
         public string CompanyName { get; set; }
         public string? ContactName { get; set; }
         public string? ContactTitle { get; set; }
@@ -617,12 +632,14 @@ namespace MPR.RestApiTemplate.Application.DTOs
 
     public class TerritoriesCreateDto
     {
+        public string TerritoryId { get; set; }
         public string TerritoryDescription { get; set; }
         public int RegionId { get; set; }
     }
 
     public class TerritoriesUpdateDto
     {
+        public string TerritoryId { get; set; }
         public string TerritoryDescription { get; set; }
         public int RegionId { get; set; }
     }
