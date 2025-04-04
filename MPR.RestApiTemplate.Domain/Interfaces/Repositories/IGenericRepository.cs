@@ -7,13 +7,18 @@ namespace MPR.RestApiTemplate.Domain.Interfaces.Repositories
     {
         Task<IEnumerable<TEntity>> GetAllAsync();
 
-        Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<IEnumerable<TEntity>> GetAllAsync(
+            params Expression<Func<TEntity, object>>[] includes);
+
+        Task<IEnumerable<TEntity>> GetAsync(
+            Expression<Func<TEntity, bool>> predicate);
 
         Task<IEnumerable<TEntity>> GetAsync(
             Expression<Func<TEntity, bool>> predicate,
             params Expression<Func<TEntity, object>>[] includes);
 
-        Task<TEntity?> GetByIdAsync(params object[] keys);
+        Task<TEntity?> GetByIdAsync(
+            params object[] keys);
 
         Task<TEntity?> GetByIdAsync(
             object[] keys,
