@@ -118,7 +118,7 @@ namespace MPR.RestApiTemplate.Application.DTOs
     {
 <#
         foreach (var prop in properties.Where(p =>
-            !p.IsKey && string.IsNullOrEmpty(p.DbGenerated) && !p.IsEntityReference))
+            string.IsNullOrEmpty(p.DbGenerated) && !p.IsEntityReference))
         {
 #>
         public <#= prop.Type #> <#= prop.Name #> { get; set; }
@@ -131,7 +131,7 @@ namespace MPR.RestApiTemplate.Application.DTOs
     {
 <#
         foreach (var prop in properties.Where(p =>
-            string.IsNullOrEmpty(p.DbGenerated) && !p.IsEntityReference))
+            !p.IsEntityReference && (string.IsNullOrEmpty(p.DbGenerated) || p.IsKey)))
         {
 #>
         public <#= prop.Type #> <#= prop.Name #> { get; set; }
