@@ -11,23 +11,44 @@ using MPR.RestApiTemplate.Domain.Entities;
 
 <#
 	var entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Domain\Entities");
-	var entities = Directory.GetFiles(entitiesPath, "*.cs")
-		.Select(f => Path.GetFileNameWithoutExtension(f))
-		.ToList();
+	var files = Directory.GetFiles(entitiesPath, "*.cs");
 #>
 namespace MPR.RestApiTemplate.Application.DTOs
 {
 <#
-	foreach (var entity in entities)
+	foreach (var file in files)
 	{
+		var entity = Path.GetFileNameWithoutExtension(file);
+		var lines = File.ReadAllLines(file);
+
+		// Detectar si tiene al menos una [Key]
+		bool hasKey = false;
+		bool nextIsKey = false;
+
+		foreach (var line in lines)
+		{
+			var trimmed = line.Trim();
+			if (trimmed.StartsWith("[Key]"))
+			{
+				hasKey = true;
+				break;
+			}
+		}
 #>
 	public class <#= entity #>Mapping : Profile
 	{
 		public <#= entity #>Mapping()
 		{
 			CreateMap<<#= entity #>, <#= entity #>Dto>().ReverseMap();
+<#
+			if (hasKey)
+			{
+#>
 			CreateMap<<#= entity #>, <#= entity #>CreateDto>().ReverseMap();
 			CreateMap<<#= entity #>, <#= entity #>UpdateDto>().ReverseMap();
+<#
+			}
+#>
 		}
 	}
 <#
