@@ -1,4 +1,4 @@
-﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ template debug="true" hostspecific="true" language="C#" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Linq" #>
@@ -6,9 +6,10 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".generated.cs" #>
 using AutoMapper;
-using MPR.RestApiTemplate.Application.Models;
+using MPR.RestApiTemplate.Application.DTOs;
 using MPR.RestApiTemplate.Domain.Entities;
 using MPR.RestApiTemplate.Domain.Interfaces;
+using System.Linq.Expressions;
 
 <#
 	var entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Domain\Entities");
@@ -22,7 +23,6 @@ namespace MPR.RestApiTemplate.Application.Services
 		var entity = Path.GetFileNameWithoutExtension(file);
 		var lines = File.ReadAllLines(file);
 
-		// Extraer propiedades con [Key]
 		List<(string Type, string Name)> keyProperties = new();
 		bool nextIsKey = false;
 
@@ -38,7 +38,7 @@ namespace MPR.RestApiTemplate.Application.Services
 			}
 			if (nextIsKey && trimmed.StartsWith("public") && trimmed.Contains("{ get;") && !trimmed.Contains("class"))
 			{
-				var parts = trimmed.Split(new[] {' ','\t'}, StringSplitOptions.RemoveEmptyEntries);
+				var parts = trimmed.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
 				if (parts.Length >= 3)
 				{
 					string type = parts[1];
@@ -65,20 +65,20 @@ namespace MPR.RestApiTemplate.Application.Services
 			_mapper = mapper;
 		}
 
-		public virtual async Task<IEnumerable<<#= entity #>Model>> GetAllAsync()
+		public virtual async Task<IEnumerable<<#= entity #>Dto>> GetAllAsync(params Expression<Func<<#= entity #>, object>>[] includes)
 		{
-			var entities = await _unitOfWork.<#= entity #>Repository.GetAllAsync();
-			return _mapper.Map<IEnumerable<<#= entity #>Model>>(entities);
+			var entities = await _unitOfWork.<#= entity #>Repository.GetAllAsync(includes);
+			return _mapper.Map<IEnumerable<<#= entity #>Dto>>(entities);
 		}
 
 <#
 	if (!isKeyless && keyProperties.Count > 0)
 	{
 #>
-		public virtual async Task<<#= entity #>Model> GetByIdAsync(<#= methodParams #>)
+		public virtual async Task<<#= entity #>Dto> GetByIdAsync(<#= methodParams #>, params Expression<Func<<#= entity #>, object>>[] includes)
 		{
-			var entity = await _unitOfWork.<#= entity #>Repository.GetByIdAsync(<#= methodKeys #>);
-			return _mapper.Map<<#= entity #>Model>(entity);
+			var entity = await _unitOfWork.<#= entity #>Repository.GetByIdAsync(new object[] { <#= methodKeys #> }, includes);
+			return _mapper.Map<<#= entity #>Dto>(entity);
 		}
 
 		public virtual async Task DeleteAsync(<#= methodParams #>)
@@ -87,20 +87,20 @@ namespace MPR.RestApiTemplate.Application.Services
 			await _unitOfWork.SaveChangesAsync();
 		}
 
-		public virtual async Task<<#= entity #>Model> AddAsync(<#= entity #>Model model)
+		public virtual async Task<<#= entity #>Dto> AddAsync(<#= entity #>CreateDto model)
 		{
 			var entity = _mapper.Map<<#= entity #>>(model);
 			entity = await _unitOfWork.<#= entity #>Repository.AddAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<<#= entity #>Model>(entity);
+			return _mapper.Map<<#= entity #>Dto>(entity);
 		}
 
-		public virtual async Task<<#= entity #>Model> UpdateAsync(<#= entity #>Model model)
+		public virtual async Task<<#= entity #>Dto> UpdateAsync(<#= entity #>UpdateDto model)
 		{
 			var entity = _mapper.Map<<#= entity #>>(model);
 			entity = await _unitOfWork.<#= entity #>Repository.UpdateAsync(entity);
 			await _unitOfWork.SaveChangesAsync();
-			return _mapper.Map<<#= entity #>Model>(entity);
+			return _mapper.Map<<#= entity #>Dto>(entity);
 		}
 <#
 	}
