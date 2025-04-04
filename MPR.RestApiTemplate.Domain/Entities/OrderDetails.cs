@@ -27,6 +27,8 @@ public partial class OrderDetails
 
     public short Quantity { get; set; }
 
+    public int Withhold { get; set; }
+
     public float Discount { get; set; }
 
     [ForeignKey("OrderId")]
