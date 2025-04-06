@@ -4,20 +4,61 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ output extension=".generated.cs" #>
-using MPR.RestApiTemplate.Domain.Entities;
-
-namespace MPR.RestApiTemplate.Domain.Interfaces.Repositories
+<#@ output extension=".cs" #>
+<#
+// Función para generar el contenido de la interfaz del repositorio
+string GenerateRepositoryInterface(string className)
 {
-<#
-	var entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Domain\Entities");
-	var files = Directory.GetFiles(entitiesPath, "*.cs");
-	foreach (var file in files)
-	{
-		var className = Path.GetFileNameWithoutExtension(file);
-#>
-	public interface I<#= className #>Repository : IGenericRepository<<#= className #>>	{ }
-<#
-	}
-#>
+	StringBuilder sb = new StringBuilder();
+	sb.AppendLine("using MPR.RestApiTemplate.Domain.Entities;");
+    sb.AppendLine("namespace MPR.RestApiTemplate.Domain.Interfaces.Repositories");
+    sb.AppendLine("{");
+    sb.AppendLine($"    public interface I{className}Repository : IGenericRepository<{className}>");
+    sb.AppendLine("    {");
+    sb.AppendLine("    }");
+    sb.AppendLine("}");
+    
+    return sb.ToString();
 }
+
+// Directorio donde se encuentran las entidades
+var entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Domain\Entities");
+
+// Directorio donde se guardarán las interfaces generadas
+string outputPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Domain\Interfaces\Repositories\GeneratedRepositories");
+
+// Crear el directorio de salida si no existe
+if (!Directory.Exists(outputPath))
+{
+    Directory.CreateDirectory(outputPath);
+}
+
+// Obtener todos los archivos de entidades
+var files = Directory.GetFiles(entitiesPath, "*.cs");
+
+// Para cada archivo de entidad, generar una interfaz de repositorio correspondiente
+foreach (var file in files)
+{
+    var className = Path.GetFileNameWithoutExtension(file);
+    
+    // Generar el contenido de la interfaz
+    string interfaceContent = GenerateRepositoryInterface(className);
+    
+    // Nombre del archivo de salida
+    string outputFileName = $"I{className}Repository.generated.cs";
+    string outputFilePath = Path.Combine(outputPath, outputFileName);
+    
+    // Verificar si el archivo ya existe antes de escribirlo
+    if (!File.Exists(outputFilePath))
+    {
+        File.WriteAllText(outputFilePath, interfaceContent);
+    }
+    else
+    {
+        // Se podría agregar alguna indicación de que el archivo no se sobrescribió
+    }
+}
+#>
+// Esta plantilla ha generado interfaces de repositorio individuales para cada entidad.
+// Los archivos generados se encuentran en la carpeta GeneratedRepositories.
+// Nota: Los archivos existentes no han sido sobrescritos.
