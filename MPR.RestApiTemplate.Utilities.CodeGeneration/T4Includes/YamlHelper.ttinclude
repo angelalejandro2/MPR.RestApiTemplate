@@ -1,0 +1,237 @@
+<#@ assembly name="System.Core" #>
+<#@ assembly name="$(SolutionDir)packages\YamlDotNet.13.1.1\lib\net47\YamlDotNet.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="YamlDotNet.Serialization" #>
+<#@ import namespace="YamlDotNet.Serialization.NamingConventions" #>
+
+<#+
+    #nullable enable
+    
+    // Clases para deserializar el YAML
+    public class CodeGenConfig
+    {
+        public DefaultsConfig? defaults { get; set; }
+        public Dictionary<string, EntityConfig>? entities { get; set; }
+        public Dictionary<string, ContextConfig>? contexts { get; set; }
+    }
+
+    public class DefaultsConfig
+    {
+        public MethodsConfig? generateMethods { get; set; }
+        public MethodsConfig? requireKeysFor { get; set; }
+        public MethodsConfig? generatePolicies { get; set; }
+    }
+
+    public class MethodsConfig
+    {
+        public bool get { get; set; }
+        public bool getById { get; set; }
+        public bool post { get; set; }
+        public bool put { get; set; }
+        public bool delete { get; set; }
+    }
+
+    public class EntityConfig
+    {
+        public string? dto { get; set; }
+        public string? createDto { get; set; }
+        public string? updateDto { get; set; }
+        public List<string>? includes { get; set; }
+        public Dictionary<string, string>? mappings { get; set; }
+        public MethodsConfig? generateMethods { get; set; }
+        public Dictionary<string, string>? policies { get; set; }
+    }
+
+    public class ContextConfig
+    {
+        public string? provider { get; set; }
+        public List<string>? entities { get; set; }
+    }
+
+    // Función para cargar y parsear el archivo YAML usando YamlDotNet
+    public CodeGenConfig LoadYamlConfig(string hostTemplateFile)
+    {
+        string yamlPath = Path.Combine(Path.GetDirectoryName(hostTemplateFile), "mpr.codegen.yaml");
+        
+        // Verificar si el archivo existe
+        if (!File.Exists(yamlPath))
+        {
+            // Devolver una configuración vacía si no existe el archivo
+            return new CodeGenConfig();
+        }
+
+        try
+        {
+            // Leer el contenido del archivo YAML
+            string yamlContent = File.ReadAllText(yamlPath);
+            
+            // Configurar el deserializador de YAML
+            var deserializer = new DeserializerBuilder()
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .Build();
+            
+            // Deserializar el YAML a la configuración
+            var config = deserializer.Deserialize<CodeGenConfig>(yamlContent);
+            
+            return config ?? new CodeGenConfig();
+        }
+        catch (Exception ex)
+        {
+            // En caso de error, devolver una configuración vacía
+            // En un entorno real, sería mejor registrar el error
+            System.Diagnostics.Debug.WriteLine($"Error al cargar el archivo YAML: {ex.Message}");
+            return new CodeGenConfig();
+        }
+    }
+
+    // Obtener el nombre de la clase DTO para una entidad
+    public string GetDtoName(string entityName, CodeGenConfig config)
+    {
+        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && !string.IsNullOrEmpty(entityConfig.dto))
+        {
+            return entityConfig.dto;
+        }
+        
+        return $"{entityName}Dto";
+    }
+
+    // Obtener el nombre de la clase CreateDTO para una entidad
+    public string GetCreateDtoName(string entityName, CodeGenConfig config)
+    {
+        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && !string.IsNullOrEmpty(entityConfig.createDto))
+        {
+            return entityConfig.createDto;
+        }
+        
+        return $"{entityName}CreateDto";
+    }
+
+    // Obtener el nombre de la clase UpdateDTO para una entidad
+    public string GetUpdateDtoName(string entityName, CodeGenConfig config)
+    {
+        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && !string.IsNullOrEmpty(entityConfig.updateDto))
+        {
+            return entityConfig.updateDto;
+        }
+        
+        return $"{entityName}UpdateDto";
+    }
+    
+    // Obtener las includes para una entidad
+    public List<string> GetIncludes(string entityName, CodeGenConfig config)
+    {
+        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && entityConfig.includes != null)
+        {
+            return entityConfig.includes;
+        }
+        
+        return new List<string>();
+    }
+    
+    // Obtener los mappings para una entidad
+    public Dictionary<string, string> GetMappings(string entityName, CodeGenConfig config)
+    {
+        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && entityConfig.mappings != null)
+        {
+            return entityConfig.mappings;
+        }
+        
+        return new Dictionary<string, string>();
+    }
+    
+    // Verificar si un método debería generarse para una entidad
+    public bool ShouldGenerateMethod(string entityName, string methodName, CodeGenConfig config)
+    {
+        // Verificar configuración específica de entidad
+        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && 
+            entityConfig.generateMethods != null)
+        {
+            return GetMethodValue(entityConfig.generateMethods, methodName);
+        }
+        
+        // Verificar configuración por defecto
+        if (config.defaults?.generateMethods != null)
+        {
+            return GetMethodValue(config.defaults.generateMethods, methodName);
+        }
+        
+        // Valor predeterminado si no hay configuración
+        return true;
+    }
+    
+    // Verificar si se requiere clave para un método
+    public bool RequiresKeyForMethod(string entityName, string methodName, CodeGenConfig config)
+    {
+        // Verificar configuración específica de entidad
+        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) &&
+            entityConfig.generateMethods != null)
+        {
+            // Nota: esto asume que tienes una propiedad requireKeysFor en EntityConfig, 
+            // lo cual no estaba en tu YAML original. Adapta según sea necesario.
+            var requireKeysConfig = entityConfig.generateMethods;  // Esto es una simplificación
+            if (requireKeysConfig != null)
+            {
+                return GetMethodValue(requireKeysConfig, methodName);
+            }
+        }
+        
+        // Verificar configuración por defecto
+        if (config.defaults?.requireKeysFor != null)
+        {
+            return GetMethodValue(config.defaults.requireKeysFor, methodName);
+        }
+        
+        // Valores predeterminados por método si no hay configuración
+        switch (methodName.ToLower())
+        {
+            case "getbyid":
+            case "put":
+            case "post":
+            case "delete":
+                return true;
+            default:
+                return false;
+        }
+    }
+    
+    // Obtener la política para un método
+    public string GetPolicy(string entityName, string methodName, CodeGenConfig config)
+    {
+        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) &&
+            entityConfig.policies != null && entityConfig.policies.TryGetValue(methodName.ToLower(), out var policy))
+        {
+            return policy;
+        }
+        
+        // Si debe generar políticas según la configuración por defecto y no hay una política específica
+        if (config.defaults?.generatePolicies != null && 
+            GetMethodValue(config.defaults.generatePolicies, methodName))
+        {
+            return $"{char.ToUpper(methodName[0])}{methodName.Substring(1)}{entityName}";
+        }
+        
+        return string.Empty;
+    }
+    
+    // Obtener el valor de un método desde MethodsConfig
+    private bool GetMethodValue(MethodsConfig methodsConfig, string methodName)
+    {
+        switch (methodName.ToLower())
+        {
+            case "get":
+                return methodsConfig.get;
+            case "getbyid":
+                return methodsConfig.getById;
+            case "post":
+                return methodsConfig.post;
+            case "put":
+                return methodsConfig.put;
+            case "delete":
+                return methodsConfig.delete;
+            default:
+                return false;
+        }
+    }
+#>

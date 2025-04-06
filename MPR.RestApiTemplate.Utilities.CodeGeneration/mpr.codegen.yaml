@@ -1,0 +1,48 @@
+defaults:
+  generateMethods:
+    get: true
+    getById: true
+    post: true
+    put: true
+    delete: true
+  requireKeysFor:
+    getById: true
+    post: true
+    put: true
+    delete: true
+  generatePolicies:
+    get: true
+    post: true
+    put: true
+    delete: true
+
+entities:
+  Customer:
+    dto: CustomerDto
+    createDto: CreateCustomeDto
+    updateDto: UpdateCustomerDto
+    includes:
+      - Customer
+      - Items.Product
+    mappings:
+      Name: customer_name
+      Address: customer_address
+      IsActive: is_active_flag
+    generateMethods:
+      get: true
+      getById: true
+      post: true
+      put: true
+      delete: true
+    policies:
+      get: ReadCustomer
+      post: CreateCustomer
+      put: UpdateCustomer
+      delete: DeleteCustomer
+
+contexts:
+  NorthwindDbContext:
+    provider: SqlServer
+    entities:
+      - Customer
+    
