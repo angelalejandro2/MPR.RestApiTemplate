@@ -4,7 +4,7 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ output extension=".cs" #>
+<#@ output extension=".generated.cs" #>
 <#
 // Función para generar el contenido de la interfaz del repositorio
 string GenerateRepositoryInterface(string className)
@@ -13,7 +13,7 @@ string GenerateRepositoryInterface(string className)
 	sb.AppendLine("using MPR.RestApiTemplate.Domain.Entities;");
     sb.AppendLine("namespace MPR.RestApiTemplate.Domain.Interfaces.Repositories");
     sb.AppendLine("{");
-    sb.AppendLine($"    public interface I{className}Repository : IGenericRepository<{className}>");
+    sb.AppendLine($"    public partial interface I{className}Repository : IGenericRepository<{className}>");
     sb.AppendLine("    {");
     sb.AppendLine("    }");
     sb.AppendLine("}");

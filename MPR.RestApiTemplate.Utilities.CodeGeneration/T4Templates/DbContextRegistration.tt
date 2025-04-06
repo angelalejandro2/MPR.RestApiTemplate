@@ -105,7 +105,7 @@
     }
     
     // Directorio donde se guardará la clase generada
-    string outputPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Infrastructure\Context\Generated");
+    string outputPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Api\Startup\Generated");
     
     // Crear el directorio de salida si no existe
     if (!Directory.Exists(outputPath))
@@ -117,7 +117,7 @@
     string classContent = GenerateDbContextRegistrationClass(contextInfo);
     
     // Nombre del archivo de salida
-    string outputFileName = "DbContextRegistration.generated.cs";
+    string outputFileName = "DbContextRegistration.cs";
     string outputFilePath = Path.Combine(outputPath, outputFileName);
     
     // Verificar si el archivo ya existe antes de escribirlo
@@ -127,5 +127,5 @@
     }
 #>
 // Esta plantilla ha generado la clase DbContextRegistration para registrar los contextos de base de datos.
-// El archivo generado se encuentra en la carpeta Infrastructure/Context/Generated.
+// El archivo generado se encuentra en la carpeta Api/Startup/Generated.
 // Nota: El archivo existente no ha sido sobrescrito si ya existía.

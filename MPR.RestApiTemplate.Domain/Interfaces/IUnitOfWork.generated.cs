@@ -2,7 +2,7 @@
 
 namespace MPR.RestApiTemplate.Domain.Interfaces
 {
-	public interface IUnitOfWork : IDisposable
+	public partial interface IUnitOfWork : IDisposable
 	{
 		IAlphabeticalListOfProductsRepository AlphabeticalListOfProductsRepository { get; }
 		ICategoriesRepository CategoriesRepository { get; }

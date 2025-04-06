@@ -50,7 +50,7 @@
 			<Generator>TextTemplatingFileGenerator</Generator>
 		</None>
 		<None Update="T4Templates\Dtos.tt">
-			<LastGenOutput>Models.generated.cs</LastGenOutput>
+			<LastGenOutput>Dtos.cs</LastGenOutput>
 			<Generator>TextTemplatingFileGenerator</Generator>
 		</None>
 		<None Update="T4Templates\RepositoryImplementation.tt">
@@ -77,6 +77,19 @@
 
 	<ItemGroup>
 		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="T4Templates\MappingProfiles.generated.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>MappingProfiles.tt</DependentUpon>
+	  </Compile>
+	  <Compile Update="T4Templates\Services.generated.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Services.tt</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 </Project>

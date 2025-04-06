@@ -6,7 +6,7 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Text.RegularExpressions" #>
-<#@ output extension=".cs" #>
+<#@ output extension=".generated.cs" #>
 <#
 // Función para generar el contenido de la implementación del repositorio
 string GenerateRepositoryImplementation(string entityName, string dbContextName, string dbContextNameLowered)

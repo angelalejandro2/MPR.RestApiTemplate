@@ -1,20 +1,3 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace MPR.RestApiTemplate.Infrastructure.Context;
-
-public static class DbContextRegistration
-{
-    public static IServiceCollection AddInfrastructureDbContexts(this IServiceCollection services, IConfiguration configuration)
-    {
-
-        services.AddDbContext<NorthwindContext>(options =>
-            options.UseSqlServer(
-                configuration.GetConnectionString("NorthwindConnection"),
-                optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(NorthwindContext).Assembly.FullName)
-            )
-        );
-        return services;
-    }
-}
+﻿// Esta plantilla ha generado la clase DbContextRegistration para registrar los contextos de base de datos.
+// El archivo generado se encuentra en la carpeta Api/Startup/Generated.
+// Nota: El archivo existente no ha sido sobrescrito si ya existía.

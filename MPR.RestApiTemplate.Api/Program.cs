@@ -17,7 +17,6 @@ public partial class Program
 
     public static WebApplication ConfigureApp(WebApplicationBuilder builder)
     { 
-
         builder.Services.AddInfrastructureDbContexts(builder.Configuration);
 
         //mvc service (set to ignore ReferenceLoopHandling in json serialization like Users[0].Account.Users)
@@ -28,8 +27,6 @@ public partial class Program
 
         builder.Services.AddApplicationServices();
         builder.Services.AddMappingProfiles();
-
-
 
         //API versioning service
         builder.Services.AddApiVersioning(

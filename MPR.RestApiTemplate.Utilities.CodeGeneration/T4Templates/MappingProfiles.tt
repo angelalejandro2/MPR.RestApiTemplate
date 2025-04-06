@@ -4,7 +4,7 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ output extension=".cs" #>
+<#@ output extension=".generated.cs" #>
 <#
     // Función para generar el contenido de la clase de mapeo
     string GenerateMappingClass(string entityName, bool hasKey)
@@ -45,7 +45,7 @@
     var entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Domain\Entities");
     
     // Directorio donde se guardarán las clases de mapeo generadas
-    string outputPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Application\DTOs\GeneratedMappings");
+    string outputPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Application\Mappings\GeneratedMappings");
     
     // Crear el directorio de salida si no existe
     if (!Directory.Exists(outputPath))
@@ -76,7 +76,7 @@
         string mappingContent = GenerateMappingClass(entityName, hasKey);
         
         // Nombre del archivo de salida
-        string outputFileName = $"{entityName}Mapping.generated.cs";
+        string outputFileName = $"{entityName}Mapping.cs";
         string outputFilePath = Path.Combine(outputPath, outputFileName);
         
         // Verificar si el archivo ya existe antes de escribirlo
