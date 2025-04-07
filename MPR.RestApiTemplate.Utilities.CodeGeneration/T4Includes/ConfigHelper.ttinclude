@@ -1,5 +1,5 @@
 <#@ assembly name="System.Core" #>
-<#@ assembly name="$(SolutionDir)packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll" #>
+<#@ assembly name="$(NuGetPackageRoot)newtonsoft.json\13.0.1\lib\netstandard2.0\Newtonsoft.Json.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Collections.Generic" #>
