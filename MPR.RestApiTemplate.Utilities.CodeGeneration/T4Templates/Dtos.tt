@@ -7,7 +7,7 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Text.RegularExpressions" #>
-<#@ include file="..\T4Includes\ConfigHelper.ttinclude" #>
+<#@ include file="JsonConfigHelper.ttinclude" #>
 
 <#
     #nullable enable
@@ -228,4 +228,19 @@
             
             // Obtener el nombre del UpdateDTO
             string updateDtoName = GetUpdateDtoName(className, config);
-            System.
+            System.Diagnostics.Debug.WriteLine($"UpdateDTO name for {className}: {updateDtoName}");
+            
+            // Generar el archivo para UpdateDto
+            string updateDtoContent = GenerateUpdateDtoClass(className, properties, config);
+            string updateDtoFileName = $"{updateDtoName}.cs";
+            string updateDtoFilePath = Path.Combine(outputPath, updateDtoFileName);
+            
+            // Siempre escribir el archivo (para pruebas)
+            File.WriteAllText(updateDtoFilePath, updateDtoContent);
+            System.Diagnostics.Debug.WriteLine($"Generated UpdateDTO file: {updateDtoFilePath}");
+        }
+    }
+#>
+// Esta plantilla ha generado archivos DTO individuales para cada entidad.
+// Los archivos generados se encuentran en la carpeta GeneratedDTOs.
+// Nota: Para fines de depuración, se han sobrescrito los archivos existentes.
