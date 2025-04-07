@@ -76,55 +76,91 @@
         }
     }
 
+    // Función de depuración para mostrar el contenido de la configuración
+    public void DebugConfig(CodeGenConfig config)
+    {
+        if (config == null)
+        {
+            System.Diagnostics.Debug.WriteLine("Config is null");
+            return;
+        }
+        
+        System.Diagnostics.Debug.WriteLine("Config loaded:");
+        if (config.entities != null)
+        {
+            foreach (var entity in config.entities)
+            {
+                System.Diagnostics.Debug.WriteLine($"Entity: {entity.Key}");
+                System.Diagnostics.Debug.WriteLine($"  DTO: {entity.Value.dto}");
+                System.Diagnostics.Debug.WriteLine($"  CreateDTO: {entity.Value.createDto}");
+                System.Diagnostics.Debug.WriteLine($"  UpdateDTO: {entity.Value.updateDto}");
+            }
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine("No entities found in config");
+        }
+    }
+
     // Cargar la configuración desde JSON
     public CodeGenConfig LoadConfig(string hostTemplateFile)
     {
-        // Buscar primero el archivo JSON
+        // Buscar el archivo JSON
         string jsonPath = Path.Combine(Path.GetDirectoryName(hostTemplateFile), "mpr.codegen.json");
         
-        // Si existe el archivo JSON, cargarlo
-        if (File.Exists(jsonPath))
+        // Verificar si el archivo existe
+        if (!File.Exists(jsonPath))
         {
-            try
+            System.Diagnostics.Debug.WriteLine($"JSON config file not found at: {jsonPath}");
+            return new CodeGenConfig();
+        }
+
+        try
+        {
+            // Leer el contenido del archivo JSON
+            string jsonContent = File.ReadAllText(jsonPath);
+            System.Diagnostics.Debug.WriteLine($"JSON content loaded: {jsonContent.Substring(0, Math.Min(100, jsonContent.Length))}...");
+            
+            // Deserializar el JSON a la configuración
+            var serializer = new JavaScriptSerializer();
+            var config = serializer.Deserialize<CodeGenConfig>(jsonContent);
+            
+            if (config == null)
             {
-                string jsonContent = File.ReadAllText(jsonPath);
-                var serializer = new JavaScriptSerializer();
-                var config = serializer.Deserialize<CodeGenConfig>(jsonContent);
-                return config ?? new CodeGenConfig();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error al cargar el archivo JSON: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine("Deserialization returned null config");
                 return new CodeGenConfig();
             }
+            
+            // Mostrar información de depuración
+            DebugConfig(config);
+            
+            return config;
         }
-        
-        // Si no hay archivo JSON, intentar con YAML (para compatibilidad hacia atrás)
-        string yamlPath = Path.Combine(Path.GetDirectoryName(hostTemplateFile), "mpr.codegen.yaml");
-        if (File.Exists(yamlPath))
+        catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine("Archivo JSON no encontrado. Recomendamos convertir el YAML a JSON para mejor compatibilidad.");
-            return new CodeGenConfig(); // En un caso real, podrías intentar una conversión simple
+            System.Diagnostics.Debug.WriteLine($"Error loading JSON config: {ex.Message}");
+            return new CodeGenConfig();
         }
-        
-        // Si no hay configuración, devolver valores por defecto
-        return new CodeGenConfig();
     }
 
     // Métodos de ayuda para acceder a la configuración
     public string GetDtoName(string entityName, CodeGenConfig config)
     {
-        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && !string.IsNullOrEmpty(entityConfig.dto))
+        System.Diagnostics.Debug.WriteLine($"GetDtoName called for entity: {entityName}");
+        
+        if (config != null && config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && !string.IsNullOrEmpty(entityConfig.dto))
         {
+            System.Diagnostics.Debug.WriteLine($"Found custom DTO name: {entityConfig.dto} for entity: {entityName}");
             return entityConfig.dto;
         }
         
+        System.Diagnostics.Debug.WriteLine($"Using default DTO name: {entityName}Dto for entity: {entityName}");
         return $"{entityName}Dto";
     }
 
     public string GetCreateDtoName(string entityName, CodeGenConfig config)
     {
-        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && !string.IsNullOrEmpty(entityConfig.createDto))
+        if (config != null && config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && !string.IsNullOrEmpty(entityConfig.createDto))
         {
             return entityConfig.createDto;
         }
@@ -134,7 +170,7 @@
 
     public string GetUpdateDtoName(string entityName, CodeGenConfig config)
     {
-        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && !string.IsNullOrEmpty(entityConfig.updateDto))
+        if (config != null && config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && !string.IsNullOrEmpty(entityConfig.updateDto))
         {
             return entityConfig.updateDto;
         }
@@ -144,7 +180,7 @@
     
     public List<string> GetIncludes(string entityName, CodeGenConfig config)
     {
-        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && entityConfig.includes != null)
+        if (config != null && config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && entityConfig.includes != null)
         {
             return entityConfig.includes;
         }
@@ -154,7 +190,7 @@
     
     public Dictionary<string, string> GetMappings(string entityName, CodeGenConfig config)
     {
-        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && entityConfig.mappings != null)
+        if (config != null && config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && entityConfig.mappings != null)
         {
             return entityConfig.mappings;
         }
@@ -165,14 +201,14 @@
     public bool ShouldGenerateMethod(string entityName, string methodName, CodeGenConfig config)
     {
         // Verificar configuración específica de entidad
-        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && 
+        if (config != null && config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && 
             entityConfig.generateMethods != null)
         {
             return GetMethodValue(entityConfig.generateMethods, methodName);
         }
         
         // Verificar configuración por defecto
-        if (config.defaults?.generateMethods != null)
+        if (config != null && config.defaults?.generateMethods != null)
         {
             return GetMethodValue(config.defaults.generateMethods, methodName);
         }
@@ -184,7 +220,7 @@
     public bool RequiresKeyForMethod(string entityName, string methodName, CodeGenConfig config)
     {
         // Verificar configuración por defecto
-        if (config.defaults?.requireKeysFor != null)
+        if (config != null && config.defaults?.requireKeysFor != null)
         {
             return GetMethodValue(config.defaults.requireKeysFor, methodName);
         }
@@ -204,14 +240,14 @@
     
     public string GetPolicy(string entityName, string methodName, CodeGenConfig config)
     {
-        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) &&
+        if (config != null && config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) &&
             entityConfig.policies != null && entityConfig.policies.TryGetValue(methodName.ToLower(), out var policy))
         {
             return policy;
         }
         
         // Si debe generar políticas según la configuración por defecto y no hay una política específica
-        if (config.defaults?.generatePolicies != null && 
+        if (config != null && config.defaults?.generatePolicies != null && 
             GetMethodValue(config.defaults.generatePolicies, methodName))
         {
             return $"{char.ToUpper(methodName[0])}{methodName.Substring(1)}{entityName}";

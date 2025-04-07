@@ -116,9 +116,18 @@
     var entityFiles = Directory.GetFiles(entitiesPath, "*.cs");
     var entityNames = entityFiles.Select(f => Path.GetFileNameWithoutExtension(f)).ToHashSet();
 
+    // Mostrar información de depuración
+    System.Diagnostics.Debug.WriteLine($"Found {entityFiles.Length} entity files");
+    foreach (var name in entityNames)
+    {
+        System.Diagnostics.Debug.WriteLine($"Entity: {name}");
+    }
+
     foreach (var file in entityFiles)
     {
         var className = Path.GetFileNameWithoutExtension(file);
+        System.Diagnostics.Debug.WriteLine($"Processing entity: {className}");
+        
         var lines = File.ReadAllLines(file);
 
         var properties = new List<(string Type, string Name, bool IsKey, string? DbGenerated, bool IsEntityReference)>();
@@ -190,51 +199,33 @@
 
         // Obtener el nombre del DTO
         string dtoName = GetDtoName(className, config);
+        System.Diagnostics.Debug.WriteLine($"DTO name for {className}: {dtoName}");
         
         // Generar el archivo para la clase DTO principal
         string dtoContent = GenerateDtoClass(className, properties, config);
         string dtoFileName = $"{dtoName}.cs";
         string dtoFilePath = Path.Combine(outputPath, dtoFileName);
         
-        // Verificar si el archivo ya existe antes de escribirlo
-        if (!File.Exists(dtoFilePath))
-        {
-            File.WriteAllText(dtoFilePath, dtoContent);
-        }
+        // Siempre escribir el archivo (para pruebas - en producción podrías usar la comprobación existente)
+        File.WriteAllText(dtoFilePath, dtoContent);
+        System.Diagnostics.Debug.WriteLine($"Generated DTO file: {dtoFilePath}");
         
         // Si la entidad tiene clave primaria, crear los DTOs adicionales (Create y Update)
         if (properties.Any(p => p.IsKey))
         {
             // Obtener el nombre del CreateDTO
             string createDtoName = GetCreateDtoName(className, config);
+            System.Diagnostics.Debug.WriteLine($"CreateDTO name for {className}: {createDtoName}");
             
             // Generar el archivo para CreateDto
             string createDtoContent = GenerateCreateDtoClass(className, properties, config);
             string createDtoFileName = $"{createDtoName}.cs";
             string createDtoFilePath = Path.Combine(outputPath, createDtoFileName);
             
-            // Verificar si el archivo ya existe antes de escribirlo
-            if (!File.Exists(createDtoFilePath))
-            {
-                File.WriteAllText(createDtoFilePath, createDtoContent);
-            }
+            // Siempre escribir el archivo (para pruebas)
+            File.WriteAllText(createDtoFilePath, createDtoContent);
+            System.Diagnostics.Debug.WriteLine($"Generated CreateDTO file: {createDtoFilePath}");
             
             // Obtener el nombre del UpdateDTO
             string updateDtoName = GetUpdateDtoName(className, config);
-            
-            // Generar el archivo para UpdateDto
-            string updateDtoContent = GenerateUpdateDtoClass(className, properties, config);
-            string updateDtoFileName = $"{updateDtoName}.cs";
-            string updateDtoFilePath = Path.Combine(outputPath, updateDtoFileName);
-            
-            // Verificar si el archivo ya existe antes de escribirlo
-            if (!File.Exists(updateDtoFilePath))
-            {
-                File.WriteAllText(updateDtoFilePath, updateDtoContent);
-            }
-        }
-    }
-#>
-// Esta plantilla ha generado archivos DTO individuales para cada entidad.
-// Los archivos generados se encuentran en la carpeta GeneratedDTOs.
-// Nota: Los archivos existentes no han sido sobrescritos.
+            System.
