@@ -36,7 +36,7 @@
 		</None>
 		<None Update="T4Templates\DbContextRegistration.tt">
 			<Generator>TextTemplatingFileGenerator</Generator>
-			<LastGenOutput>DbContextRegistration.cs</LastGenOutput>
+			<LastGenOutput>DbContextRegistration.generated.cs</LastGenOutput>
 		</None>
 		<None Update="T4Templates\IntegrationTests.tt">
 			<Generator>TextTemplatingFileGenerator</Generator>
@@ -81,20 +81,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="T4Templates\Controllers.cs">
+	  <Compile Update="T4Templates\DbContextRegistration.generated.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Controllers.tt</DependentUpon>
-	  </Compile>
-	  <Compile Update="T4Templates\Dtos.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Dtos.tt</DependentUpon>
-	  </Compile>
-	  <Compile Update="T4Templates\MappingProfiles.generated.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>MappingProfiles.tt</DependentUpon>
+	    <DependentUpon>DbContextRegistration.tt</DependentUpon>
 	  </Compile>
 	  <Compile Update="T4Templates\Services.generated.cs">
 	    <DesignTime>True</DesignTime>

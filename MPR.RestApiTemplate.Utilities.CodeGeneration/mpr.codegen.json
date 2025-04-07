@@ -1,25 +1,25 @@
 {
-    "defaults": {
-      "generateMethods": {
-        "get": true,
-        "getById": true,
-        "post": true,
-        "put": true,
-        "delete": true
-      },
-      "requireKeysFor": {
-        "getById": true,
-        "post": true,
-        "put": true,
-        "delete": true
-      },
-      "generatePolicies": {
-        "get": true,
-        "post": true,
-        "put": true,
-        "delete": true
-      }
+  "defaults": {
+    "generateMethods": {
+      "get": true,
+      "getById": true,
+      "post": true,
+      "put": true,
+      "delete": true
     },
+    "requireKeysFor": {
+      "getById": true,
+      "post": true,
+      "put": true,
+      "delete": true
+    },
+    "generatePolicies": {
+      "get": true,
+      "post": true,
+      "put": true,
+      "delete": true
+    }
+  },
   "entities": {
     "AlphabeticalListOfProducts": {
       "dto": "ListOfProductsDto",
@@ -49,12 +49,12 @@
       }
     }
   },
-    "contexts": {
-      "NorthwindDbContext": {
-        "provider": "SqlServer",
-        "entities": [
-          "Customer"
-        ]
-      }
+  "contexts": {
+    "NorthwindDbContext": {
+      "provider": "SqlServer",
+      "entities": [
+        "Customer"
+      ]
     }
   }
+}
