@@ -15,6 +15,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -30,7 +31,7 @@
 			<LastGenOutput>AutoMapperServiceRegistration.cs</LastGenOutput>
 		</None>
 		<None Update="T4Templates\Controllers.tt">
-			<LastGenOutput>Controllers.generated.cs</LastGenOutput>
+			<LastGenOutput>Controllers.cs</LastGenOutput>
 			<Generator>TextTemplatingFileGenerator</Generator>
 		</None>
 		<None Update="T4Templates\DbContextRegistration.tt">
@@ -80,6 +81,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="T4Templates\Controllers.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Controllers.tt</DependentUpon>
+	  </Compile>
 	  <Compile Update="T4Templates\Dtos.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
