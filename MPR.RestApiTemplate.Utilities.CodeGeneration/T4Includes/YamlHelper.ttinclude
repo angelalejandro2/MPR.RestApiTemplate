@@ -1,20 +1,25 @@
 <#@ assembly name="System.Core" #>
-<#@ assembly name="$(NuGetPackageRoot)yamldotnet\16.3.0\lib\net8.0\YamlDotNet.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="YamlDotNet.Serialization" #>
-<#@ import namespace="YamlDotNet.Serialization.NamingConventions" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
 
 <#+
     #nullable enable
     
-    // Clases para deserializar el YAML
+    // Clases para la configuración
     public class CodeGenConfig
     {
         public DefaultsConfig? defaults { get; set; }
         public Dictionary<string, EntityConfig>? entities { get; set; }
         public Dictionary<string, ContextConfig>? contexts { get; set; }
+
+        public CodeGenConfig()
+        {
+            defaults = new DefaultsConfig();
+            entities = new Dictionary<string, EntityConfig>();
+            contexts = new Dictionary<string, ContextConfig>();
+        }
     }
 
     public class DefaultsConfig
@@ -22,15 +27,22 @@
         public MethodsConfig? generateMethods { get; set; }
         public MethodsConfig? requireKeysFor { get; set; }
         public MethodsConfig? generatePolicies { get; set; }
+
+        public DefaultsConfig()
+        {
+            generateMethods = new MethodsConfig();
+            requireKeysFor = new MethodsConfig();
+            generatePolicies = new MethodsConfig();
+        }
     }
 
     public class MethodsConfig
     {
-        public bool get { get; set; }
-        public bool getById { get; set; }
-        public bool post { get; set; }
-        public bool put { get; set; }
-        public bool delete { get; set; }
+        public bool get { get; set; } = true;
+        public bool getById { get; set; } = true;
+        public bool post { get; set; } = true;
+        public bool put { get; set; } = true;
+        public bool delete { get; set; } = true;
     }
 
     public class EntityConfig
@@ -42,15 +54,28 @@
         public Dictionary<string, string>? mappings { get; set; }
         public MethodsConfig? generateMethods { get; set; }
         public Dictionary<string, string>? policies { get; set; }
+
+        public EntityConfig()
+        {
+            includes = new List<string>();
+            mappings = new Dictionary<string, string>();
+            generateMethods = new MethodsConfig();
+            policies = new Dictionary<string, string>();
+        }
     }
 
     public class ContextConfig
     {
         public string? provider { get; set; }
         public List<string>? entities { get; set; }
+
+        public ContextConfig()
+        {
+            entities = new List<string>();
+        }
     }
 
-    // Función para cargar y parsear el archivo YAML usando YamlDotNet
+    // Parser YAML simplificado
     public CodeGenConfig LoadYamlConfig(string hostTemplateFile)
     {
         string yamlPath = Path.Combine(Path.GetDirectoryName(hostTemplateFile), "mpr.codegen.yaml");
@@ -64,29 +89,249 @@
 
         try
         {
-            // Leer el contenido del archivo YAML
-            string yamlContent = File.ReadAllText(yamlPath);
+            var config = new CodeGenConfig();
+            string[] lines = File.ReadAllLines(yamlPath);
             
-            // Configurar el deserializador de YAML
-            var deserializer = new DeserializerBuilder()
-                .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                .Build();
+            // Variables para seguir el estado del parsing
+            Stack<string> sections = new Stack<string>();
+            string currentSection = "";
+            string currentEntity = "";
+            int currentIndent = 0;
             
-            // Deserializar el YAML a la configuración
-            var config = deserializer.Deserialize<CodeGenConfig>(yamlContent);
+            foreach (string line in lines)
+            {
+                if (string.IsNullOrWhiteSpace(line) || line.Trim().StartsWith("#"))
+                    continue;
+                
+                // Calcular indentación
+                int indent = line.Length - line.TrimStart().Length;
+                string trimmedLine = line.Trim();
+                
+                // Si la indentación disminuye, salimos de las secciones actuales
+                while (indent < currentIndent && sections.Count > 0)
+                {
+                    sections.Pop();
+                    currentIndent -= 2; // Asumimos indentación de 2 espacios
+                }
+                
+                // Determinar sección actual basada en la indentación
+                if (indent == 0)
+                {
+                    // Nivel raíz
+                    if (trimmedLine.EndsWith(":"))
+                    {
+                        sections.Clear();
+                        currentSection = trimmedLine.TrimEnd(':');
+                        sections.Push(currentSection);
+                        currentIndent = 2;
+                    }
+                }
+                else if (sections.Count > 0)
+                {
+                    // Procesar subsecciones
+                    currentSection = sections.Peek();
+                    
+                    if (trimmedLine.EndsWith(":"))
+                    {
+                        // Nueva subsección
+                        string subSection = trimmedLine.TrimEnd(':');
+                        
+                        // Manejar entidades
+                        if (currentSection == "entities" && indent == 2)
+                        {
+                            currentEntity = subSection;
+                            config.entities[currentEntity] = new EntityConfig();
+                            sections.Push(currentEntity);
+                            currentIndent = 4;
+                        }
+                        // Manejar contextos
+                        else if (currentSection == "contexts" && indent == 2)
+                        {
+                            string contextName = subSection;
+                            config.contexts[contextName] = new ContextConfig();
+                            sections.Push(contextName);
+                            currentIndent = 4;
+                        }
+                        // Otras subsecciones
+                        else if (trimmedLine.EndsWith(":"))
+                        {
+                            sections.Push(subSection);
+                            currentIndent = indent + 2;
+                        }
+                    }
+                    else
+                    {
+                        // Procesar valores
+                        string[] parts = trimmedLine.Split(new[] { ':' }, 2);
+                        if (parts.Length == 2)
+                        {
+                            string key = parts[0].Trim();
+                            string value = parts[1].Trim();
+                            
+                            // Procesar según la sección actual
+                            if (currentSection == "defaults")
+                            {
+                                ProcessDefaultsConfig(config, sections, key, value);
+                            }
+                            else if (currentSection == "entities")
+                            {
+                                ProcessEntityConfig(config, sections, key, value);
+                            }
+                            else if (currentSection == "contexts")
+                            {
+                                ProcessContextConfig(config, sections, key, value);
+                            }
+                        }
+                    }
+                }
+            }
             
-            return config ?? new CodeGenConfig();
+            return config;
         }
         catch (Exception ex)
         {
-            // En caso de error, devolver una configuración vacía
-            // En un entorno real, sería mejor registrar el error
             System.Diagnostics.Debug.WriteLine($"Error al cargar el archivo YAML: {ex.Message}");
             return new CodeGenConfig();
         }
     }
+    
+    // Procesar configuración por defecto
+    private void ProcessDefaultsConfig(CodeGenConfig config, Stack<string> sections, string key, string value)
+    {
+        if (sections.Count >= 2)
+        {
+            string section = sections.ElementAt(1);
+            
+            if (section == "generateMethods" || section == "requireKeysFor" || section == "generatePolicies")
+            {
+                MethodsConfig methodsConfig = section == "generateMethods" 
+                    ? (config.defaults.generateMethods ?? (config.defaults.generateMethods = new MethodsConfig()))
+                    : section == "requireKeysFor" 
+                        ? (config.defaults.requireKeysFor ?? (config.defaults.requireKeysFor = new MethodsConfig()))
+                        : (config.defaults.generatePolicies ?? (config.defaults.generatePolicies = new MethodsConfig()));
+                
+                SetMethodValue(methodsConfig, key, value.ToLowerInvariant() == "true");
+            }
+        }
+    }
+    
+    // Procesar configuración de entidad
+    private void ProcessEntityConfig(CodeGenConfig config, Stack<string> sections, string key, string value)
+    {
+        if (sections.Count >= 2)
+        {
+            string entityName = sections.ElementAt(1);
+            
+            if (!config.entities.ContainsKey(entityName))
+            {
+                config.entities[entityName] = new EntityConfig();
+            }
+            
+            EntityConfig entityConfig = config.entities[entityName];
+            
+            if (sections.Count == 2)
+            {
+                // Propiedades directas de la entidad
+                if (key == "dto") entityConfig.dto = value;
+                else if (key == "createDto") entityConfig.createDto = value;
+                else if (key == "updateDto") entityConfig.updateDto = value;
+            }
+            else if (sections.Count >= 3)
+            {
+                string subSection = sections.ElementAt(2);
+                
+                if (subSection == "includes")
+                {
+                    if (entityConfig.includes == null)
+                        entityConfig.includes = new List<string>();
+                    
+                    if (key == "-")
+                        entityConfig.includes.Add(value);
+                }
+                else if (subSection == "mappings")
+                {
+                    if (entityConfig.mappings == null)
+                        entityConfig.mappings = new Dictionary<string, string>();
+                    
+                    entityConfig.mappings[key] = value;
+                }
+                else if (subSection == "generateMethods")
+                {
+                    if (entityConfig.generateMethods == null)
+                        entityConfig.generateMethods = new MethodsConfig();
+                    
+                    SetMethodValue(entityConfig.generateMethods, key, value.ToLowerInvariant() == "true");
+                }
+                else if (subSection == "policies")
+                {
+                    if (entityConfig.policies == null)
+                        entityConfig.policies = new Dictionary<string, string>();
+                    
+                    entityConfig.policies[key] = value;
+                }
+            }
+        }
+    }
+    
+    // Procesar configuración de contexto
+    private void ProcessContextConfig(CodeGenConfig config, Stack<string> sections, string key, string value)
+    {
+        if (sections.Count >= 2)
+        {
+            string contextName = sections.ElementAt(1);
+            
+            if (!config.contexts.ContainsKey(contextName))
+            {
+                config.contexts[contextName] = new ContextConfig();
+            }
+            
+            ContextConfig contextConfig = config.contexts[contextName];
+            
+            if (sections.Count == 2)
+            {
+                if (key == "provider") 
+                    contextConfig.provider = value;
+            }
+            else if (sections.Count >= 3)
+            {
+                string subSection = sections.ElementAt(2);
+                
+                if (subSection == "entities")
+                {
+                    if (contextConfig.entities == null)
+                        contextConfig.entities = new List<string>();
+                    
+                    if (key == "-")
+                        contextConfig.entities.Add(value);
+                }
+            }
+        }
+    }
+    
+    // Establecer valor en MethodsConfig
+    private void SetMethodValue(MethodsConfig methodsConfig, string method, bool value)
+    {
+        switch (method.ToLowerInvariant())
+        {
+            case "get":
+                methodsConfig.get = value;
+                break;
+            case "getbyid":
+                methodsConfig.getById = value;
+                break;
+            case "post":
+                methodsConfig.post = value;
+                break;
+            case "put":
+                methodsConfig.put = value;
+                break;
+            case "delete":
+                methodsConfig.delete = value;
+                break;
+        }
+    }
 
-    // Obtener el nombre de la clase DTO para una entidad
+    // Métodos de ayuda para acceder a la configuración
     public string GetDtoName(string entityName, CodeGenConfig config)
     {
         if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && !string.IsNullOrEmpty(entityConfig.dto))
@@ -97,7 +342,6 @@
         return $"{entityName}Dto";
     }
 
-    // Obtener el nombre de la clase CreateDTO para una entidad
     public string GetCreateDtoName(string entityName, CodeGenConfig config)
     {
         if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && !string.IsNullOrEmpty(entityConfig.createDto))
@@ -108,7 +352,6 @@
         return $"{entityName}CreateDto";
     }
 
-    // Obtener el nombre de la clase UpdateDTO para una entidad
     public string GetUpdateDtoName(string entityName, CodeGenConfig config)
     {
         if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && !string.IsNullOrEmpty(entityConfig.updateDto))
@@ -119,7 +362,6 @@
         return $"{entityName}UpdateDto";
     }
     
-    // Obtener las includes para una entidad
     public List<string> GetIncludes(string entityName, CodeGenConfig config)
     {
         if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && entityConfig.includes != null)
@@ -130,7 +372,6 @@
         return new List<string>();
     }
     
-    // Obtener los mappings para una entidad
     public Dictionary<string, string> GetMappings(string entityName, CodeGenConfig config)
     {
         if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && entityConfig.mappings != null)
@@ -141,7 +382,6 @@
         return new Dictionary<string, string>();
     }
     
-    // Verificar si un método debería generarse para una entidad
     public bool ShouldGenerateMethod(string entityName, string methodName, CodeGenConfig config)
     {
         // Verificar configuración específica de entidad
@@ -161,22 +401,8 @@
         return true;
     }
     
-    // Verificar si se requiere clave para un método
     public bool RequiresKeyForMethod(string entityName, string methodName, CodeGenConfig config)
     {
-        // Verificar configuración específica de entidad
-        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) &&
-            entityConfig.generateMethods != null)
-        {
-            // Nota: esto asume que tienes una propiedad requireKeysFor en EntityConfig, 
-            // lo cual no estaba en tu YAML original. Adapta según sea necesario.
-            var requireKeysConfig = entityConfig.generateMethods;  // Esto es una simplificación
-            if (requireKeysConfig != null)
-            {
-                return GetMethodValue(requireKeysConfig, methodName);
-            }
-        }
-        
         // Verificar configuración por defecto
         if (config.defaults?.requireKeysFor != null)
         {
@@ -196,7 +422,6 @@
         }
     }
     
-    // Obtener la política para un método
     public string GetPolicy(string entityName, string methodName, CodeGenConfig config)
     {
         if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) &&

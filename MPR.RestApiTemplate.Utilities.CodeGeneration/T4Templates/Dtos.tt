@@ -7,7 +7,7 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Text.RegularExpressions" #>
-<#@ include file="YamlHelper.ttinclude" #>
+<#@ include file="..\T4Includes\YamlHelper.ttinclude" #>
 
 <#
     #nullable enable
@@ -98,7 +98,7 @@
         return sb.ToString();
     }
     
-    // Cargar la configuración YAML
+    // Cargar la configuración YAML usando nuestro parser simple
     var config = LoadYamlConfig(Host.TemplateFile);
     
     // Directorio donde se encuentran las entidades
