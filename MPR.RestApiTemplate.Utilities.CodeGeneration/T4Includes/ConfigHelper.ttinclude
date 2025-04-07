@@ -1,0 +1,242 @@
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Web.Extensions" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Web.Script.Serialization" #>
+
+<#+
+    #nullable enable
+    
+    // Clases para la configuración
+    public class CodeGenConfig
+    {
+        public DefaultsConfig? defaults { get; set; }
+        public Dictionary<string, EntityConfig>? entities { get; set; }
+        public Dictionary<string, ContextConfig>? contexts { get; set; }
+
+        public CodeGenConfig()
+        {
+            defaults = new DefaultsConfig();
+            entities = new Dictionary<string, EntityConfig>();
+            contexts = new Dictionary<string, ContextConfig>();
+        }
+    }
+
+    public class DefaultsConfig
+    {
+        public MethodsConfig? generateMethods { get; set; }
+        public MethodsConfig? requireKeysFor { get; set; }
+        public MethodsConfig? generatePolicies { get; set; }
+
+        public DefaultsConfig()
+        {
+            generateMethods = new MethodsConfig();
+            requireKeysFor = new MethodsConfig();
+            generatePolicies = new MethodsConfig();
+        }
+    }
+
+    public class MethodsConfig
+    {
+        public bool get { get; set; } = true;
+        public bool getById { get; set; } = true;
+        public bool post { get; set; } = true;
+        public bool put { get; set; } = true;
+        public bool delete { get; set; } = true;
+    }
+
+    public class EntityConfig
+    {
+        public string? dto { get; set; }
+        public string? createDto { get; set; }
+        public string? updateDto { get; set; }
+        public List<string>? includes { get; set; }
+        public Dictionary<string, string>? mappings { get; set; }
+        public MethodsConfig? generateMethods { get; set; }
+        public Dictionary<string, string>? policies { get; set; }
+
+        public EntityConfig()
+        {
+            includes = new List<string>();
+            mappings = new Dictionary<string, string>();
+            generateMethods = new MethodsConfig();
+            policies = new Dictionary<string, string>();
+        }
+    }
+
+    public class ContextConfig
+    {
+        public string? provider { get; set; }
+        public List<string>? entities { get; set; }
+
+        public ContextConfig()
+        {
+            entities = new List<string>();
+        }
+    }
+
+    // Cargar la configuración desde JSON
+    public CodeGenConfig LoadConfig(string hostTemplateFile)
+    {
+        // Buscar primero el archivo JSON
+        string jsonPath = Path.Combine(Path.GetDirectoryName(hostTemplateFile), "mpr.codegen.json");
+        
+        // Si existe el archivo JSON, cargarlo
+        if (File.Exists(jsonPath))
+        {
+            try
+            {
+                string jsonContent = File.ReadAllText(jsonPath);
+                var serializer = new JavaScriptSerializer();
+                var config = serializer.Deserialize<CodeGenConfig>(jsonContent);
+                return config ?? new CodeGenConfig();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al cargar el archivo JSON: {ex.Message}");
+                return new CodeGenConfig();
+            }
+        }
+        
+        // Si no hay archivo JSON, intentar con YAML (para compatibilidad hacia atrás)
+        string yamlPath = Path.Combine(Path.GetDirectoryName(hostTemplateFile), "mpr.codegen.yaml");
+        if (File.Exists(yamlPath))
+        {
+            System.Diagnostics.Debug.WriteLine("Archivo JSON no encontrado. Recomendamos convertir el YAML a JSON para mejor compatibilidad.");
+            return new CodeGenConfig(); // En un caso real, podrías intentar una conversión simple
+        }
+        
+        // Si no hay configuración, devolver valores por defecto
+        return new CodeGenConfig();
+    }
+
+    // Métodos de ayuda para acceder a la configuración
+    public string GetDtoName(string entityName, CodeGenConfig config)
+    {
+        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && !string.IsNullOrEmpty(entityConfig.dto))
+        {
+            return entityConfig.dto;
+        }
+        
+        return $"{entityName}Dto";
+    }
+
+    public string GetCreateDtoName(string entityName, CodeGenConfig config)
+    {
+        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && !string.IsNullOrEmpty(entityConfig.createDto))
+        {
+            return entityConfig.createDto;
+        }
+        
+        return $"{entityName}CreateDto";
+    }
+
+    public string GetUpdateDtoName(string entityName, CodeGenConfig config)
+    {
+        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && !string.IsNullOrEmpty(entityConfig.updateDto))
+        {
+            return entityConfig.updateDto;
+        }
+        
+        return $"{entityName}UpdateDto";
+    }
+    
+    public List<string> GetIncludes(string entityName, CodeGenConfig config)
+    {
+        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && entityConfig.includes != null)
+        {
+            return entityConfig.includes;
+        }
+        
+        return new List<string>();
+    }
+    
+    public Dictionary<string, string> GetMappings(string entityName, CodeGenConfig config)
+    {
+        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && entityConfig.mappings != null)
+        {
+            return entityConfig.mappings;
+        }
+        
+        return new Dictionary<string, string>();
+    }
+    
+    public bool ShouldGenerateMethod(string entityName, string methodName, CodeGenConfig config)
+    {
+        // Verificar configuración específica de entidad
+        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && 
+            entityConfig.generateMethods != null)
+        {
+            return GetMethodValue(entityConfig.generateMethods, methodName);
+        }
+        
+        // Verificar configuración por defecto
+        if (config.defaults?.generateMethods != null)
+        {
+            return GetMethodValue(config.defaults.generateMethods, methodName);
+        }
+        
+        // Valor predeterminado si no hay configuración
+        return true;
+    }
+    
+    public bool RequiresKeyForMethod(string entityName, string methodName, CodeGenConfig config)
+    {
+        // Verificar configuración por defecto
+        if (config.defaults?.requireKeysFor != null)
+        {
+            return GetMethodValue(config.defaults.requireKeysFor, methodName);
+        }
+        
+        // Valores predeterminados por método si no hay configuración
+        switch (methodName.ToLower())
+        {
+            case "getbyid":
+            case "put":
+            case "post":
+            case "delete":
+                return true;
+            default:
+                return false;
+        }
+    }
+    
+    public string GetPolicy(string entityName, string methodName, CodeGenConfig config)
+    {
+        if (config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) &&
+            entityConfig.policies != null && entityConfig.policies.TryGetValue(methodName.ToLower(), out var policy))
+        {
+            return policy;
+        }
+        
+        // Si debe generar políticas según la configuración por defecto y no hay una política específica
+        if (config.defaults?.generatePolicies != null && 
+            GetMethodValue(config.defaults.generatePolicies, methodName))
+        {
+            return $"{char.ToUpper(methodName[0])}{methodName.Substring(1)}{entityName}";
+        }
+        
+        return string.Empty;
+    }
+    
+    // Obtener el valor de un método desde MethodsConfig
+    private bool GetMethodValue(MethodsConfig methodsConfig, string methodName)
+    {
+        switch (methodName.ToLower())
+        {
+            case "get":
+                return methodsConfig.get;
+            case "getbyid":
+                return methodsConfig.getById;
+            case "post":
+                return methodsConfig.post;
+            case "put":
+                return methodsConfig.put;
+            case "delete":
+                return methodsConfig.delete;
+            default:
+                return false;
+        }
+    }
+#>

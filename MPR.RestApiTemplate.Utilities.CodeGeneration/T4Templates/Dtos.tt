@@ -7,7 +7,7 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Text.RegularExpressions" #>
-<#@ include file="..\T4Includes\YamlHelper.ttinclude" #>
+<#@ include file="..\T4Includes\ConfigHelper.ttinclude" #>
 
 <#
     #nullable enable
@@ -98,8 +98,8 @@
         return sb.ToString();
     }
     
-    // Cargar la configuración YAML usando nuestro parser simple
-    var config = LoadYamlConfig(Host.TemplateFile);
+    // Cargar la configuración JSON
+    var config = LoadConfig(Host.TemplateFile);
     
     // Directorio donde se encuentran las entidades
     string entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Domain\Entities");
