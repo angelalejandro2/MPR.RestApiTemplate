@@ -80,6 +80,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="T4Templates\Dtos.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Dtos.tt</DependentUpon>
+	  </Compile>
 	  <Compile Update="T4Templates\MappingProfiles.generated.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
