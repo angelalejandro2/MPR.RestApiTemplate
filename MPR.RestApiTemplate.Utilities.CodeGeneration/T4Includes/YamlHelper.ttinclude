@@ -1,5 +1,5 @@
 <#@ assembly name="System.Core" #>
-<#@ assembly name="$(SolutionDir)packages\YamlDotNet.13.1.1\lib\net47\YamlDotNet.dll" #>
+<#@ assembly name="$(NuGetPackageRoot)yamldotnet\16.3.0\lib\net8.0\YamlDotNet.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Collections.Generic" #>
