@@ -45,7 +45,7 @@ foreach (var file in files)
     string interfaceContent = GenerateRepositoryInterface(className);
     
     // Nombre del archivo de salida
-    string outputFileName = $"I{className}Repository.generated.cs";
+    string outputFileName = $"I{className}Repository.cs";
     string outputFilePath = Path.Combine(outputPath, outputFileName);
     
     // Verificar si el archivo ya existe antes de escribirlo

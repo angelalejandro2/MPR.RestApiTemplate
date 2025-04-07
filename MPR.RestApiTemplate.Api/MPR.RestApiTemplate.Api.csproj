@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <Folder Include="Startup\" />
+    <Folder Include="Startup\Generated\" />
   </ItemGroup>
 
 </Project>

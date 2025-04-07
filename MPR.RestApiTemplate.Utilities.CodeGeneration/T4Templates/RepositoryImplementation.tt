@@ -62,7 +62,7 @@ foreach (var dbContext in dbContexts)
         string repositoryContent = GenerateRepositoryImplementation(entityName, dbContextName, dbContextNameLowered);
         
         // Nombre del archivo de salida
-        string outputFileName = $"{entityName}Repository.generated.cs";
+        string outputFileName = $"{entityName}Repository.cs";
         string outputFilePath = Path.Combine(outputPath, outputFileName);
         
         // Verificar si el archivo ya existe antes de escribirlo

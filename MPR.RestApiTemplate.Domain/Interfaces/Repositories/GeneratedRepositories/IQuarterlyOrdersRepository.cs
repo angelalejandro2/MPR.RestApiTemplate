@@ -1,7 +1,7 @@
 using MPR.RestApiTemplate.Domain.Entities;
 namespace MPR.RestApiTemplate.Domain.Interfaces.Repositories
 {
-    public interface IRegionRepository : IGenericRepository<Region>
+    public partial interface IQuarterlyOrdersRepository : IGenericRepository<QuarterlyOrders>
     {
     }
 }

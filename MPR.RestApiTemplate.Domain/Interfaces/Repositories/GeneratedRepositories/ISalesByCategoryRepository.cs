@@ -1,7 +1,7 @@
 using MPR.RestApiTemplate.Domain.Entities;
 namespace MPR.RestApiTemplate.Domain.Interfaces.Repositories
 {
-    public interface ISalesTotalsByAmountRepository : IGenericRepository<SalesTotalsByAmount>
+    public partial interface ISalesByCategoryRepository : IGenericRepository<SalesByCategory>
     {
     }
 }
