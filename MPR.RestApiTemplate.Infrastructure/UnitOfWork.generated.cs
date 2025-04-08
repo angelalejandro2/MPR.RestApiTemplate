@@ -3,84 +3,30 @@
 
 using MPR.RestApiTemplate.Domain.Interfaces;
 using MPR.RestApiTemplate.Domain.Interfaces.Repositories;
-using MPR.RestApiTemplate.Infrastructure.Context;
 using MPR.RestApiTemplate.Infrastructure.Repositories;
 
 namespace MPR.RestApiTemplate.Infrastructure
 {
-	public partial class UnitOfWork(NorthwindContext northwindContext): IUnitOfWork
+	public partial class UnitOfWork(): IUnitOfWork
 	{
-		private readonly NorthwindContext _northwindContext = northwindContext;
+		// TODO: Add dbContext intances here
 
-		private IAlphabeticalListOfProductsRepository? _alphabeticalListOfProductsRepository;
-		private ICategoriesRepository? _categoriesRepository;
-		private ICategorySalesFor1997Repository? _categorySalesFor1997Repository;
-		private ICurrentProductListRepository? _currentProductListRepository;
-		private ICustomerAndSuppliersByCityRepository? _customerAndSuppliersByCityRepository;
-		private ICustomerDemographicsRepository? _customerDemographicsRepository;
-		private ICustomersRepository? _customersRepository;
-		private IEmployeesRepository? _employeesRepository;
-		private IInvoicesRepository? _invoicesRepository;
-		private IOrderDetailsRepository? _orderDetailsRepository;
-		private IOrderDetailsExtendedRepository? _orderDetailsExtendedRepository;
-		private IOrderSubtotalsRepository? _orderSubtotalsRepository;
-		private IOrdersRepository? _ordersRepository;
-		private IOrdersQryRepository? _ordersQryRepository;
-		private IProductSalesFor1997Repository? _productSalesFor1997Repository;
-		private IProductsRepository? _productsRepository;
-		private IProductsAboveAveragePriceRepository? _productsAboveAveragePriceRepository;
-		private IProductsByCategoryRepository? _productsByCategoryRepository;
-		private IQuarterlyOrdersRepository? _quarterlyOrdersRepository;
-		private IRegionRepository? _regionRepository;
-		private ISalesByCategoryRepository? _salesByCategoryRepository;
-		private ISalesTotalsByAmountRepository? _salesTotalsByAmountRepository;
-		private IShippersRepository? _shippersRepository;
-		private ISummaryOfSalesByQuarterRepository? _summaryOfSalesByQuarterRepository;
-		private ISummaryOfSalesByYearRepository? _summaryOfSalesByYearRepository;
-		private ISuppliersRepository? _suppliersRepository;
-		private ITerritoriesRepository? _territoriesRepository;
-
-		public IAlphabeticalListOfProductsRepository AlphabeticalListOfProductsRepository => _alphabeticalListOfProductsRepository ??= new AlphabeticalListOfProductsRepository(_northwindContext);
-		public ICategoriesRepository CategoriesRepository => _categoriesRepository ??= new CategoriesRepository(_northwindContext);
-		public ICategorySalesFor1997Repository CategorySalesFor1997Repository => _categorySalesFor1997Repository ??= new CategorySalesFor1997Repository(_northwindContext);
-		public ICurrentProductListRepository CurrentProductListRepository => _currentProductListRepository ??= new CurrentProductListRepository(_northwindContext);
-		public ICustomerAndSuppliersByCityRepository CustomerAndSuppliersByCityRepository => _customerAndSuppliersByCityRepository ??= new CustomerAndSuppliersByCityRepository(_northwindContext);
-		public ICustomerDemographicsRepository CustomerDemographicsRepository => _customerDemographicsRepository ??= new CustomerDemographicsRepository(_northwindContext);
-		public ICustomersRepository CustomersRepository => _customersRepository ??= new CustomersRepository(_northwindContext);
-		public IEmployeesRepository EmployeesRepository => _employeesRepository ??= new EmployeesRepository(_northwindContext);
-		public IInvoicesRepository InvoicesRepository => _invoicesRepository ??= new InvoicesRepository(_northwindContext);
-		public IOrderDetailsRepository OrderDetailsRepository => _orderDetailsRepository ??= new OrderDetailsRepository(_northwindContext);
-		public IOrderDetailsExtendedRepository OrderDetailsExtendedRepository => _orderDetailsExtendedRepository ??= new OrderDetailsExtendedRepository(_northwindContext);
-		public IOrderSubtotalsRepository OrderSubtotalsRepository => _orderSubtotalsRepository ??= new OrderSubtotalsRepository(_northwindContext);
-		public IOrdersRepository OrdersRepository => _ordersRepository ??= new OrdersRepository(_northwindContext);
-		public IOrdersQryRepository OrdersQryRepository => _ordersQryRepository ??= new OrdersQryRepository(_northwindContext);
-		public IProductSalesFor1997Repository ProductSalesFor1997Repository => _productSalesFor1997Repository ??= new ProductSalesFor1997Repository(_northwindContext);
-		public IProductsRepository ProductsRepository => _productsRepository ??= new ProductsRepository(_northwindContext);
-		public IProductsAboveAveragePriceRepository ProductsAboveAveragePriceRepository => _productsAboveAveragePriceRepository ??= new ProductsAboveAveragePriceRepository(_northwindContext);
-		public IProductsByCategoryRepository ProductsByCategoryRepository => _productsByCategoryRepository ??= new ProductsByCategoryRepository(_northwindContext);
-		public IQuarterlyOrdersRepository QuarterlyOrdersRepository => _quarterlyOrdersRepository ??= new QuarterlyOrdersRepository(_northwindContext);
-		public IRegionRepository RegionRepository => _regionRepository ??= new RegionRepository(_northwindContext);
-		public ISalesByCategoryRepository SalesByCategoryRepository => _salesByCategoryRepository ??= new SalesByCategoryRepository(_northwindContext);
-		public ISalesTotalsByAmountRepository SalesTotalsByAmountRepository => _salesTotalsByAmountRepository ??= new SalesTotalsByAmountRepository(_northwindContext);
-		public IShippersRepository ShippersRepository => _shippersRepository ??= new ShippersRepository(_northwindContext);
-		public ISummaryOfSalesByQuarterRepository SummaryOfSalesByQuarterRepository => _summaryOfSalesByQuarterRepository ??= new SummaryOfSalesByQuarterRepository(_northwindContext);
-		public ISummaryOfSalesByYearRepository SummaryOfSalesByYearRepository => _summaryOfSalesByYearRepository ??= new SummaryOfSalesByYearRepository(_northwindContext);
-		public ISuppliersRepository SuppliersRepository => _suppliersRepository ??= new SuppliersRepository(_northwindContext);
-		public ITerritoriesRepository TerritoriesRepository => _territoriesRepository ??= new TerritoriesRepository(_northwindContext);
+		// TODO: Add repository implementations here with their corresponding DbContext
 
 		public virtual async Task<int> SaveChangesAsync() {
-			int northwindContextAffectedRows =  await _northwindContext.SaveChangesAsync();
+            // TODO: Call SaveChanges for each DbContext instance
 
-			int totalAffectedRows = 0;
-			totalAffectedRows += northwindContextAffectedRows;
+            int totalAffectedRows = 0;
 
-			return totalAffectedRows;
+            // TODO: Add totalRowsAffected for each DbContext saveChanges call
+
+            return totalAffectedRows;
 		}
 
 		public virtual void Dispose()
 		{
-			_northwindContext.Dispose();
-			GC.SuppressFinalize(this);
+            // TODO: Dispose each DbContext instance here 
+            GC.SuppressFinalize(this);
 		}
 	}
 }

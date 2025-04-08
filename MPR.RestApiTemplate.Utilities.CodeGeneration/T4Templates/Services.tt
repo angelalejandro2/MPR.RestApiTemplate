@@ -81,7 +81,7 @@
     var entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Domain\Entities");
     
     // Directorio donde se guardarán los servicios generados
-    string outputPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Application\Services\GeneratedServices");
+    string outputPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Application\Services\Generated");
     
     // Crear el directorio de salida si no existe
     if (!Directory.Exists(outputPath))

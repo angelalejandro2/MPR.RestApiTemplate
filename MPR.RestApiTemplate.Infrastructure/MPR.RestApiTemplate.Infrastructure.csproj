@@ -29,7 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Context\" />
     <Folder Include="Migrations\" />
+    <Folder Include="Repositories\Generated\" />
   </ItemGroup>
 
 </Project>

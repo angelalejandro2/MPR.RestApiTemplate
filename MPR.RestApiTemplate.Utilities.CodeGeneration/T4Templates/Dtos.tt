@@ -95,7 +95,7 @@
     string entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Domain\Entities");
     
     // Directorio donde se guardarán los DTOs generados
-    string outputPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Application\Dtos\GeneratedDtos");
+    string outputPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Application\Dtos\Generated");
     
     // Crear el directorio de salida si no existe
     if (!Directory.Exists(outputPath))
