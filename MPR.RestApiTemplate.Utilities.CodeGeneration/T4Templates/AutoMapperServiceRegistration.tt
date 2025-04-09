@@ -8,7 +8,7 @@
 
 <#
     // Directorio donde se encuentran las clases de mapeo generadas
-    string mappingsDir = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Application\Mappings\GeneratedMappings");
+    string mappingsDir = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Application\Mappings\Generated");
 
     if (!Directory.Exists(mappingsDir))
     {

@@ -3,13 +3,14 @@
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 
+
 namespace MPR.RestApiTemplate.Application.Mappings;
 
 public static class AutoMapperRegistration
 {
     public static IServiceCollection AddMappingProfiles(this IServiceCollection services)
     {
-        // TODO: Add mapping pofiles registrations here
+
 
         return services;
     }

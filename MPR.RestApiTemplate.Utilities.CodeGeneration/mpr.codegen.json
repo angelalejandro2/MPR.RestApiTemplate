@@ -21,7 +21,7 @@
     }
   },
   "entities": {
-    "AlphabeticalListOfProducts": {
+    "A00001234": {
       "dto": "ListOfProductsDto",
       "createDto": "CreateListOfProductsDto",
       "updateDto": "UpdateListOfProductsDto",
@@ -39,7 +39,7 @@
         "getById": true,
         "post": true,
         "put": true,
-        "delete": true
+        "delete": false
       },
       "policies": {
         "get": "ReadCustomer",

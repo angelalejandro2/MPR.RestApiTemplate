@@ -9,24 +9,19 @@ namespace MPR.RestApiTemplate.Infrastructure
 {
 	public partial class UnitOfWork(): IUnitOfWork
 	{
-		// TODO: Add dbContext intances here
-
-		// TODO: Add repository implementations here with their corresponding DbContext
 
 		public virtual async Task<int> SaveChangesAsync() {
-            // TODO: Call SaveChanges for each DbContext instance
 
-            int totalAffectedRows = 0;
+			int totalAffectedRows = 0;
 
-            // TODO: Add totalRowsAffected for each DbContext saveChanges call
 
-            return totalAffectedRows;
+			return totalAffectedRows;
 		}
 
 		public virtual void Dispose()
 		{
-            // TODO: Dispose each DbContext instance here 
-            GC.SuppressFinalize(this);
+
+			GC.SuppressFinalize(this);
 		}
 	}
 }

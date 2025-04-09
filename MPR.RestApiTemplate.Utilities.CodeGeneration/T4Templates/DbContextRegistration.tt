@@ -121,10 +121,10 @@
     string outputFilePath = Path.Combine(outputPath, outputFileName);
     
     // Verificar si el archivo ya existe antes de escribirlo
-    if (!File.Exists(outputFilePath))
-    {
+    //if (!File.Exists(outputFilePath))
+    //{
         File.WriteAllText(outputFilePath, classContent);
-    }
+    //}
 #>
 // Esta plantilla ha generado la clase DbContextRegistration para registrar los contextos de base de datos.
 // El archivo generado se encuentra en la carpeta Api/Startup/Generated.

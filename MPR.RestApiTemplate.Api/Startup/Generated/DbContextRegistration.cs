@@ -26,7 +26,7 @@ namespace MPR.RestApiTemplate.Infrastructure.Context
 
         protected virtual void ConfigureDbContexts()
         {
-            // TODO: Add context registrations here
+          
         }
     }
 

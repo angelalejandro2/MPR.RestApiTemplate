@@ -8,7 +8,7 @@
 
 <#
     // Directorio donde se encuentran los servicios generados
-    string servicesDir = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Application\Services\GeneratedServices");
+    string servicesDir = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Application\Services\Generated");
 
     // Inicializar lista para almacenar nombres de servicios
     var serviceNames = new List<string>();
