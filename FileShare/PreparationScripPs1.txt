@@ -1,0 +1,260 @@
+param (
+    [Parameter(Mandatory=$true)]
+    [string]$SolutionDir,
+    
+    [Parameter(Mandatory=$true)]
+    [string]$ProjectDir,
+    
+    [Parameter(Mandatory=$true)]
+    [string]$Configuration
+)
+
+# Setup logging
+$logFile = Join-Path $ProjectDir "template-preparation.log"
+function Write-Log {
+    param([string]$message)
+    
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    "$timestamp - $message" | Out-File -FilePath $logFile -Append
+    Write-Host $message
+}
+
+Write-Log "Starting modern .NET template preparation..."
+Write-Log "Solution Directory: $SolutionDir"
+Write-Log "Project Directory: $ProjectDir"
+Write-Log "Configuration: $Configuration"
+
+# Define directories
+$templateOutputDir = Join-Path $ProjectDir "Content\Templates"
+$tempWorkingDir = Join-Path $ProjectDir "temp_template_working"
+
+# Create directories if they don't exist
+if (-not (Test-Path $templateOutputDir)) {
+    New-Item -ItemType Directory -Path $templateOutputDir -Force | Out-Null
+    Write-Log "Created template output directory: $templateOutputDir"
+}
+
+if (Test-Path $tempWorkingDir) {
+    Remove-Item -Path $tempWorkingDir -Recurse -Force
+    Write-Log "Cleaned up existing temporary working directory"
+}
+
+New-Item -ItemType Directory -Path $tempWorkingDir -Force | Out-Null
+Write-Log "Created temporary working directory: $tempWorkingDir"
+
+# Copy solution files to the temporary working directory
+Write-Log "Copying solution files to temporary working directory..."
+$excludeDirs = @(
+    ".vs",
+    "bin",
+    "obj",
+    "packages",
+    "node_modules",
+    ".git",
+    "TestResults"
+)
+
+$excludeFiles = @(
+    "*.user",
+    "*.vsix",
+    "*.suo",
+    "*.cache",
+    "*.log"
+)
+
+# Get all items from solution directory
+$allItems = Get-ChildItem -Path $SolutionDir -Recurse
+
+# Filter out items that should be excluded
+$filteredItems = $allItems | Where-Object {
+    $item = $_
+    $exclude = $false
+    
+    # Check if item is in an excluded directory
+    foreach ($dir in $excludeDirs) {
+        if ($item.FullName -match [regex]::Escape($dir)) {
+            $exclude = $true
+            break
+        }
+    }
+    
+    # Check if item matches an excluded file pattern
+    if (-not $exclude -and $item.PSIsContainer -eq $false) {
+        foreach ($pattern in $excludeFiles) {
+            if ($item.Name -like $pattern) {
+                $exclude = $true
+                break
+            }
+        }
+    }
+    
+    return -not $exclude
+}
+
+# Copy filtered items to temporary working directory
+foreach ($item in $filteredItems) {
+    $relativePath = $item.FullName.Substring($SolutionDir.Length)
+    $destinationPath = Join-Path $tempWorkingDir $relativePath
+    
+    if ($item.PSIsContainer) {
+        # Create directory
+        if (-not (Test-Path $destinationPath)) {
+            New-Item -ItemType Directory -Path $destinationPath -Force | Out-Null
+        }
+    } else {
+        # Create directory structure if it doesn't exist
+        $destinationDir = Split-Path -Path $destinationPath -Parent
+        if (-not (Test-Path $destinationDir)) {
+            New-Item -ItemType Directory -Path $destinationDir -Force | Out-Null
+        }
+        
+        # Copy file
+        Copy-Item -Path $item.FullName -Destination $destinationPath -Force
+    }
+}
+
+Write-Log "Files copied to working directory successfully"
+
+# Replace solution name placeholders with template parameters
+Write-Log "Replacing solution name placeholders with template parameters..."
+$solutionName = (Get-Item $SolutionDir).BaseName
+$filesToProcess = Get-ChildItem -Path $tempWorkingDir -Recurse -File | 
+    Where-Object { $_.Extension -in ".cs", ".csproj", ".sln", ".xml", ".config", ".json", ".cshtml", ".razor", ".md", ".txt" }
+
+foreach ($file in $filesToProcess) {
+    Write-Log "Processing file: $($file.FullName)"
+    $content = Get-Content -Path $file.FullName -Raw -Encoding UTF8
+    
+    if ($content -match $solutionName) {
+        $updatedContent = $content -replace [regex]::Escape($solutionName), '#{SolutionName}#'
+        Set-Content -Path $file.FullName -Value $updatedContent -Encoding UTF8
+        Write-Log "  - Replaced solution name placeholders"
+    }
+}
+
+# Create the template.json file for modern .NET templating
+Write-Log "Creating the template.json file..."
+$templateJsonPath = Join-Path $tempWorkingDir ".template.config\template.json"
+$templateJsonDir = Split-Path -Path $templateJsonPath -Parent
+
+if (-not (Test-Path $templateJsonDir)) {
+    New-Item -ItemType Directory -Path $templateJsonDir -Force | Out-Null
+    Write-Log "Created .template.config directory"
+}
+
+$templateJsonContent = @"
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Your Name",
+  "classifications": [ "Common", "Console" ],
+  "identity": "YourCompany.${solutionName}",
+  "name": "${solutionName} Template",
+  "shortName": "${solutionName}",
+  "description": "A template for ${solutionName}",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "#{SolutionName}#",
+  "preferNameDirectory": true,
+  "symbols": {
+    "Framework": {
+      "type": "parameter",
+      "description": "The target framework for the project.",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "net9.0",
+          "description": "Target .NET 9.0"
+        }
+      ],
+      "defaultValue": "net9.0"
+    }
+  },
+  "guids": [
+  ],
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "exclude": [
+            ".template.config/**/*",
+            "**/.vs/**",
+            "**/bin/**",
+            "**/obj/**",
+            "**/*.user",
+            "**/*.vsix",
+            "**/*.suo"
+          ]
+        }
+      ]
+    }
+  ]
+}
+"@
+
+Set-Content -Path $templateJsonPath -Value $templateJsonContent -Encoding UTF8
+Write-Log "Created template.json file: $templateJsonPath"
+
+# Create the template package directory structure
+Write-Log "Preparing template package..."
+$nupkgDir = Join-Path $tempWorkingDir "nupkg"
+New-Item -ItemType Directory -Path $nupkgDir -Force | Out-Null
+
+# Create the .nuspec file
+$nuspecPath = Join-Path $nupkgDir "${solutionName}Template.nuspec"
+$nuspecContent = @"
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>${solutionName}Template</id>
+    <version>1.0.0</version>
+    <description>A template for ${solutionName}</description>
+    <authors>Your Name</authors>
+    <packageTypes>
+      <packageType name="Template" />
+    </packageTypes>
+  </metadata>
+  <files>
+    <file src="..\**\*" exclude="..\nupkg\**\*;..\**\bin\**;..\**\obj\**;..\**\.vs\**" target="content" />
+  </files>
+</package>
+"@
+
+Set-Content -Path $nuspecPath -Value $nuspecContent -Encoding UTF8
+Write-Log "Created .nuspec file: $nuspecPath"
+
+# Create NuGet package
+Write-Log "Creating NuGet package..."
+$templatePackagePath = Join-Path $templateOutputDir "${solutionName}Template.nupkg"
+
+# Check if nuget.exe is in PATH, if not, download it
+$nugetCommand = Get-Command nuget -ErrorAction SilentlyContinue
+if (-not $nugetCommand) {
+    $nugetPath = Join-Path $ProjectDir "nuget.exe"
+    if (-not (Test-Path $nugetPath)) {
+        Write-Log "Downloading nuget.exe..."
+        Invoke-WebRequest -Uri "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe" -OutFile $nugetPath
+    }
+} else {
+    $nugetPath = "nuget"
+}
+
+# Pack the template using nuget
+Push-Location $nupkgDir
+& $nugetPath pack "${solutionName}Template.nuspec" -OutputDirectory $templateOutputDir
+$packResult = $LASTEXITCODE
+Pop-Location
+
+if ($packResult -eq 0) {
+    Write-Log "NuGet package created successfully: $templatePackagePath"
+} else {
+    Write-Log "Error creating NuGet package. Exit code: $packResult"
+}
+
+# Clean up the temporary working directory
+Write-Log "Cleaning up temporary working directory..."
+Remove-Item -Path $tempWorkingDir -Recurse -Force
+Write-Log "Temporary working directory removed"
+
+Write-Log "Modern .NET template preparation completed successfully!"
