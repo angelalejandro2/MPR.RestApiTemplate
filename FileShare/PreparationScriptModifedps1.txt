@@ -1,0 +1,161 @@
+param(
+    [Parameter(Mandatory = $false)]
+    [string]$SourceName = "MPR.RestApiTemplate", # Ej: MPR.RestApiTemplate
+
+    [Parameter(Mandatory = $false)]
+    [string]$ShortName = "mpr-rest-api-template", # Ej: mprapi
+
+    [Parameter(Mandatory = $false)]
+    [string]$Identity = "MPR.RestApiTemplate", # Ej: TuEmpresa.MPR.RestApiTemplate
+
+    [Parameter(Mandatory = $false)]
+    [string]$OutputPath = "./output",
+
+    [Parameter(Mandatory = $false)]
+    [string[]]$Exclude = @("MPR.RestApiTemplate.Vsix", ".git", ".gitignore", ".vs", "PrepareTemplate.ps1", "CHANGELOG.md", "README.md", "LICENSE", "LICENSE.txt", "CONTRIBUTING.md", "CONTRIBUTORS.md", ".vscode", ".editorconfig", ".gitattributes", ".gitkeep", ".github", "template_tmp", "template.config", "template.json" ) # Exclude folders and files (wildcards are allowed)
+)
+
+$TempPath = "./template_tmp"
+
+function Initialize-TempDirectory {
+    Write-Host "Preparando carpeta temporal '$TempPath'..."
+
+    if (Test-Path $TempPath) {
+        Remove-Item -Recurse -Force $TempPath
+    }
+    New-Item -ItemType Directory -Path $TempPath | Out-Null
+
+    $rootItems = Get-ChildItem -LiteralPath "." -Force |
+    Where-Object {
+        $excludeMatch = $false
+        foreach ($pattern in $Exclude) {
+            if ($_.FullName -like "*$pattern*") { $excludeMatch = $true; break }
+        }
+        return !$excludeMatch
+    } 
+
+    foreach ($item in $rootItems) {
+        Copy-Item -Path $item.FullName -Destination $TempPath -Recurse -Force
+    }
+}
+
+function Remove-DirectoryContent {
+    Write-Host "Limpiando archivos innecesarios en '$TempPath'..."
+    Get-ChildItem -Path $TempPath -Recurse -Include bin, obj, .vs, .vscode, TestResults | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    Get-ChildItem -Path $TempPath -Recurse -Include *.user, *.suo, launchSettings.json | Remove-Item -Force -ErrorAction SilentlyContinue
+}
+
+function Update-Names {
+    Write-Host "Reemplazando '$SourceName' a '{{SolutionName}}' en archivos y nombres..."
+
+    $allFiles = Get-ChildItem -Path $TempPath -Recurse -File -Include *.cs, *.csproj, *.sln, *.json, *.cshtml, *.config, *.yml
+
+    foreach ($file in $allFiles) {
+        (Get-Content $file.FullName) -replace $SourceName, "{{SolutionName}}" | Set-Content $file.FullName
+    }
+
+    # Renombrar carpetas
+    Get-ChildItem -Path $TempPath -Recurse -Directory |
+    Where-Object { $_.Name -like "*$SourceName*" } |
+    ForEach-Object {
+        $newName = $_.Name -replace [regex]::Escape($SourceName), "{{SolutionName}}"
+        Rename-Item -Path $_.FullName -NewName $newName -Force
+    }
+
+    # Renombrar archivos
+    Get-ChildItem -Path $TempPath -Recurse -File |
+    Where-Object { $_.Name -like "*$SourceName*" } |
+    ForEach-Object {
+        $newName = $_.Name -replace [regex]::Escape($SourceName), "{{SolutionName}}"
+        Rename-Item -Path $_.FullName -NewName $newName -Force
+    }
+}
+
+function New-NugetPackage {
+    Write-Host "Generando paquete NuGet..."
+    dotnet new uninstall $OutputPath -ea SilentlyContinue | Out-Null
+    dotnet new install $OutputPath
+
+    $templateCsproj = Get-ChildItem -Path $TempPath -Recurse -Filter "*.csproj" | Select-Object -First 1
+    if ($null -ne $templateCsproj) {
+        dotnet pack $templateCsproj.FullName -o "$OutputPath\nuget"
+        Write-Host "NuGet package creado en '$OutputPath\nuget'"
+    }
+    else {
+        Write-Warning "No se encontró .csproj para empacar. Asegúrate de tener un archivo .csproj válido si deseas generar un .nupkg."
+    }
+}
+
+function Remove-Temp {
+    if (Test-Path $TempPath) {
+        Write-Host "Eliminando carpeta temporal..."
+        Remove-Item -Recurse -Force $TempPath
+    }
+}
+
+function Clear-SpecifiedPaths {
+    param (
+        [Parameter(Mandatory = $false)]
+        [string[]]$DirectoriesToClean = @(),
+
+        [Parameter(Mandatory = $false)]
+        [string[]]$FilesToDelete = @()
+    )
+
+    foreach ($dir in $DirectoriesToClean) {
+        $cleanPath = Join-Path $TempPath $dir
+
+        if (Test-Path $cleanPath) {
+            Write-Host "Limpiando contenido de '$cleanPath'..."
+            Get-ChildItem -Path $cleanPath -Recurse -Force |
+            Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+        }
+        else {
+            Write-Host "Creando carpeta limpia '$cleanPath'..."
+            New-Item -ItemType Directory -Path $cleanPath -Force | Out-Null
+        }
+    }
+
+    foreach ($file in $FilesToDelete) {
+        $targetFile = Join-Path $TempPath $file
+
+        if (Test-Path $targetFile) {
+            Write-Host "Eliminando archivo '$targetFile'..."
+            Remove-Item -Path $targetFile -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
+# === EJECUCIÓN ===
+
+$ErrorActionPreference = "Stop"
+
+Remove-Temp
+Initialize-TempDirectory
+Remove-DirectoryContent
+Clear-SpecifiedPaths `
+    -DirectoriesToClean @(
+    "MPR.RestApiTemplate.Api\\Controllers\\Generated",
+    "MPR.RestApiTemplate.Api\\Startup\\Generated", 
+    "MPR.RestApiTemplate.Application\\Dtos\\Generated",
+    "MPR.RestApiTemplate.Application\\Mappings\\Generated",
+    "MPR.RestApiTemplate.Application\\Services\\Generated",
+    "MPR.RestApiTemplate.Domain\\Entities",
+    "MPR.RestApiTemplate.Domain\\Interfaces\\Repositories\\Generated",
+    "MPR.RestApiTemplate.Infrastructure\\Context",
+    "MPR.RestApiTemplate.Infrastructure\\Migrations",
+    "MPR.RestApiTemplate.Infrastructure\\Repositories\\Generated"
+) `
+    -FilesToDelete @(
+    "*.user", 
+    "*.suo", 
+    "MPR.RestApiTemplate.Domain\\Interfaces\\IUnitOfWork.generated.cs",
+    "MPR.RestApiTemplate.Infrastructure\\UnitOfWork.generated.cs"
+)
+Update-Names
+New-NugetPackage
+#Remove-Temp
+
+Write-Host "`nPlantilla lista en '$OutputPath'"
+Write-Host "Puedes probarla con:"
+Write-Host "   dotnet new $ShortName -n MiProyecto"
