@@ -1,0 +1,32 @@
+param(
+    [Parameter(Mandatory = $false)]
+    [string]$NugetSourcePath = "./output/nuget",
+
+    [Parameter(Mandatory = $false)]
+    [string]$VsixProjectPath = "./MPR.RestApiTemplate.Vsix/NuGet"
+)
+
+function Move-NugetPackage {
+    if (!(Test-Path $NugetSourcePath)) {
+        Write-Warning "❌ No se encontró la carpeta de paquetes NuGet en '$NugetSourcePath'"
+        return
+    }
+
+    $nupkg = Get-ChildItem -Path $NugetSourcePath -Filter *.nupkg | Select-Object -Last 1
+
+    if ($null -eq $nupkg) {
+        Write-Warning "⚠️ No se encontró ningún archivo .nupkg en '$NugetSourcePath'"
+        return
+    }
+
+    if (!(Test-Path $VsixProjectPath)) {
+        Write-Host "📁 Creando carpeta de destino: $VsixProjectPath"
+        New-Item -ItemType Directory -Path $VsixProjectPath -Force | Out-Null
+    }
+
+    Copy-Item -Path $nupkg.FullName -Destination $VsixProjectPath -Force
+
+    Write-Host "✅ Paquete '$($nupkg.Name)' copiado a '$VsixProjectPath'"
+}
+
+Move-NugetPackage
