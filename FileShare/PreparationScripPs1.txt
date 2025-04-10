@@ -96,6 +96,38 @@ function Clean-Temp {
     Remove-Item -Recurse -Force $TempPath
 }
 
+function Clean-SpecifiedPaths {
+    param (
+        [Parameter(Mandatory = $false)]
+        [string[]]$DirectoriesToClean = @(),
+
+        [Parameter(Mandatory = $false)]
+        [string[]]$FilesToDelete = @()
+    )
+
+    foreach ($dir in $DirectoriesToClean) {
+        $cleanPath = Join-Path $TempPath $dir
+
+        if (Test-Path $cleanPath) {
+            Write-Host "🧽 Limpiando contenido de '$cleanPath'..."
+            Get-ChildItem -Path $cleanPath -Recurse -Force |
+                Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+        } else {
+            Write-Host "📁 Creando carpeta limpia '$cleanPath'..."
+            New-Item -ItemType Directory -Path $cleanPath -Force | Out-Null
+        }
+    }
+
+    foreach ($file in $FilesToDelete) {
+        $targetFile = Join-Path $TempPath $file
+
+        if (Test-Path $targetFile) {
+            Write-Host "🗑️ Eliminando archivo '$targetFile'..."
+            Remove-Item -Path $targetFile -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
 # === EJECUCIÓN ===
 
 $ErrorActionPreference = "Stop"
