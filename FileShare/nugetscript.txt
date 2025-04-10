@@ -1,0 +1,36 @@
+function New-NugetPackage {
+    $templateCsproj = Join-Path $TempPath "Template.csproj"
+    $nugetOutput = Join-Path $OutputPath "nuget"
+
+    if (!(Test-Path $templateCsproj)) {
+        Write-Host "⚙️  Creando archivo Template.csproj en $TempPath..."
+
+        @"
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>$Identity</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>TuEmpresa</Authors>
+    <Description>Plantilla Clean Architecture para APIs REST</Description>
+    <PackageType>Template</PackageType>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <BuildOutputTargetFolder>content</BuildOutputTargetFolder>
+    <NoBuild>true</NoBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="**\*" Pack="true" PackagePath="content\" />
+  </ItemGroup>
+</Project>
+"@ | Out-File -Encoding utf8 $templateCsproj
+    }
+
+    Write-Host "📦 Empaquetando plantilla como NuGet..."
+    dotnet pack $templateCsproj -o $nugetOutput --nologo
+
+    if (Test-Path $nugetOutput) {
+        Write-Host "✅ Paquete generado en: $nugetOutput"
+    } else {
+        Write-Warning "❌ No se pudo generar el paquete. Revisa que dotnet esté disponible y que Template.csproj sea válido."
+    }
+}
