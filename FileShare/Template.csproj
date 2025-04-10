@@ -1,0 +1,18 @@
+<!-- Template.csproj -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>MPR.RestApiTemplate</PackageId> <!-- Cambia esto por el nombre que quieras publicar -->
+    <Version>1.0.0</Version>
+    <Authors>TuEmpresa</Authors>
+    <Description>Plantilla Clean Architecture para APIs REST</Description>
+    <PackageType>Template</PackageType>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <BuildOutputTargetFolder>content</BuildOutputTargetFolder>
+    <NoBuild>true</NoBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="**\*" Pack="true" PackagePath="content\" />
+  </ItemGroup>
+</Project>
