@@ -1,0 +1,31 @@
+function Copy-TemplateConfigFiles {
+    $templateSourceDir = "./templateConfig"
+    $templateTargetConfigDir = Join-Path $TempPath ".template.config"
+    $templateCsprojTargetPath = Join-Path $TempPath "Template.csproj"
+
+    if (!(Test-Path $templateSourceDir)) {
+        Write-Warning "❌ La carpeta 'templateConfig' no existe. Se omite la copia de archivos de configuración."
+        return
+    }
+
+    if (!(Test-Path $templateTargetConfigDir)) {
+        New-Item -ItemType Directory -Path $templateTargetConfigDir -Force | Out-Null
+    }
+
+    $templateJsonSourcePath = Join-Path $templateSourceDir "template.json"
+    $templateCsprojSourcePath = Join-Path $templateSourceDir "Template.csproj"
+
+    if (Test-Path $templateJsonSourcePath) {
+        Copy-Item $templateJsonSourcePath -Destination (Join-Path $templateTargetConfigDir "template.json") -Force
+        Write-Host "✅ template.json copiado a $templateTargetConfigDir"
+    } else {
+        Write-Warning "⚠️ No se encontró 'template.json' en templateConfig/"
+    }
+
+    if (Test-Path $templateCsprojSourcePath) {
+        Copy-Item $templateCsprojSourcePath -Destination $templateCsprojTargetPath -Force
+        Write-Host "✅ Template.csproj copiado a $templateCsprojTargetPath"
+    } else {
+        Write-Warning "⚠️ No se encontró 'Template.csproj' en templateConfig/"
+    }
+}
