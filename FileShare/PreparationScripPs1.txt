@@ -2,81 +2,111 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$SourceName,            # Ej: MPR.RestApiTemplate
 
+    [Parameter(Mandatory = $true)]
+    [string]$ShortName,             # Ej: mprapi
+
+    [Parameter(Mandatory = $true)]
+    [string]$Identity,              # Ej: TuEmpresa.MPR.RestApiTemplate
+
     [Parameter(Mandatory = $false)]
-    [string]$OutputPath = "./output"
+    [string]$OutputPath = "./output",
+
+    [Parameter(Mandatory = $false)]
+    [string[]]$Exclude = @("MPR.RestApiTemplate.Vsix", ".git", ".gitignore")
 )
 
-# Carpeta a excluir completamente del procesamiento
-$ExcludedFolder = "MPR.RestApiTemplate.Vsix"
+$TempPath = "./template_tmp"
+
+function Prepare-TempDirectory {
+    Write-Host "📂 Preparando carpeta temporal '$TempPath'..."
+
+    if (Test-Path $TempPath) {
+        Remove-Item -Recurse -Force $TempPath
+    }
+    New-Item -ItemType Directory -Path $TempPath | Out-Null
+
+    Get-ChildItem -Recurse -Force |
+        Where-Object {
+            $excludeMatch = $false
+            foreach ($pattern in $Exclude) {
+                if ($_.FullName -like "*$pattern*") { $excludeMatch = $true; break }
+            }
+            return !$excludeMatch
+        } |
+        Copy-Item -Destination { Join-Path $TempPath $_.FullName.Substring((Get-Location).Path.Length + 1) } -Recurse -Force
+}
 
 function Clean-Directory {
-    Write-Host "🧹 Limpiando archivos innecesarios..."
-    Get-ChildItem -Recurse -Force -Directory -Exclude $ExcludedFolder |
-        Where-Object { $_.Name -in @("bin", "obj", ".vs", ".vscode", "TestResults") } |
-        Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-
-    Get-ChildItem -Recurse -Force -File -Exclude $ExcludedFolder |
-        Where-Object { $_.FullName -notmatch "\\$ExcludedFolder\\" } |
-        Where-Object { $_.Name -match ".*\.(user|suo)$" -or $_.Name -eq "launchSettings.json" } |
-        Remove-Item -Force -ErrorAction SilentlyContinue
+    Write-Host "🧹 Limpiando archivos innecesarios en '$TempPath'..."
+    Get-ChildItem -Path $TempPath -Recurse -Include bin, obj, .vs, .vscode, TestResults | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    Get-ChildItem -Path $TempPath -Recurse -Include *.user, *.suo, launchSettings.json | Remove-Item -Force -ErrorAction SilentlyContinue
 }
 
 function Replace-Names {
-    Write-Host "✏️ Reemplazando '$SourceName' → '{{SolutionName}}' en archivos..."
+    Write-Host "✏️ Reemplazando '$SourceName' → '{{SolutionName}}' en archivos y nombres..."
 
-    $allFiles = Get-ChildItem -Recurse -File -Include *.cs, *.csproj, *.sln, *.json, *.cshtml, *.config, *.yml |
-        Where-Object { $_.FullName -notmatch "\\$ExcludedFolder\\" }
+    $allFiles = Get-ChildItem -Path $TempPath -Recurse -File -Include *.cs, *.csproj, *.sln, *.json, *.cshtml, *.config, *.yml
 
     foreach ($file in $allFiles) {
         (Get-Content $file.FullName) -replace $SourceName, "{{SolutionName}}" | Set-Content $file.FullName
     }
 
-    Write-Host "📁 Renombrando carpetas..."
-    $folders = Get-ChildItem -Recurse -Directory |
-        Where-Object {
-            $_.Name -like "*$SourceName*" -and $_.FullName -notmatch "\\$ExcludedFolder\\"
+    # Renombrar carpetas
+    Get-ChildItem -Path $TempPath -Recurse -Directory |
+        Where-Object { $_.Name -like "*$SourceName*" } |
+        ForEach-Object {
+            $newName = $_.Name -replace [regex]::Escape($SourceName), "{{SolutionName}}"
+            Rename-Item -Path $_.FullName -NewName $newName -Force
         }
 
-    foreach ($folder in $folders) {
-        $newName = $folder.Name -replace [regex]::Escape($SourceName), "{{SolutionName}}"
-        Rename-Item -Path $folder.FullName -NewName $newName -Force
-    }
-
-    Write-Host "📄 Renombrando archivos..."
-    $files = Get-ChildItem -Recurse -File |
-        Where-Object {
-            $_.Name -like "*$SourceName*" -and $_.FullName -notmatch "\\$ExcludedFolder\\"
+    # Renombrar archivos
+    Get-ChildItem -Path $TempPath -Recurse -File |
+        Where-Object { $_.Name -like "*$SourceName*" } |
+        ForEach-Object {
+            $newName = $_.Name -replace [regex]::Escape($SourceName), "{{SolutionName}}"
+            Rename-Item -Path $_.FullName -NewName $newName -Force
         }
-
-    foreach ($file in $files) {
-        $newName = $file.Name -replace [regex]::Escape($SourceName), "{{SolutionName}}"
-        Rename-Item -Path $file.FullName -NewName $newName -Force
-    }
 }
 
-function Copy-To-Output {
+function Move-To-Output {
     if (Test-Path $OutputPath) {
         Remove-Item -Recurse -Force $OutputPath
     }
 
-    Write-Host "📦 Copiando solución a '$OutputPath' (excluyendo '$ExcludedFolder')..."
+    Write-Host "📦 Copiando contenido procesado a '$OutputPath'..."
+    Copy-Item -Path "$TempPath\*" -Destination $OutputPath -Recurse -Force
+}
 
-    # Copia todos los archivos/directorios excepto la carpeta excluida
-    Get-ChildItem -Recurse -Exclude $ExcludedFolder |
-        Where-Object { $_.FullName -notmatch "\\$ExcludedFolder\\" } |
-        Copy-Item -Destination $OutputPath -Recurse -Force
+function Pack-Nuget {
+    Write-Host "📦 Generando paquete NuGet..."
+    dotnet new uninstall $OutputPath -ea SilentlyContinue | Out-Null
+    dotnet new install $OutputPath
+
+    $templateCsproj = Get-ChildItem -Path $OutputPath -Recurse -Filter "*.csproj" | Select-Object -First 1
+    if ($null -ne $templateCsproj) {
+        dotnet pack $templateCsproj.FullName -o "$OutputPath\nuget"
+        Write-Host "✅ NuGet package creado en '$OutputPath\nuget'"
+    } else {
+        Write-Warning "⚠️ No se encontró .csproj para empacar. Asegúrate de tener un archivo .csproj válido si deseas generar un .nupkg."
+    }
+}
+
+function Clean-Temp {
+    Write-Host "🧽 Eliminando carpeta temporal..."
+    Remove-Item -Recurse -Force $TempPath
 }
 
 # === EJECUCIÓN ===
 
 $ErrorActionPreference = "Stop"
 
+Prepare-TempDirectory
 Clean-Directory
 Replace-Names
-Copy-To-Output
+Move-To-Output
+Pack-Nuget
+Clean-Temp
 
 Write-Host "`n✅ Plantilla lista en '$OutputPath'"
-Write-Host "Puedes instalarla con:"
-Write-Host "   dotnet new --install $OutputPath"
-Write-Host "Y usarla con:"
-Write-Host "   dotnet new [shortname] -n MiProyecto"
+Write-Host "Puedes probarla con:"
+Write-Host "   dotnet new $ShortName -n MiProyecto"
