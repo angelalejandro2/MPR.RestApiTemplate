@@ -6,30 +6,48 @@ param(
     [string]$OutputPath = "./output"
 )
 
+# Carpeta a excluir completamente del procesamiento
+$ExcludedFolder = "MPR.RestApiTemplate.Vsix"
+
 function Clean-Directory {
     Write-Host "🧹 Limpiando archivos innecesarios..."
-    Get-ChildItem -Recurse -Include bin, obj, .vs, .vscode, TestResults | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-    Get-ChildItem -Recurse -Include *.user, *.suo, launchSettings.json | Remove-Item -Force -ErrorAction SilentlyContinue
+    Get-ChildItem -Recurse -Force -Directory -Exclude $ExcludedFolder |
+        Where-Object { $_.Name -in @("bin", "obj", ".vs", ".vscode", "TestResults") } |
+        Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+
+    Get-ChildItem -Recurse -Force -File -Exclude $ExcludedFolder |
+        Where-Object { $_.FullName -notmatch "\\$ExcludedFolder\\" } |
+        Where-Object { $_.Name -match ".*\.(user|suo)$" -or $_.Name -eq "launchSettings.json" } |
+        Remove-Item -Force -ErrorAction SilentlyContinue
 }
 
 function Replace-Names {
     Write-Host "✏️ Reemplazando '$SourceName' → '{{SolutionName}}' en archivos..."
 
-    $allFiles = Get-ChildItem -Recurse -File -Include *.cs, *.csproj, *.sln, *.json, *.cshtml, *.config, *.yml
+    $allFiles = Get-ChildItem -Recurse -File -Include *.cs, *.csproj, *.sln, *.json, *.cshtml, *.config, *.yml |
+        Where-Object { $_.FullName -notmatch "\\$ExcludedFolder\\" }
 
     foreach ($file in $allFiles) {
         (Get-Content $file.FullName) -replace $SourceName, "{{SolutionName}}" | Set-Content $file.FullName
     }
 
     Write-Host "📁 Renombrando carpetas..."
-    $folders = Get-ChildItem -Recurse -Directory | Where-Object { $_.Name -like "*$SourceName*" }
+    $folders = Get-ChildItem -Recurse -Directory |
+        Where-Object {
+            $_.Name -like "*$SourceName*" -and $_.FullName -notmatch "\\$ExcludedFolder\\"
+        }
+
     foreach ($folder in $folders) {
         $newName = $folder.Name -replace [regex]::Escape($SourceName), "{{SolutionName}}"
         Rename-Item -Path $folder.FullName -NewName $newName -Force
     }
 
     Write-Host "📄 Renombrando archivos..."
-    $files = Get-ChildItem -Recurse -File | Where-Object { $_.Name -like "*$SourceName*" }
+    $files = Get-ChildItem -Recurse -File |
+        Where-Object {
+            $_.Name -like "*$SourceName*" -and $_.FullName -notmatch "\\$ExcludedFolder\\"
+        }
+
     foreach ($file in $files) {
         $newName = $file.Name -replace [regex]::Escape($SourceName), "{{SolutionName}}"
         Rename-Item -Path $file.FullName -NewName $newName -Force
@@ -41,8 +59,12 @@ function Copy-To-Output {
         Remove-Item -Recurse -Force $OutputPath
     }
 
-    Write-Host "📦 Copiando solución a '$OutputPath'..."
-    Copy-Item * $OutputPath -Recurse -Force -Exclude .git, .gitignore
+    Write-Host "📦 Copiando solución a '$OutputPath' (excluyendo '$ExcludedFolder')..."
+
+    # Copia todos los archivos/directorios excepto la carpeta excluida
+    Get-ChildItem -Recurse -Exclude $ExcludedFolder |
+        Where-Object { $_.FullName -notmatch "\\$ExcludedFolder\\" } |
+        Copy-Item -Destination $OutputPath -Recurse -Force
 }
 
 # === EJECUCIÓN ===
