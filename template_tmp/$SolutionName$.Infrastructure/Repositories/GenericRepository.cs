@@ -1,9 +1,9 @@
 using System.Data.Common;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using {{SolutionName}}.Domain.Interfaces.Repositories;
+using $SolutionName$.Domain.Interfaces.Repositories;
 
-namespace {{SolutionName}}.Infrastructure.Repositories
+namespace $SolutionName$.Infrastructure.Repositories
 {
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {

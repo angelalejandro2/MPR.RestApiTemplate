@@ -16,6 +16,7 @@ param(
 )
 
 $TempPath = "./template_tmp"
+$Placeholder = "`$SolutionName$"
 
 function Initialize-TempDirectory {
     Write-Host "Preparando carpeta temporal '$TempPath'..."
@@ -46,19 +47,19 @@ function Remove-DirectoryContent {
 }
 
 function Update-Names {
-    Write-Host "Reemplazando '$SourceName' a '{{SolutionName}}' en archivos y nombres..."
+    Write-Host "Reemplazando '$SourceName' a '$Placeholder' en archivos y nombres..."
 
     $allFiles = Get-ChildItem -Path $TempPath -Recurse -File -Include *.cs, *.csproj, *.sln, *.json, *.cshtml, *.config, *.yml
 
     foreach ($file in $allFiles) {
-        (Get-Content $file.FullName) -replace $SourceName, "{{SolutionName}}" | Set-Content $file.FullName
+        (Get-Content $file.FullName) -replace $SourceName, $Placeholder | Set-Content $file.FullName
     }
 
     # Renombrar carpetas
     Get-ChildItem -Path $TempPath -Recurse -Directory |
     Where-Object { $_.Name -like "*$SourceName*" } |
     ForEach-Object {
-        $newName = $_.Name -replace [regex]::Escape($SourceName), "{{SolutionName}}"
+        $newName = $_.Name -replace [regex]::Escape($SourceName), $Placeholder
         Rename-Item -Path $_.FullName -NewName $newName -Force
     }
 
@@ -66,7 +67,7 @@ function Update-Names {
     Get-ChildItem -Path $TempPath -Recurse -File |
     Where-Object { $_.Name -like "*$SourceName*" } |
     ForEach-Object {
-        $newName = $_.Name -replace [regex]::Escape($SourceName), "{{SolutionName}}"
+        $newName = $_.Name -replace [regex]::Escape($SourceName), $Placeholder
         Rename-Item -Path $_.FullName -NewName $newName -Force
     }
 }
@@ -127,7 +128,7 @@ function Clear-SpecifiedPaths {
 
 function Copy-TemplateConfigFiles {
     $templateSourceDir = "./TemplateConfig"
-    $templateTargetConfigDir = Join-Path $TempPath "template.config"
+    $templateTargetConfigDir = Join-Path $TempPath ".template.config"
     $templateCsprojTargetPath = Join-Path $TempPath "Template.csproj"
 
     if (!(Test-Path $templateSourceDir)) {
@@ -216,7 +217,7 @@ Clear-SpecifiedPaths `
 Update-Names
 Copy-TemplateConfigFiles
 New-NugetPackage
-Remove-Temp
+#Remove-Temp
 
 Write-Host "`nPlantilla lista en '$OutputPath'"
 Write-Host "Puedes probarla con:"

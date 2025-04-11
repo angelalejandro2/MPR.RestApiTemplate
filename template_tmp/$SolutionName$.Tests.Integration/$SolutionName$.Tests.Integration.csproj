@@ -28,10 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\{{SolutionName}}.Api\{{SolutionName}}.Api.csproj" />
-    <ProjectReference Include="..\{{SolutionName}}.Application\{{SolutionName}}.Application.csproj" />
-    <ProjectReference Include="..\{{SolutionName}}.Domain\{{SolutionName}}.Domain.csproj" />
-    <ProjectReference Include="..\{{SolutionName}}.Infrastructure\{{SolutionName}}.Infrastructure.csproj" />
+    <ProjectReference Include="..\$SolutionName$.Api\$SolutionName$.Api.csproj" />
+    <ProjectReference Include="..\$SolutionName$.Application\$SolutionName$.Application.csproj" />
+    <ProjectReference Include="..\$SolutionName$.Domain\$SolutionName$.Domain.csproj" />
+    <ProjectReference Include="..\$SolutionName$.Infrastructure\$SolutionName$.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

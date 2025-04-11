@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "{{SolutionName}}.Api", "{{SolutionName}}.Api\{{SolutionName}}.Api.csproj", "{FC56D87A-AC0C-453A-AE7D-36AAB5526888}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "$SolutionName$.Api", "$SolutionName$.Api\$SolutionName$.Api.csproj", "{FC56D87A-AC0C-453A-AE7D-36AAB5526888}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "{{SolutionName}}.Application", "{{SolutionName}}.Application\{{SolutionName}}.Application.csproj", "{E6DF92C9-B211-4235-B14D-6E52214122F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "$SolutionName$.Application", "$SolutionName$.Application\$SolutionName$.Application.csproj", "{E6DF92C9-B211-4235-B14D-6E52214122F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "{{SolutionName}}.Domain", "{{SolutionName}}.Domain\{{SolutionName}}.Domain.csproj", "{A65E2A1D-9A06-4264-AE21-EB9A457D4690}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "$SolutionName$.Domain", "$SolutionName$.Domain\$SolutionName$.Domain.csproj", "{A65E2A1D-9A06-4264-AE21-EB9A457D4690}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "{{SolutionName}}.Tests.Integration", "{{SolutionName}}.Tests.Integration\{{SolutionName}}.Tests.Integration.csproj", "{E666CB5B-6E62-4EC8-BB78-174FD0FC77B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "$SolutionName$.Tests.Integration", "$SolutionName$.Tests.Integration\$SolutionName$.Tests.Integration.csproj", "{E666CB5B-6E62-4EC8-BB78-174FD0FC77B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "{{SolutionName}}.Utilities.CodeGeneration", "{{SolutionName}}.Utilities.CodeGeneration\{{SolutionName}}.Utilities.CodeGeneration.csproj", "{3B8F1420-8E0D-4F26-AA7B-4662A2851687}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "$SolutionName$.Utilities.CodeGeneration", "$SolutionName$.Utilities.CodeGeneration\$SolutionName$.Utilities.CodeGeneration.csproj", "{3B8F1420-8E0D-4F26-AA7B-4662A2851687}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "{{SolutionName}}.Infrastructure", "{{SolutionName}}.Infrastructure\{{SolutionName}}.Infrastructure.csproj", "{53459BFE-2601-4112-B6E2-D73C017D4E74}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "$SolutionName$.Infrastructure", "$SolutionName$.Infrastructure\$SolutionName$.Infrastructure.csproj", "{53459BFE-2601-4112-B6E2-D73C017D4E74}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
@@ -22,7 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		TemplateConfig\template.json = TemplateConfig\template.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "{{SolutionName}}.Vsix", "{{SolutionName}}.Vsix\{{SolutionName}}.Vsix.csproj", "{33BE51C5-72D8-4BCB-92C4-9356D2AC7065}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "$SolutionName$.Vsix", "$SolutionName$.Vsix\$SolutionName$.Vsix.csproj", "{33BE51C5-72D8-4BCB-92C4-9356D2AC7065}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

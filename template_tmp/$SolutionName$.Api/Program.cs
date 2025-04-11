@@ -1,9 +1,9 @@
 using Asp.Versioning;
-using {{SolutionName}}.Application.Mappings;
-using {{SolutionName}}.Application.Services;
-using {{SolutionName}}.Domain.Interfaces;
-using {{SolutionName}}.Infrastructure;
-using {{SolutionName}}.Infrastructure.Context;
+using $SolutionName$.Application.Mappings;
+using $SolutionName$.Application.Services;
+using $SolutionName$.Domain.Interfaces;
+using $SolutionName$.Infrastructure;
+using $SolutionName$.Infrastructure.Context;
 using Scalar.AspNetCore;
 
 public partial class Program

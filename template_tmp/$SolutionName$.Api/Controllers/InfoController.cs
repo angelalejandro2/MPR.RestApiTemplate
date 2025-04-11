@@ -2,7 +2,7 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace {{SolutionName}}.Api.Controllers
+namespace $SolutionName$.Api.Controllers
 {
     [ApiVersion("1.0")]
     [Route("api/[controller]")]
@@ -19,7 +19,7 @@ namespace {{SolutionName}}.Api.Controllers
         {
             var info = new
             {
-                name = "{{SolutionName}}",
+                name = "$SolutionName$",
                 version = "1.0",
                 description = "Reusable REST API template for building .NET 9 APIs.",
                 documentation = new
@@ -43,13 +43,13 @@ namespace {{SolutionName}}.Api.Controllers
             var html = $"""
             <html>
             <head>
-                <title>{{SolutionName}} API</title>
+                <title>$SolutionName$ API</title>
                 <link href='https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css' rel='stylesheet'>
             </head>
             <body>
                 <div class='container mt-5'>
                     <div class='jumbotron'>
-                        <h1 class='display-4'>{{SolutionName}} API v1.0</h1>
+                        <h1 class='display-4'>$SolutionName$ API v1.0</h1>
                         <p class='lead'>Reusable REST API template for building .NET 9 APIs.</p>
                         <hr class='my-4'>
                         <p>Explore the API documentation below:</p>

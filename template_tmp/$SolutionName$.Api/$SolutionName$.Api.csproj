@@ -19,8 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\{{SolutionName}}.Application\{{SolutionName}}.Application.csproj" />
-    <ProjectReference Include="..\{{SolutionName}}.Infrastructure\{{SolutionName}}.Infrastructure.csproj" />
+    <ProjectReference Include="..\$SolutionName$.Application\$SolutionName$.Application.csproj" />
+    <ProjectReference Include="..\$SolutionName$.Infrastructure\$SolutionName$.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,7 +1,7 @@
 using System.Data.Common;
 using System.Linq.Expressions;
 
-namespace {{SolutionName}}.Domain.Interfaces.Repositories
+namespace $SolutionName$.Domain.Interfaces.Repositories
 {
     public interface IGenericRepository<TEntity> where TEntity : class
     {

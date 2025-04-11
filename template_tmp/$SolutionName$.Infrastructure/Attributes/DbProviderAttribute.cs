@@ -1,4 +1,4 @@
-namespace {{SolutionName}}.Infrastructure.Attributes
+namespace $SolutionName$.Infrastructure.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public sealed class DbProviderAttribute(DbProvider provider) : Attribute
