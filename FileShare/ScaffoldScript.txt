@@ -1,0 +1,64 @@
+param(
+    [Parameter(Mandatory = $true)]
+    [string]$ConnectionString,
+
+    [Parameter(Mandatory = $true)]
+    [ValidateSet("SqlServer", "Oracle")]
+    [string]$DbProvider,
+
+    [Parameter(Mandatory = $true)]
+    [string]$DomainProjectPath,        # Ruta al .csproj de las entidades
+
+    [Parameter(Mandatory = $true)]
+    [string]$InfrastructureProjectPath,# Ruta al .csproj donde irá el DbContext
+
+    [string]$OutputModelsDir = "Entities",
+    [string]$OutputContextDir = "Data/Contexts",
+    [string]$ContextName = "AppDbContext"
+)
+
+# Determinar el proveedor y sus opciones
+switch ($DbProvider) {
+    "SqlServer" {
+        $Provider = "Microsoft.EntityFrameworkCore.SqlServer"
+    }
+    "Oracle" {
+        $Provider = "Oracle.EntityFrameworkCore"
+    }
+}
+
+# Comando de scaffolding
+$Command = @(
+    "dotnet ef dbcontext scaffold",
+    "`"$ConnectionString`"",
+    "$Provider",
+    "--output-dir $OutputModelsDir",               # Va al proyecto de modelos
+    "--context-dir $OutputContextDir",             # Va al proyecto del contexto
+    "--context $ContextName",
+    "--project $InfrastructureProjectPath",        # Proyecto donde se ejecuta EF
+    "--startup-project $InfrastructureProjectPath",# Proyecto de inicio para ejecutar EF
+    "--force",
+    "--no-onconfiguring",
+    "--use-database-names",
+    "--data-annotations"
+) -join " "
+
+# Cambiar al directorio del proyecto de las entidades para que genere los modelos allí
+Push-Location (Split-Path -Path $DomainProjectPath)
+
+Write-Host "Ejecutando scaffolding EF Core con los siguientes parámetros:" -ForegroundColor Cyan
+Write-Host "DbContext:     $ContextName" -ForegroundColor Yellow
+Write-Host "Connection:    $ConnectionString"
+Write-Host "DbProvider:    $DbProvider"
+Write-Host "Model output:  $OutputModelsDir"
+Write-Host "Context output:$OutputContextDir"
+Write-Host "Project EF:    $InfrastructureProjectPath"
+Write-Host "Project Domain:$DomainProjectPath"
+Write-Host ""
+Write-Host $Command -ForegroundColor Green
+
+# Ejecutar el comando
+Invoke-Expression $Command
+
+# Volver al directorio anterior
+Pop-Location
