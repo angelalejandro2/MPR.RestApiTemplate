@@ -17,6 +17,20 @@ param(
     [string]$ContextName = "AppDbContext"
 )
 
+function Resolve-ProjectPath {
+    param(
+        [string]$PathWildcard
+    )
+
+    $projects = Get-ChildItem -Path $PathWildcard -Recurse -Filter "*.csproj"
+    if ($projects.Count -eq 0) {
+        throw "No .csproj found for path: $PathWildcard"
+    } elseif ($projects.Count -gt 1) {
+        Write-Warning "Multiple matches found for $PathWildcard. Using first one: $($projects[0].FullName)"
+    }
+    return $projects[0].FullName
+}
+
 # Determinar el proveedor y sus opciones
 switch ($DbProvider) {
     "SqlServer" {
