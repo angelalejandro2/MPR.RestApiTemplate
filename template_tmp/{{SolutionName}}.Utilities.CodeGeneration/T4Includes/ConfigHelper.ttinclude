@@ -1,0 +1,306 @@
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+
+<#+
+    #nullable enable
+    
+    // Clases para la configuración - sin atributos JsonProperty
+    public class CodeGenConfig
+    {
+        public DefaultsConfig? defaults { get; set; }
+        public Dictionary<string, EntityConfig>? entities { get; set; }
+        public Dictionary<string, ContextConfig>? contexts { get; set; }
+
+        public CodeGenConfig()
+        {
+            defaults = new DefaultsConfig();
+            entities = new Dictionary<string, EntityConfig>();
+            contexts = new Dictionary<string, ContextConfig>();
+        }
+    }
+
+    public class DefaultsConfig
+    {
+        public MethodsConfig? generateMethods { get; set; }
+        public MethodsConfig? requireKeysFor { get; set; }
+        public MethodsConfig? generatePolicies { get; set; }
+
+        public DefaultsConfig()
+        {
+            generateMethods = new MethodsConfig();
+            requireKeysFor = new MethodsConfig();
+            generatePolicies = new MethodsConfig();
+        }
+    }
+
+    public class MethodsConfig
+    {
+        public bool get { get; set; } = true;
+        public bool getById { get; set; } = true;
+        public bool post { get; set; } = true;
+        public bool put { get; set; } = true;
+        public bool delete { get; set; } = true;
+    }
+
+    public class EntityConfig
+    {
+        public string? dto { get; set; }
+        public string? createDto { get; set; }
+        public string? updateDto { get; set; }
+        public List<string>? includes { get; set; }
+        public Dictionary<string, string>? mappings { get; set; }
+        public MethodsConfig? generateMethods { get; set; }
+        public Dictionary<string, string>? policies { get; set; }
+
+        public EntityConfig()
+        {
+            includes = new List<string>();
+            mappings = new Dictionary<string, string>();
+            generateMethods = new MethodsConfig();
+            policies = new Dictionary<string, string>();
+        }
+    }
+
+    public class ContextConfig
+    {
+        public string? provider { get; set; }
+        public List<string>? entities { get; set; }
+
+        public ContextConfig()
+        {
+            entities = new List<string>();
+        }
+    }
+
+    // Función de depuración para mostrar el contenido de la configuración
+    public void DebugConfig(CodeGenConfig config)
+    {
+        if (config == null)
+        {
+            System.Diagnostics.Debug.WriteLine("Config is null");
+            return;
+        }
+        
+        System.Diagnostics.Debug.WriteLine("Config loaded:");
+        if (config.entities != null)
+        {
+            System.Diagnostics.Debug.WriteLine($"Entities count: {config.entities.Count}");
+            foreach (var entity in config.entities)
+            {
+                System.Diagnostics.Debug.WriteLine($"Entity: {entity.Key}");
+                System.Diagnostics.Debug.WriteLine($"  DTO: {entity.Value.dto}");
+                System.Diagnostics.Debug.WriteLine($"  CreateDTO: {entity.Value.createDto}");
+                System.Diagnostics.Debug.WriteLine($"  UpdateDTO: {entity.Value.updateDto}");
+            }
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine("No entities found in config");
+        }
+    }
+    
+    // Parser JSON manual para extraer la configuración específica
+    public CodeGenConfig LoadConfig(string hostTemplateFile)
+    {
+        var config = new CodeGenConfig();
+        
+        // Buscar el archivo JSON
+        string jsonPath = Path.Combine(Path.GetDirectoryName(hostTemplateFile), "mpr.codegen.json");
+        
+        // Verificar si el archivo existe
+        if (!File.Exists(jsonPath))
+        {
+            System.Diagnostics.Debug.WriteLine($"JSON config file not found at: {jsonPath}");
+            return config;
+        }
+
+        try
+        {
+            // Leer el contenido del archivo JSON
+            string jsonContent = File.ReadAllText(jsonPath);
+            System.Diagnostics.Debug.WriteLine($"JSON content loaded: {jsonContent.Substring(0, Math.Min(100, jsonContent.Length))}...");
+            
+            // Obtener manualmente la configuración para AlphabeticalListOfProducts
+            if (jsonContent.Contains("\"AlphabeticalListOfProducts\""))
+            {
+                if (config.entities == null)
+                    config.entities = new Dictionary<string, EntityConfig>();
+                
+                var entityConfig = new EntityConfig();
+                
+                // Extraer valores usando índices
+                int dtoIndex = jsonContent.IndexOf("\"dto\":", jsonContent.IndexOf("\"AlphabeticalListOfProducts\""));
+                if (dtoIndex > 0)
+                {
+                    int startQuote = jsonContent.IndexOf("\"", dtoIndex + 6);
+                    int endQuote = jsonContent.IndexOf("\"", startQuote + 1);
+                    entityConfig.dto = jsonContent.Substring(startQuote + 1, endQuote - startQuote - 1);
+                }
+                
+                int createDtoIndex = jsonContent.IndexOf("\"createDto\":", jsonContent.IndexOf("\"AlphabeticalListOfProducts\""));
+                if (createDtoIndex > 0)
+                {
+                    int startQuote = jsonContent.IndexOf("\"", createDtoIndex + 12);
+                    int endQuote = jsonContent.IndexOf("\"", startQuote + 1);
+                    entityConfig.createDto = jsonContent.Substring(startQuote + 1, endQuote - startQuote - 1);
+                }
+                
+                int updateDtoIndex = jsonContent.IndexOf("\"updateDto\":", jsonContent.IndexOf("\"AlphabeticalListOfProducts\""));
+                if (updateDtoIndex > 0)
+                {
+                    int startQuote = jsonContent.IndexOf("\"", updateDtoIndex + 12);
+                    int endQuote = jsonContent.IndexOf("\"", startQuote + 1);
+                    entityConfig.updateDto = jsonContent.Substring(startQuote + 1, endQuote - startQuote - 1);
+                }
+                
+                config.entities["AlphabeticalListOfProducts"] = entityConfig;
+            }
+            
+            DebugConfig(config);
+            return config;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error loading JSON config manually: {ex.Message}");
+            return config;
+        }
+    }
+
+    // Métodos de ayuda para acceder a la configuración
+    public string GetDtoName(string entityName, CodeGenConfig config)
+    {
+        System.Diagnostics.Debug.WriteLine($"GetDtoName called for entity: {entityName}");
+        
+        if (config != null && config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && !string.IsNullOrEmpty(entityConfig.dto))
+        {
+            System.Diagnostics.Debug.WriteLine($"Found custom DTO name: {entityConfig.dto} for entity: {entityName}");
+            return entityConfig.dto;
+        }
+        
+        System.Diagnostics.Debug.WriteLine($"Using default DTO name: {entityName}Dto for entity: {entityName}");
+        return $"{entityName}Dto";
+    }
+
+    public string GetCreateDtoName(string entityName, CodeGenConfig config)
+    {
+        if (config != null && config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && !string.IsNullOrEmpty(entityConfig.createDto))
+        {
+            return entityConfig.createDto;
+        }
+        
+        return $"{entityName}CreateDto";
+    }
+
+    public string GetUpdateDtoName(string entityName, CodeGenConfig config)
+    {
+        if (config != null && config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && !string.IsNullOrEmpty(entityConfig.updateDto))
+        {
+            return entityConfig.updateDto;
+        }
+        
+        return $"{entityName}UpdateDto";
+    }
+    
+    public List<string> GetIncludes(string entityName, CodeGenConfig config)
+    {
+        if (config != null && config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && entityConfig.includes != null)
+        {
+            return entityConfig.includes;
+        }
+        
+        return new List<string>();
+    }
+    
+    public Dictionary<string, string> GetMappings(string entityName, CodeGenConfig config)
+    {
+        if (config != null && config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && entityConfig.mappings != null)
+        {
+            return entityConfig.mappings;
+        }
+        
+        return new Dictionary<string, string>();
+    }
+    
+    public bool ShouldGenerateMethod(string entityName, string methodName, CodeGenConfig config)
+    {
+        // Verificar configuración específica de entidad
+        if (config != null && config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) && 
+            entityConfig.generateMethods != null)
+        {
+            return GetMethodValue(entityConfig.generateMethods, methodName);
+        }
+        
+        // Verificar configuración por defecto
+        if (config != null && config.defaults?.generateMethods != null)
+        {
+            return GetMethodValue(config.defaults.generateMethods, methodName);
+        }
+        
+        // Valor predeterminado si no hay configuración
+        return true;
+    }
+    
+    public bool RequiresKeyForMethod(string entityName, string methodName, CodeGenConfig config)
+    {
+        // Verificar configuración por defecto
+        if (config != null && config.defaults?.requireKeysFor != null)
+        {
+            return GetMethodValue(config.defaults.requireKeysFor, methodName);
+        }
+        
+        // Valores predeterminados por método si no hay configuración
+        switch (methodName.ToLower())
+        {
+            case "getbyid":
+            case "put":
+            case "post":
+            case "delete":
+                return true;
+            default:
+                return false;
+        }
+    }
+    
+    public string GetPolicy(string entityName, string methodName, CodeGenConfig config)
+    {
+        if (config != null && config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) &&
+            entityConfig.policies != null && entityConfig.policies.TryGetValue(methodName.ToLower(), out var policy))
+        {
+            return policy;
+        }
+        
+        // Si debe generar políticas según la configuración por defecto y no hay una política específica
+        if (config != null && config.defaults?.generatePolicies != null && 
+            GetMethodValue(config.defaults.generatePolicies, methodName))
+        {
+            return $"{char.ToUpper(methodName[0])}{methodName.Substring(1)}{entityName}";
+        }
+        
+        return string.Empty;
+    }
+    
+    // Obtener el valor de un método desde MethodsConfig
+    private bool GetMethodValue(MethodsConfig methodsConfig, string methodName)
+    {
+        switch (methodName.ToLower())
+        {
+            case "get":
+                return methodsConfig.get;
+            case "getbyid":
+                return methodsConfig.getById;
+            case "post":
+                return methodsConfig.post;
+            case "put":
+                return methodsConfig.put;
+            case "delete":
+                return methodsConfig.delete;
+            default:
+                return false;
+        }
+    }
+#>

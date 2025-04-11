@@ -1,0 +1,96 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="T4Reference\*.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="CodeGenerator.ps1">
+			<Generator></Generator>
+		</None>
+		<None Update="T4Includes\DefaultValueHelper.ttinclude">
+		  <Generator>TextTemplatingFileGenerator</Generator>
+		  <LastGenOutput>DefaultValueHelper.cs</LastGenOutput>
+		</None>
+		<None Update="T4Templates\AutoMapperServiceRegistration.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>AutoMapperServiceRegistration.cs</LastGenOutput>
+		</None>
+		<None Update="T4Templates\Controllers.tt">
+			<LastGenOutput>Controllers.cs</LastGenOutput>
+			<Generator>TextTemplatingFileGenerator</Generator>
+		</None>
+		<None Update="T4Templates\DbContextRegistration.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>DbContextRegistration.generated.cs</LastGenOutput>
+		</None>
+		<None Update="T4Templates\IntegrationTests.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>IntegrationTests.generated.cs</LastGenOutput>
+		</None>
+		<None Update="T4Templates\IUnitOfWork.tt">
+			<LastGenOutput>IUnitOfWork.generated.cs</LastGenOutput>
+			<Generator>TextTemplatingFileGenerator</Generator>
+		</None>
+		<None Update="T4Templates\MappingProfiles.tt">
+			<LastGenOutput>MappingProfiles.generated.cs</LastGenOutput>
+			<Generator>TextTemplatingFileGenerator</Generator>
+		</None>
+		<None Update="T4Templates\Dtos.tt">
+			<LastGenOutput>Dtos.cs</LastGenOutput>
+			<Generator>TextTemplatingFileGenerator</Generator>
+		</None>
+		<None Update="T4Templates\RepositoryImplementation.tt">
+			<LastGenOutput>RepositoryImplementation.generated.cs</LastGenOutput>
+			<Generator>TextTemplatingFileGenerator</Generator>
+		</None>
+		<None Update="T4Templates\RepositoryInterfaces.tt">
+			<LastGenOutput>RepositoryInterfaces.generated.cs</LastGenOutput>
+			<Generator>TextTemplatingFileGenerator</Generator>
+		</None>
+		<None Update="T4Templates\Services.tt">
+			<LastGenOutput>Services.generated.cs</LastGenOutput>
+			<Generator>TextTemplatingFileGenerator</Generator>
+		</None>
+		<None Update="T4Templates\ApplicationServiceRegistration.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>ApplicationServiceRegistration.cs</LastGenOutput>
+		</None>
+		<None Update="T4Templates\UnitOfWork.tt">
+			<LastGenOutput>UnitOfWork.generated.cs</LastGenOutput>
+			<Generator>TextTemplatingFileGenerator</Generator>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="T4Templates\DbContextRegistration.generated.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>DbContextRegistration.tt</DependentUpon>
+	  </Compile>
+	  <Compile Update="T4Templates\Services.generated.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Services.tt</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+</Project>
