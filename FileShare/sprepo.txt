@@ -1,0 +1,121 @@
+public interface IStoredProcedureRepository<TContext> where TContext : DbContext
+{
+    Task<IEnumerable<TResult>> ExecuteStoredProcedureAsync<TResult>(
+        string storedProcedureName,
+        Func<DbDataReader, TResult> map,
+        IEnumerable<DbParameterDefinition>? parameters = null,
+        string? cursorParameterName = null);
+}
+
+
+
+--
+
+
+
+public class StoredProcedureRepository<TContext> : IStoredProcedureRepository<TContext>
+    where TContext : DbContext
+{
+    private readonly TContext _dbContext;
+
+    public StoredProcedureRepository(TContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
+    public async Task<IEnumerable<TResult>> ExecuteStoredProcedureAsync<TResult>(
+        string storedProcedureName,
+        Func<DbDataReader, TResult> map,
+        IEnumerable<DbParameterDefinition>? parameters = null,
+        string? cursorParameterName = null)
+    {
+        return await DatabaseUtils.ExecuteStoredProcedureAsync(
+            _dbContext,
+            storedProcedureName,
+            map,
+            parameters,
+            cursorParameterName
+        );
+    }
+}
+
+
+
+
+--
+
+
+
+
+services.AddScoped<IStoredProcedureRepository<NorthwindDbContext>, StoredProcedureRepository<NorthwindDbContext>>();
+services.AddScoped<IStoredProcedureRepository<OrdersDbContext>, StoredProcedureRepository<OrdersDbContext>>();
+
+
+
+
+--
+
+
+
+public interface IUnitOfWork
+{
+    // otros repositorios...
+
+    IStoredProcedureRepository<NorthwindDbContext> NorthwindSPs { get; }
+    IStoredProcedureRepository<OrdersDbContext> OrdersSPs { get; }
+}
+
+
+
+
+
+--
+
+
+
+
+
+
+public class UnitOfWork : IUnitOfWork
+{
+    public IStoredProcedureRepository<NorthwindDbContext> NorthwindSPs { get; }
+    public IStoredProcedureRepository<OrdersDbContext> OrdersSPs { get; }
+
+    public UnitOfWork(
+        IStoredProcedureRepository<NorthwindDbContext> northwindSPs,
+        IStoredProcedureRepository<OrdersDbContext> ordersSPs,
+        ...
+    )
+    {
+        NorthwindSPs = northwindSPs;
+        OrdersSPs = ordersSPs;
+    }
+
+    public Task<int> SaveChangesAsync()
+        => Task.WhenAll(
+               NorthwindSPs.Context.SaveChangesAsync(),
+               OrdersSPs.Context.SaveChangesAsync()
+           ).ContinueWith(_ => 1); // ejemplo si querés consolidar SaveChanges
+}
+
+
+
+
+--
+
+
+
+
+var result = await _unitOfWork.NorthwindSPs.ExecuteStoredProcedureAsync(
+    "GetCustomerOrdersReport",
+    reader => new CustomerOrdersReportModel
+    {
+        CustomerName = reader.GetString(0),
+        OrderCount = reader.GetInt32(1),
+        TotalAmount = reader.GetDecimal(2)
+    },
+    new List<DbParameterDefinition>
+    {
+        new() { Name = "CustomerId", Value = 123 }
+    }
+);
