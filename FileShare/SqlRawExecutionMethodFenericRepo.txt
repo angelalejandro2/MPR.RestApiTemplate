@@ -1,0 +1,15 @@
+public virtual async Task<IEnumerable<TResult>> ExecuteStoredProcedureAsync<TResult>(
+    string storedProcedureName,
+    Func<DbDataReader, TResult> map,
+    object parameters,
+    string? cursorParameterName = null)
+{
+    var parameterDefs = DbParameterFactory.FromObject(parameters);
+    return await DatabaseUtils.ExecuteStoredProcedureAsync(
+        _dbContext,
+        storedProcedureName,
+        map,
+        parameterDefs,
+        cursorParameterName
+    );
+}
