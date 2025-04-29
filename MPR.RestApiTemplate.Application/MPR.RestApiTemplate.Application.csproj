@@ -21,10 +21,6 @@
 
   <ItemGroup>
     <Folder Include="Dtos\Generated\" />
-    <Folder Include="Mappings\" />
-    <Folder Include="Mappings\Generated\" />
-    <Folder Include="Services\" />
-    <Folder Include="Services\Generated\" />
   </ItemGroup>
 
 </Project>

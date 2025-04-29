@@ -24,26 +24,26 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{regionId}")]
-        public virtual async Task<ActionResult<RegionDto>> GetById(int regionId)
+        [HttpGet("{regionID}")]
+        public virtual async Task<ActionResult<RegionDto>> GetById(int regionID)
         {
-            var result = await _service.GetByIdAsync(regionId);
+            var result = await _service.GetByIdAsync(regionID);
             if (result == null)
                 return NotFound();
             return Ok(result);
         }
 
-        [HttpDelete("{regionId}")]
-        public virtual async Task<ActionResult> DeleteAsync(int regionId)
+        [HttpDelete("{regionID}")]
+        public virtual async Task<ActionResult> DeleteAsync(int regionID)
         {
-            await _service.DeleteAsync(regionId);
+            await _service.DeleteAsync(regionID);
             return NoContent();
         }
 
-        [HttpPut("{regionId}")]
-        public virtual async Task<ActionResult<RegionDto>> UpdateAsync(int regionId, [FromBody] RegionUpdateDto model)
+        [HttpPut("{regionID}")]
+        public virtual async Task<ActionResult<RegionDto>> UpdateAsync(int regionID, [FromBody] RegionUpdateDto model)
         {
-            if (model.RegionId != regionId)
+            if (model.RegionID != regionID)
                 return BadRequest("Key mismatch between route and payload");
             var result = await _service.UpdateAsync(model);
             return Accepted(result);
@@ -53,7 +53,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
         public virtual async Task<ActionResult<RegionDto>> AddAsync([FromBody] RegionCreateDto model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { RegionId = result.RegionId }, result);
+            return CreatedAtAction(nameof(GetById), new { RegionID = result.RegionID }, result);
         }
     }
 }

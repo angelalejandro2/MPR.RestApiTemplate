@@ -24,15 +24,15 @@ namespace MPR.RestApiTemplate.Application.Services
             return _mapper.Map<IEnumerable<RegionDto>>(entities);
         }
 
-        public virtual async Task<RegionDto> GetByIdAsync(int regionId, params Expression<Func<Region, object>>[] includes)
+        public virtual async Task<RegionDto> GetByIdAsync(int regionID, params Expression<Func<Region, object>>[] includes)
         {
-            var entity = await _unitOfWork.RegionRepository.GetByIdAsync(new object[] { regionId }, includes);
+            var entity = await _unitOfWork.RegionRepository.GetByIdAsync(new object[] { regionID }, includes);
             return _mapper.Map<RegionDto>(entity);
         }
 
-        public virtual async Task DeleteAsync(int regionId)
+        public virtual async Task DeleteAsync(int regionID)
         {
-            await _unitOfWork.RegionRepository.DeleteAsync(regionId);
+            await _unitOfWork.RegionRepository.DeleteAsync(regionID);
             await _unitOfWork.SaveChangesAsync();
         }
 

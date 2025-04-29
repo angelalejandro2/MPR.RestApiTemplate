@@ -11,61 +11,61 @@ public static class AutoMapperRegistration
     public static IServiceCollection AddMappingProfiles(this IServiceCollection services)
     {
         services.AddSingleton<Profile, AlphabeticalListOfProductsMapping>();
-        services.AddSingleton<Profile, CategoriesMapping>();
-        services.AddSingleton<Profile, CategorySalesFor1997Mapping>();
-        services.AddSingleton<Profile, CurrentProductListMapping>();
-        services.AddSingleton<Profile, CustomerAndSuppliersByCityMapping>();
-        services.AddSingleton<Profile, CustomerDemographicsMapping>();
-        services.AddSingleton<Profile, CustomersMapping>();
-        services.AddSingleton<Profile, EmployeesMapping>();
-        services.AddSingleton<Profile, InvoicesMapping>();
-        services.AddSingleton<Profile, OrderDetailsExtendedMapping>();
-        services.AddSingleton<Profile, OrderDetailsMapping>();
-        services.AddSingleton<Profile, OrdersMapping>();
-        services.AddSingleton<Profile, OrdersQryMapping>();
-        services.AddSingleton<Profile, OrderSubtotalsMapping>();
-        services.AddSingleton<Profile, ProductsAboveAveragePriceMapping>();
-        services.AddSingleton<Profile, ProductSalesFor1997Mapping>();
-        services.AddSingleton<Profile, ProductsByCategoryMapping>();
-        services.AddSingleton<Profile, ProductsMapping>();
-        services.AddSingleton<Profile, QuarterlyOrdersMapping>();
+        services.AddSingleton<Profile, CategoryMapping>();
+        services.AddSingleton<Profile, Category_Sales_for_1997Mapping>();
+        services.AddSingleton<Profile, Current_Product_ListMapping>();
+        services.AddSingleton<Profile, CustomerDemographicMapping>();
+        services.AddSingleton<Profile, CustomerMapping>();
+        services.AddSingleton<Profile, Customer_and_Suppliers_by_CityMapping>();
+        services.AddSingleton<Profile, EmployeeMapping>();
+        services.AddSingleton<Profile, InvoiceMapping>();
+        services.AddSingleton<Profile, OrderMapping>();
+        services.AddSingleton<Profile, Orders_QryMapping>();
+        services.AddSingleton<Profile, Order_DetailMapping>();
+        services.AddSingleton<Profile, Order_Details_ExtendedMapping>();
+        services.AddSingleton<Profile, Order_SubtotalMapping>();
+        services.AddSingleton<Profile, ProductMapping>();
+        services.AddSingleton<Profile, Products_Above_Average_PriceMapping>();
+        services.AddSingleton<Profile, Products_by_CategoryMapping>();
+        services.AddSingleton<Profile, Product_Sales_for_1997Mapping>();
+        services.AddSingleton<Profile, Quarterly_OrderMapping>();
         services.AddSingleton<Profile, RegionMapping>();
-        services.AddSingleton<Profile, SalesByCategoryMapping>();
-        services.AddSingleton<Profile, SalesTotalsByAmountMapping>();
-        services.AddSingleton<Profile, ShippersMapping>();
-        services.AddSingleton<Profile, SummaryOfSalesByQuarterMapping>();
-        services.AddSingleton<Profile, SummaryOfSalesByYearMapping>();
-        services.AddSingleton<Profile, SuppliersMapping>();
-        services.AddSingleton<Profile, TerritoriesMapping>();
+        services.AddSingleton<Profile, Sales_by_CategoryMapping>();
+        services.AddSingleton<Profile, Sales_Totals_by_AmountMapping>();
+        services.AddSingleton<Profile, ShipperMapping>();
+        services.AddSingleton<Profile, Summary_of_Sales_by_QuarterMapping>();
+        services.AddSingleton<Profile, Summary_of_Sales_by_YearMapping>();
+        services.AddSingleton<Profile, SupplierMapping>();
+        services.AddSingleton<Profile, TerritoryMapping>();
         
         services.AddAutoMapper(
             typeof(AlphabeticalListOfProductsMapping),
-            typeof(CategoriesMapping),
-            typeof(CategorySalesFor1997Mapping),
-            typeof(CurrentProductListMapping),
-            typeof(CustomerAndSuppliersByCityMapping),
-            typeof(CustomerDemographicsMapping),
-            typeof(CustomersMapping),
-            typeof(EmployeesMapping),
-            typeof(InvoicesMapping),
-            typeof(OrderDetailsExtendedMapping),
-            typeof(OrderDetailsMapping),
-            typeof(OrdersMapping),
-            typeof(OrdersQryMapping),
-            typeof(OrderSubtotalsMapping),
-            typeof(ProductsAboveAveragePriceMapping),
-            typeof(ProductSalesFor1997Mapping),
-            typeof(ProductsByCategoryMapping),
-            typeof(ProductsMapping),
-            typeof(QuarterlyOrdersMapping),
+            typeof(CategoryMapping),
+            typeof(Category_Sales_for_1997Mapping),
+            typeof(Current_Product_ListMapping),
+            typeof(CustomerDemographicMapping),
+            typeof(CustomerMapping),
+            typeof(Customer_and_Suppliers_by_CityMapping),
+            typeof(EmployeeMapping),
+            typeof(InvoiceMapping),
+            typeof(OrderMapping),
+            typeof(Orders_QryMapping),
+            typeof(Order_DetailMapping),
+            typeof(Order_Details_ExtendedMapping),
+            typeof(Order_SubtotalMapping),
+            typeof(ProductMapping),
+            typeof(Products_Above_Average_PriceMapping),
+            typeof(Products_by_CategoryMapping),
+            typeof(Product_Sales_for_1997Mapping),
+            typeof(Quarterly_OrderMapping),
             typeof(RegionMapping),
-            typeof(SalesByCategoryMapping),
-            typeof(SalesTotalsByAmountMapping),
-            typeof(ShippersMapping),
-            typeof(SummaryOfSalesByQuarterMapping),
-            typeof(SummaryOfSalesByYearMapping),
-            typeof(SuppliersMapping),
-            typeof(TerritoriesMapping)
+            typeof(Sales_by_CategoryMapping),
+            typeof(Sales_Totals_by_AmountMapping),
+            typeof(ShipperMapping),
+            typeof(Summary_of_Sales_by_QuarterMapping),
+            typeof(Summary_of_Sales_by_YearMapping),
+            typeof(SupplierMapping),
+            typeof(TerritoryMapping)
         );
 
         return services;

@@ -12,6 +12,11 @@ using MPR.RestApiTemplate.Domain.Interfaces.Repositories;
 	var entities = Directory.GetFiles(entitiesPath, "*.cs")
 		.Select(f => Path.GetFileNameWithoutExtension(f))
 		.ToList();
+
+	var contextsPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Infrastructure\Context");
+	var contexts = Directory.GetFiles(contextsPath, "*.cs")
+		.Select(f => Path.GetFileNameWithoutExtension(f))
+		.ToList();
 #>
 namespace MPR.RestApiTemplate.Domain.Interfaces
 {
@@ -22,6 +27,12 @@ namespace MPR.RestApiTemplate.Domain.Interfaces
 	{
 #>
 		I<#= entity #>Repository <#= entity #>Repository { get; }
+<#
+	}
+	foreach (var context in contexts)
+	{
+#>
+		I<#= context #>SpRepository <#= context #>SpRepository { get; }
 <#
 	}
 #>

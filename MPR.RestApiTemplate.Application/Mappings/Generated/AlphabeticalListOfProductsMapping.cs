@@ -14,7 +14,7 @@ namespace MPR.RestApiTemplate.Application.DTOs
 
         protected virtual void ConfigureMappings()
         {
-            CreateMap<AlphabeticalListOfProducts, AlphabeticalListOfProductsDto>().ReverseMap();
+            CreateMap<Alphabetical_list_of_product, AlphabeticalListOfProductsDto>().ReverseMap();
         }
     }
 }

@@ -18,9 +18,9 @@ namespace MPR.RestApiTemplate.Application.Services
             _mapper = mapper;
         }
 
-        public virtual async Task<IEnumerable<AlphabeticalListOfProductsDto>> GetAllAsync(params Expression<Func<AlphabeticalListOfProducts, object>>[] includes)
+        public virtual async Task<IEnumerable<AlphabeticalListOfProductsDto>> GetAllAsync(params Expression<Func<Alphabetical_list_of_product, object>>[] includes)
         {
-            var entities = await _unitOfWork.AlphabeticalListOfProductsRepository.GetAllAsync(includes);
+            var entities = await _unitOfWork.Alphabetical_list_of_productRepository.GetAllAsync(includes);
             return _mapper.Map<IEnumerable<AlphabeticalListOfProductsDto>>(entities);
         }
     }

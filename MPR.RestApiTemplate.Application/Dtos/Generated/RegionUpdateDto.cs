@@ -6,7 +6,7 @@ namespace MPR.RestApiTemplate.Application.DTOs
 {
     public class RegionUpdateDto
     {
-        public int RegionId { get; set; }
+        public int RegionID { get; set; }
         public string RegionDescription { get; set; }
     }
 }

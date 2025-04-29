@@ -58,6 +58,10 @@
 			<LastGenOutput>RepositoryImplementation.generated.cs</LastGenOutput>
 			<Generator>TextTemplatingFileGenerator</Generator>
 		</None>
+		<None Update="T4Templates\RepositoryInterfacesSp.tt">
+		  <LastGenOutput>RepositoryInterfaces.generated.cs</LastGenOutput>
+		  <Generator>TextTemplatingFileGenerator</Generator>
+		</None>
 		<None Update="T4Templates\RepositoryInterfaces.tt">
 			<LastGenOutput>RepositoryInterfaces.generated.cs</LastGenOutput>
 			<Generator>TextTemplatingFileGenerator</Generator>
@@ -85,6 +89,11 @@
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>DbContextRegistration.tt</DependentUpon>
+	  </Compile>
+	  <Compile Update="T4Templates\Dtos.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Dtos.tt</DependentUpon>
 	  </Compile>
 	  <Compile Update="T4Templates\Services.generated.cs">
 	    <DesignTime>True</DesignTime>

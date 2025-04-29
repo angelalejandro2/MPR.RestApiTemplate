@@ -21,15 +21,15 @@ namespace MPR.RestApiTemplate.Api.Controllers
             {
                 name = "MPR.RestApiTemplate",
                 version = "1.0",
-                description = "Reusable REST API template for building .NET 9 APIs.",
+                description = "REST API template",
                 documentation = new
                 {
                     scalar = $"{Request.Scheme}://{Request.Host}/scalar",
                     swagger = $"{Request.Scheme}://{Request.Host}/swagger"
                 },
-                domains = new[] { "Customers", "Orders", "Products" }, // Reemplazar según corresponda
+                domains = new[] {"Lorem Ipsum"}, // Reemplazar según corresponda
                 serverTime = DateTime.UtcNow,
-                message = "Welcome to the MPR REST API Template. Customize this endpoint as needed."
+                message = "Customize this endpoint as needed."
             };
 
             return Ok(info);
@@ -50,7 +50,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
                 <div class='container mt-5'>
                     <div class='jumbotron'>
                         <h1 class='display-4'>MPR.RestApiTemplate API v1.0</h1>
-                        <p class='lead'>Reusable REST API template for building .NET 9 APIs.</p>
+                        <p class='lead'>Reusable REST API template. Customize this as needed.</p>
                         <hr class='my-4'>
                         <p>Explore the API documentation below:</p>
                         <a class='btn btn-primary btn-lg' href='/scalar' role='button'>Scalar Docs</a>

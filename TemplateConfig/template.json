@@ -4,9 +4,8 @@
   "classifications": [ "Web", "REST", "API" ],
   "identity": "MPR.RestApiTemplate",
   "name": "MPR REST API Template",
-  "shortName": "mpr-rest-api-template",
+  "shortName": "mpr-rest-api",
   "sourceName": "MPR.RestApiTemplate",
-  "preferNameDirectory": true,
   "tags": {
     "language": "C#",
     "type": "project"

@@ -6,14 +6,41 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Text" #>
+<#@ include file="..\T4Includes\MprCodegenParser.ttinclude" #>
 <#
-    // Función para generar el contenido del controlador para una entidad específica
-    string GenerateControllerContent(string className, List<(string Type, string Name)> keyProps, bool isKeyless)
+    // Crear una instancia del MprCodegenParser para leer la configuración
+    var parser = new MprCodegenParser(Host.TemplateFile, @"..\mpr.codegen.json");
+    
+    // Función para obtener el nombre personalizado de la entidad desde mpr.codegen.json
+    string GetCustomEntityName(string entityName, MprCodegenParser parser)
     {
-        string dtoName = className + "Dto";
-        string createDto = className + "CreateDto";
-        string updateDto = className + "UpdateDto";
-        string lowerName = char.ToLower(className[0]) + className.Substring(1);
+        try
+        {
+            // Obtenemos los nombres de DTO para aprovechar la lógica que ya existe en el parser
+            var (dtoName, _, _) = parser.GetDtoNames(entityName);
+            
+            // Extraer el nombre base de la entidad del nombre del DTO (quitando "Dto" del final)
+            string customName = dtoName.EndsWith("Dto") ? dtoName.Substring(0, dtoName.Length - 3) : dtoName;
+            
+            return string.IsNullOrEmpty(customName) ? entityName : customName;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error al obtener nombre personalizado: {ex.Message}");
+            return entityName;
+        }
+    }
+
+    // Función para generar el contenido del controlador para una entidad específica
+    string GenerateControllerContent(string entityName, List<(string Type, string Name)> keyProps, bool isKeyless, MprCodegenParser parser)
+    {
+        // Obtener el nombre personalizado de la entidad desde la configuración
+        string customEntityName = GetCustomEntityName(entityName, parser);
+        
+        // Obtener los nombres de DTO configurados o por defecto
+        var (dtoName, createDtoName, updateDtoName) = parser.GetDtoNames(entityName);
+        
+        string lowerName = char.ToLower(customEntityName[0]) + customEntityName.Substring(1);
         
         StringBuilder sb = new StringBuilder();
         sb.AppendLine("using Asp.Versioning;");
@@ -26,11 +53,11 @@
         sb.AppendLine("    [ApiController]");
         sb.AppendLine("    [ApiVersion(\"1.0\")]");
         sb.AppendLine("    [Route(\"api/v{version:apiVersion}/[controller]\")]");
-        sb.AppendLine($"    public partial class {className}Controller : ControllerBase");
+        sb.AppendLine($"    public partial class {customEntityName}Controller : ControllerBase");
         sb.AppendLine("    {");
-        sb.AppendLine($"        private readonly {className}Service _service;");
+        sb.AppendLine($"        private readonly {customEntityName}Service _service;");
         sb.AppendLine("");
-        sb.AppendLine($"        public {className}Controller({className}Service service)");
+        sb.AppendLine($"        public {customEntityName}Controller({customEntityName}Service service)");
         sb.AppendLine("        {");
         sb.AppendLine("            _service = service;");
         sb.AppendLine("        }");
@@ -68,7 +95,7 @@
             sb.AppendLine("        }");
             sb.AppendLine("");
             sb.AppendLine($"        [HttpPut(\"{routeParams}\")]");
-            sb.AppendLine($"        public virtual async Task<ActionResult<{dtoName}>> UpdateAsync({methodParams}, [FromBody] {updateDto} model)");
+            sb.AppendLine($"        public virtual async Task<ActionResult<{dtoName}>> UpdateAsync({methodParams}, [FromBody] {updateDtoName} model)");
             sb.AppendLine("        {");
 
             // Validación de coincidencia de claves
@@ -84,7 +111,7 @@
             sb.AppendLine("        }");
             sb.AppendLine("");
             sb.AppendLine("        [HttpPost]");
-            sb.AppendLine($"        public virtual async Task<ActionResult<{dtoName}>> AddAsync([FromBody] {createDto} model)");
+            sb.AppendLine($"        public virtual async Task<ActionResult<{dtoName}>> AddAsync([FromBody] {createDtoName} model)");
             sb.AppendLine("        {");
             sb.AppendLine("            var result = await _service.AddAsync(model);");
             sb.AppendLine($"            return CreatedAtAction(nameof(GetById), new {{ {keyObject} }}, result);");
@@ -114,7 +141,7 @@
     // Para cada archivo de entidad, generar un controlador correspondiente
     foreach (var file in entityFiles)
     {
-        string className = Path.GetFileNameWithoutExtension(file);
+        string entityName = Path.GetFileNameWithoutExtension(file);
         var lines = File.ReadAllLines(file);
 
         bool isKeyless = lines.Any(l => l.Trim().StartsWith("[Keyless]"));
@@ -144,25 +171,19 @@
             }
         }
 
-        // Generar el contenido del controlador para esta entidad
-        string controllerContent = GenerateControllerContent(className, keyProps, isKeyless);
+        // Obtener el nombre personalizado para el archivo de salida
+        string customEntityName = GetCustomEntityName(entityName, parser);
         
-        // Escribir el contenido en un archivo independiente solo si no existe
-        string outputFileName = $"{className}Controller.generated.cs";
+        // Generar el contenido del controlador para esta entidad
+        string controllerContent = GenerateControllerContent(entityName, keyProps, isKeyless, parser);
+        
+        // Escribir el contenido en un archivo independiente
+        string outputFileName = $"{customEntityName}Controller.generated.cs";
         string outputFilePath = Path.Combine(outputPath, outputFileName);
         
-        // Verificar si el archivo ya existe antes de escribirlo
-        if (!File.Exists(outputFilePath))
-        {
-            File.WriteAllText(outputFilePath, controllerContent);
-        }
-        else
-        {
-            // Se podría agregar alguna indicación de que el archivo no se sobrescribió
-            // Por ejemplo, registrarlo en un archivo de log o mostrar un mensaje
-        }
+        File.WriteAllText(outputFilePath, controllerContent);
     }
 #>
 // Esta plantilla ha generado controladores individuales para cada entidad.
 // Los archivos generados se encuentran en la carpeta GeneratedControllers.
-// Nota: Los archivos existentes no han sido sobrescritos.
+// Los nombres de DTOs personalizados se configuran en mpr.codegen.json

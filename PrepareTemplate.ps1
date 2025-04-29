@@ -12,7 +12,7 @@ param(
     [string]$OutputPath = "./output",
 
     [Parameter(Mandatory = $false)]
-    [string[]]$Exclude = @("MPR.RestApiTemplate.Vsix", ".git", ".gitignore", ".vs", "PrepareTemplate.ps1", "CHANGELOG.md", "README.md", "LICENSE", "LICENSE.txt", "CONTRIBUTING.md", "CONTRIBUTORS.md", ".vscode", ".editorconfig", ".gitattributes", ".gitkeep", ".github", "template_tmp", "TemplateConfig", "template.json") # Exclude folders and files (wildcards are allowed)
+    [string[]]$Exclude = @("MPR.RestApiTemplate.Vsix", ".git", ".gitignore", ".vs", "PrepareTemplate.ps1", "CHANGELOG.md", "README.md", "LICENSE", "LICENSE.txt", "CONTRIBUTING.md", "CONTRIBUTORS.md", ".vscode", ".editorconfig", ".gitattributes", ".gitkeep", ".github", "template_tmp", "TemplateConfig", "template.json", "oracle-install-sample-schemas.sh") # Exclude folders and files (wildcards are allowed)
 )
 
 $TempPath = "./template_tmp"
@@ -44,32 +44,6 @@ function Remove-DirectoryContent {
     Write-Host "Limpiando archivos innecesarios en '$TempPath'..."
     Get-ChildItem -Path $TempPath -Recurse -Include bin, obj, .vs, .vscode, TestResults | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
     Get-ChildItem -Path $TempPath -Recurse -Include *.user, *.suo, launchSettings.json | Remove-Item -Force -ErrorAction SilentlyContinue
-}
-
-function Update-Names {
-    Write-Host "Reemplazando '$SourceName' a '$Placeholder' en archivos y nombres..."
-
-    $allFiles = Get-ChildItem -Path $TempPath -Recurse -File -Include *.cs, *.csproj, *.sln, *.json, *.cshtml, *.config, *.yml
-
-    foreach ($file in $allFiles) {
-        (Get-Content $file.FullName) -replace $SourceName, $Placeholder | Set-Content $file.FullName
-    }
-
-    # Renombrar carpetas
-    Get-ChildItem -Path $TempPath -Recurse -Directory |
-    Where-Object { $_.Name -like "*$SourceName*" } |
-    ForEach-Object {
-        $newName = $_.Name -replace [regex]::Escape($SourceName), $Placeholder
-        Rename-Item -Path $_.FullName -NewName $newName -Force
-    }
-
-    # Renombrar archivos
-    Get-ChildItem -Path $TempPath -Recurse -File |
-    Where-Object { $_.Name -like "*$SourceName*" } |
-    ForEach-Object {
-        $newName = $_.Name -replace [regex]::Escape($SourceName), $Placeholder
-        Rename-Item -Path $_.FullName -NewName $newName -Force
-    }
 }
 
 function New-NugetPackage {
@@ -107,7 +81,7 @@ function Clear-SpecifiedPaths {
 
         if (Test-Path $cleanPath) {
             Write-Host "Limpiando contenido de '$cleanPath'..."
-            Get-ChildItem -Path $cleanPath -Recurse -Force |
+            Get-ChildItem -Path $cleanPath -Exclude "*.md" -Recurse -Force |
             Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
         }
         else {
@@ -214,10 +188,9 @@ Clear-SpecifiedPaths `
     "MPR.RestApiTemplate.Domain\\Interfaces\\IUnitOfWork.generated.cs",
     "MPR.RestApiTemplate.Infrastructure\\UnitOfWork.generated.cs"
 )
-Update-Names
 Copy-TemplateConfigFiles
 New-NugetPackage
-#Remove-Temp
+Remove-Temp
 
 Write-Host "`nPlantilla lista en '$OutputPath'"
 Write-Host "Puedes probarla con:"

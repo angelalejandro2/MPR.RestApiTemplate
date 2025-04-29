@@ -4,11 +4,41 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
+<#@ include file="..\T4Includes\MprCodegenParser.ttinclude" #>
 <#@ output extension=".generated.cs" #>
 <#
-    // Función para generar el contenido de la clase de servicio
-    string GenerateServiceClass(string entityName, List<(string Type, string Name)> keyProperties, bool isKeyless)
+    // Crear una instancia del MprCodegenParser para leer la configuración
+    var parser = new MprCodegenParser(Host.TemplateFile, @"..\mpr.codegen.json");
+    
+    // Función para obtener el nombre personalizado de la entidad desde mpr.codegen.json
+    string GetCustomEntityName(string entityName, MprCodegenParser parser)
     {
+        try
+        {
+            // Obtenemos los nombres de DTO para aprovechar la lógica que ya existe en el parser
+            var (dtoName, _, _) = parser.GetDtoNames(entityName);
+            
+            // Extraer el nombre base de la entidad del nombre del DTO (quitando "Dto" del final)
+            string customName = dtoName.EndsWith("Dto") ? dtoName.Substring(0, dtoName.Length - 3) : dtoName;
+            
+            return string.IsNullOrEmpty(customName) ? entityName : customName;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error al obtener nombre personalizado: {ex.Message}");
+            return entityName;
+        }
+    }
+    
+    // Función para generar el contenido de la clase de servicio
+    string GenerateServiceClass(string entityName, List<(string Type, string Name)> keyProperties, bool isKeyless, MprCodegenParser parser)
+    {
+        // Obtener el nombre personalizado de la entidad desde la configuración
+        string customEntityName = GetCustomEntityName(entityName, parser);
+        
+        // Obtener los nombres de DTO configurados o por defecto
+        var (dtoName, createDtoName, updateDtoName) = parser.GetDtoNames(entityName);
+        
         var methodParams = string.Join(", ", keyProperties.Select(p => $"{p.Type} {char.ToLower(p.Name[0]) + p.Name.Substring(1)}"));
         var methodKeys = string.Join(", ", keyProperties.Select(p => char.ToLower(p.Name[0]) + p.Name.Substring(1)));
         
@@ -22,30 +52,30 @@
         sb.AppendLine("");
         sb.AppendLine("namespace MPR.RestApiTemplate.Application.Services");
         sb.AppendLine("{");
-        sb.AppendLine($"    public partial class {entityName}Service");
+        sb.AppendLine($"    public partial class {customEntityName}Service");
         sb.AppendLine("    {");
         sb.AppendLine("        private readonly IUnitOfWork _unitOfWork;");
         sb.AppendLine("        private readonly IMapper _mapper;");
         sb.AppendLine("");
-        sb.AppendLine($"        public {entityName}Service(IUnitOfWork unitOfWork, IMapper mapper)");
+        sb.AppendLine($"        public {customEntityName}Service(IUnitOfWork unitOfWork, IMapper mapper)");
         sb.AppendLine("        {");
         sb.AppendLine("            _unitOfWork = unitOfWork;");
         sb.AppendLine("            _mapper = mapper;");
         sb.AppendLine("        }");
         sb.AppendLine("");
-        sb.AppendLine($"        public virtual async Task<IEnumerable<{entityName}Dto>> GetAllAsync(params Expression<Func<{entityName}, object>>[] includes)");
+        sb.AppendLine($"        public virtual async Task<IEnumerable<{dtoName}>> GetAllAsync(params Expression<Func<{entityName}, object>>[] includes)");
         sb.AppendLine("        {");
         sb.AppendLine($"            var entities = await _unitOfWork.{entityName}Repository.GetAllAsync(includes);");
-        sb.AppendLine($"            return _mapper.Map<IEnumerable<{entityName}Dto>>(entities);");
+        sb.AppendLine($"            return _mapper.Map<IEnumerable<{dtoName}>>(entities);");
         sb.AppendLine("        }");
         
         if (!isKeyless && keyProperties.Count > 0)
         {
             sb.AppendLine("");
-            sb.AppendLine($"        public virtual async Task<{entityName}Dto> GetByIdAsync({methodParams}, params Expression<Func<{entityName}, object>>[] includes)");
+            sb.AppendLine($"        public virtual async Task<{dtoName}> GetByIdAsync({methodParams}, params Expression<Func<{entityName}, object>>[] includes)");
             sb.AppendLine("        {");
             sb.AppendLine($"            var entity = await _unitOfWork.{entityName}Repository.GetByIdAsync(new object[] {{ {methodKeys} }}, includes);");
-            sb.AppendLine($"            return _mapper.Map<{entityName}Dto>(entity);");
+            sb.AppendLine($"            return _mapper.Map<{dtoName}>(entity);");
             sb.AppendLine("        }");
             sb.AppendLine("");
             sb.AppendLine($"        public virtual async Task DeleteAsync({methodParams})");
@@ -54,20 +84,20 @@
             sb.AppendLine("            await _unitOfWork.SaveChangesAsync();");
             sb.AppendLine("        }");
             sb.AppendLine("");
-            sb.AppendLine($"        public virtual async Task<{entityName}Dto> AddAsync({entityName}CreateDto model)");
+            sb.AppendLine($"        public virtual async Task<{dtoName}> AddAsync({createDtoName} model)");
             sb.AppendLine("        {");
             sb.AppendLine($"            var entity = _mapper.Map<{entityName}>(model);");
             sb.AppendLine($"            entity = await _unitOfWork.{entityName}Repository.AddAsync(entity);");
             sb.AppendLine("            await _unitOfWork.SaveChangesAsync();");
-            sb.AppendLine($"            return _mapper.Map<{entityName}Dto>(entity);");
+            sb.AppendLine($"            return _mapper.Map<{dtoName}>(entity);");
             sb.AppendLine("        }");
             sb.AppendLine("");
-            sb.AppendLine($"        public virtual async Task<{entityName}Dto> UpdateAsync({entityName}UpdateDto model)");
+            sb.AppendLine($"        public virtual async Task<{dtoName}> UpdateAsync({updateDtoName} model)");
             sb.AppendLine("        {");
             sb.AppendLine($"            var entity = _mapper.Map<{entityName}>(model);");
             sb.AppendLine($"            entity = await _unitOfWork.{entityName}Repository.UpdateAsync(entity);");
             sb.AppendLine("            await _unitOfWork.SaveChangesAsync();");
-            sb.AppendLine($"            return _mapper.Map<{entityName}Dto>(entity);");
+            sb.AppendLine($"            return _mapper.Map<{dtoName}>(entity);");
             sb.AppendLine("        }");
         }
         
@@ -123,20 +153,20 @@
             }
         }
         
-        // Generar el contenido de la clase de servicio
-        string serviceContent = GenerateServiceClass(entityName, keyProperties, isKeyless);
+        // Obtener el nombre personalizado para el archivo de salida
+        string customEntityName = GetCustomEntityName(entityName, parser);
         
-        // Nombre del archivo de salida
-        string outputFileName = $"{entityName}Service.cs";
+        // Generar el contenido de la clase de servicio
+        string serviceContent = GenerateServiceClass(entityName, keyProperties, isKeyless, parser);
+        
+        // Nombre del archivo de salida con el nombre personalizado
+        string outputFileName = $"{customEntityName}Service.cs";
         string outputFilePath = Path.Combine(outputPath, outputFileName);
         
-        // Verificar si el archivo ya existe antes de escribirlo
-        if (!File.Exists(outputFilePath))
-        {
-            File.WriteAllText(outputFilePath, serviceContent);
-        }
+        // Escribir el archivo
+        File.WriteAllText(outputFilePath, serviceContent);
     }
 #>
 // Esta plantilla ha generado clases de servicio individuales para cada entidad.
 // Los archivos generados se encuentran en la carpeta GeneratedServices.
-// Nota: Los archivos existentes no han sido sobrescritos.
+// Los nombres de DTOs personalizados se configuran en mpr.codegen.json

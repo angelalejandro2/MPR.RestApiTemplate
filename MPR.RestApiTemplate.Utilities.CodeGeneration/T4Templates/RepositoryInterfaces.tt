@@ -49,14 +49,14 @@ foreach (var file in files)
     string outputFilePath = Path.Combine(outputPath, outputFileName);
     
     // Verificar si el archivo ya existe antes de escribirlo
-    if (!File.Exists(outputFilePath))
-    {
+    //if (!File.Exists(outputFilePath))
+    //{
         File.WriteAllText(outputFilePath, interfaceContent);
-    }
-    else
-    {
+    //}
+   // else
+   // {
         // Se podría agregar alguna indicación de que el archivo no se sobrescribió
-    }
+   // }
 }
 #>
 // Esta plantilla ha generado interfaces de repositorio individuales para cada entidad.

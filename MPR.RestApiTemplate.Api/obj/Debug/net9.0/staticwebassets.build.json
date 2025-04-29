@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "NLZ6rnctyB9kAIwrZ3UYHxbHPgqoCyYL67w8w1VaUKM=",
+  "Source": "MPR.RestApiTemplate.Api",
+  "BasePath": "_content/MPR.RestApiTemplate.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

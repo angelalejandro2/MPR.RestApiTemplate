@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using MPR.RestApiTemplate.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using MPR.RestApiTemplate.Infrastructure.Attributes;
 
 namespace MPR.RestApiTemplate.Infrastructure.Context;
@@ -14,180 +14,152 @@ public partial class NorthwindContext : DbContext
     {
     }
 
-    public virtual DbSet<AlphabeticalListOfProducts> AlphabeticalListOfProducts { get; set; }
+    public virtual DbSet<Alphabetical_list_of_product> Alphabetical_list_of_products { get; set; }
 
-    public virtual DbSet<Categories> Categories { get; set; }
+    public virtual DbSet<Category> Categories { get; set; }
 
-    public virtual DbSet<CategorySalesFor1997> CategorySalesFor1997 { get; set; }
+    public virtual DbSet<Category_Sales_for_1997> Category_Sales_for_1997s { get; set; }
 
-    public virtual DbSet<CurrentProductList> CurrentProductList { get; set; }
+    public virtual DbSet<Current_Product_List> Current_Product_Lists { get; set; }
 
-    public virtual DbSet<CustomerAndSuppliersByCity> CustomerAndSuppliersByCity { get; set; }
+    public virtual DbSet<Customer> Customers { get; set; }
 
-    public virtual DbSet<CustomerDemographics> CustomerDemographics { get; set; }
+    public virtual DbSet<CustomerDemographic> CustomerDemographics { get; set; }
 
-    public virtual DbSet<Customers> Customers { get; set; }
+    public virtual DbSet<Customer_and_Suppliers_by_City> Customer_and_Suppliers_by_Cities { get; set; }
 
-    public virtual DbSet<Employees> Employees { get; set; }
+    public virtual DbSet<Employee> Employees { get; set; }
 
-    public virtual DbSet<Invoices> Invoices { get; set; }
+    public virtual DbSet<Invoice> Invoices { get; set; }
 
-    public virtual DbSet<OrderDetails> OrderDetails { get; set; }
+    public virtual DbSet<Order> Orders { get; set; }
 
-    public virtual DbSet<OrderDetailsExtended> OrderDetailsExtended { get; set; }
+    public virtual DbSet<Order_Detail> Order_Details { get; set; }
 
-    public virtual DbSet<OrderSubtotals> OrderSubtotals { get; set; }
+    public virtual DbSet<Order_Details_Extended> Order_Details_Extendeds { get; set; }
 
-    public virtual DbSet<Orders> Orders { get; set; }
+    public virtual DbSet<Order_Subtotal> Order_Subtotals { get; set; }
 
-    public virtual DbSet<OrdersQry> OrdersQry { get; set; }
+    public virtual DbSet<Orders_Qry> Orders_Qries { get; set; }
 
-    public virtual DbSet<ProductSalesFor1997> ProductSalesFor1997 { get; set; }
+    public virtual DbSet<Product> Products { get; set; }
 
-    public virtual DbSet<Products> Products { get; set; }
+    public virtual DbSet<Product_Sales_for_1997> Product_Sales_for_1997s { get; set; }
 
-    public virtual DbSet<ProductsAboveAveragePrice> ProductsAboveAveragePrice { get; set; }
+    public virtual DbSet<Products_Above_Average_Price> Products_Above_Average_Prices { get; set; }
 
-    public virtual DbSet<ProductsByCategory> ProductsByCategory { get; set; }
+    public virtual DbSet<Products_by_Category> Products_by_Categories { get; set; }
 
-    public virtual DbSet<QuarterlyOrders> QuarterlyOrders { get; set; }
+    public virtual DbSet<Quarterly_Order> Quarterly_Orders { get; set; }
 
-    public virtual DbSet<Region> Region { get; set; }
+    public virtual DbSet<Region> Regions { get; set; }
 
-    public virtual DbSet<SalesByCategory> SalesByCategory { get; set; }
+    public virtual DbSet<Sales_Totals_by_Amount> Sales_Totals_by_Amounts { get; set; }
 
-    public virtual DbSet<SalesTotalsByAmount> SalesTotalsByAmount { get; set; }
+    public virtual DbSet<Sales_by_Category> Sales_by_Categories { get; set; }
 
-    public virtual DbSet<Shippers> Shippers { get; set; }
+    public virtual DbSet<Shipper> Shippers { get; set; }
 
-    public virtual DbSet<SummaryOfSalesByQuarter> SummaryOfSalesByQuarter { get; set; }
+    public virtual DbSet<Summary_of_Sales_by_Quarter> Summary_of_Sales_by_Quarters { get; set; }
 
-    public virtual DbSet<SummaryOfSalesByYear> SummaryOfSalesByYear { get; set; }
+    public virtual DbSet<Summary_of_Sales_by_Year> Summary_of_Sales_by_Years { get; set; }
 
-    public virtual DbSet<Suppliers> Suppliers { get; set; }
+    public virtual DbSet<Supplier> Suppliers { get; set; }
 
-    public virtual DbSet<Territories> Territories { get; set; }
+    public virtual DbSet<Territory> Territories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<AlphabeticalListOfProducts>(entity =>
+        modelBuilder.Entity<Alphabetical_list_of_product>(entity =>
         {
             entity.ToView("Alphabetical list of products");
         });
 
-        modelBuilder.Entity<CategorySalesFor1997>(entity =>
+        modelBuilder.Entity<Category_Sales_for_1997>(entity =>
         {
             entity.ToView("Category Sales for 1997");
         });
 
-        modelBuilder.Entity<CurrentProductList>(entity =>
+        modelBuilder.Entity<Current_Product_List>(entity =>
         {
             entity.ToView("Current Product List");
 
-            entity.Property(e => e.ProductId).ValueGeneratedOnAdd();
+            entity.Property(e => e.ProductID).ValueGeneratedOnAdd();
         });
 
-        modelBuilder.Entity<CustomerAndSuppliersByCity>(entity =>
+        modelBuilder.Entity<Customer>(entity =>
         {
-            entity.ToView("Customer and Suppliers by City");
-        });
+            entity.Property(e => e.CustomerID).IsFixedLength();
 
-        modelBuilder.Entity<CustomerDemographics>(entity =>
-        {
-            entity.HasKey(e => e.CustomerTypeId).IsClustered(false);
-
-            entity.Property(e => e.CustomerTypeId).IsFixedLength();
-        });
-
-        modelBuilder.Entity<Customers>(entity =>
-        {
-            entity.Property(e => e.CustomerId).IsFixedLength();
-
-            entity.HasMany(d => d.CustomerType).WithMany(p => p.Customer)
+            entity.HasMany(d => d.CustomerTypes).WithMany(p => p.Customers)
                 .UsingEntity<Dictionary<string, object>>(
                     "CustomerCustomerDemo",
-                    r => r.HasOne<CustomerDemographics>().WithMany()
-                        .HasForeignKey("CustomerTypeId")
+                    r => r.HasOne<CustomerDemographic>().WithMany()
+                        .HasForeignKey("CustomerTypeID")
                         .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("FK_CustomerCustomerDemo"),
-                    l => l.HasOne<Customers>().WithMany()
-                        .HasForeignKey("CustomerId")
+                    l => l.HasOne<Customer>().WithMany()
+                        .HasForeignKey("CustomerID")
                         .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("FK_CustomerCustomerDemo_Customers"),
                     j =>
                     {
-                        j.HasKey("CustomerId", "CustomerTypeId").IsClustered(false);
-                        j.IndexerProperty<string>("CustomerId")
+                        j.HasKey("CustomerID", "CustomerTypeID").IsClustered(false);
+                        j.ToTable("CustomerCustomerDemo");
+                        j.IndexerProperty<string>("CustomerID")
                             .HasMaxLength(5)
-                            .IsFixedLength()
-                            .HasColumnName("CustomerID");
-                        j.IndexerProperty<string>("CustomerTypeId")
+                            .IsFixedLength();
+                        j.IndexerProperty<string>("CustomerTypeID")
                             .HasMaxLength(10)
-                            .IsFixedLength()
-                            .HasColumnName("CustomerTypeID");
+                            .IsFixedLength();
                     });
         });
 
-        modelBuilder.Entity<Employees>(entity =>
+        modelBuilder.Entity<CustomerDemographic>(entity =>
+        {
+            entity.HasKey(e => e.CustomerTypeID).IsClustered(false);
+
+            entity.Property(e => e.CustomerTypeID).IsFixedLength();
+        });
+
+        modelBuilder.Entity<Customer_and_Suppliers_by_City>(entity =>
+        {
+            entity.ToView("Customer and Suppliers by City");
+        });
+
+        modelBuilder.Entity<Employee>(entity =>
         {
             entity.HasOne(d => d.ReportsToNavigation).WithMany(p => p.InverseReportsToNavigation).HasConstraintName("FK_Employees_Employees");
 
-            entity.HasMany(d => d.Territory).WithMany(p => p.Employee)
+            entity.HasMany(d => d.Territories).WithMany(p => p.Employees)
                 .UsingEntity<Dictionary<string, object>>(
-                    "EmployeeTerritories",
-                    r => r.HasOne<Territories>().WithMany()
-                        .HasForeignKey("TerritoryId")
+                    "EmployeeTerritory",
+                    r => r.HasOne<Territory>().WithMany()
+                        .HasForeignKey("TerritoryID")
                         .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("FK_EmployeeTerritories_Territories"),
-                    l => l.HasOne<Employees>().WithMany()
-                        .HasForeignKey("EmployeeId")
+                    l => l.HasOne<Employee>().WithMany()
+                        .HasForeignKey("EmployeeID")
                         .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("FK_EmployeeTerritories_Employees"),
                     j =>
                     {
-                        j.HasKey("EmployeeId", "TerritoryId").IsClustered(false);
-                        j.IndexerProperty<int>("EmployeeId").HasColumnName("EmployeeID");
-                        j.IndexerProperty<string>("TerritoryId")
-                            .HasMaxLength(20)
-                            .HasColumnName("TerritoryID");
+                        j.HasKey("EmployeeID", "TerritoryID").IsClustered(false);
+                        j.ToTable("EmployeeTerritories");
+                        j.IndexerProperty<string>("TerritoryID").HasMaxLength(20);
                     });
         });
 
-        modelBuilder.Entity<Invoices>(entity =>
+        modelBuilder.Entity<Invoice>(entity =>
         {
             entity.ToView("Invoices");
 
-            entity.Property(e => e.CustomerId).IsFixedLength();
+            entity.Property(e => e.CustomerID).IsFixedLength();
         });
 
-        modelBuilder.Entity<OrderDetails>(entity =>
+        modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => new { e.OrderId, e.ProductId }).HasName("PK_Order_Details");
-
-            entity.Property(e => e.Quantity).HasDefaultValue((short)1);
-
-            entity.HasOne(d => d.Order).WithMany(p => p.OrderDetails)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Order_Details_Orders");
-
-            entity.HasOne(d => d.Product).WithMany(p => p.OrderDetails)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Order_Details_Products");
-        });
-
-        modelBuilder.Entity<OrderDetailsExtended>(entity =>
-        {
-            entity.ToView("Order Details Extended");
-        });
-
-        modelBuilder.Entity<OrderSubtotals>(entity =>
-        {
-            entity.ToView("Order Subtotals");
-        });
-
-        modelBuilder.Entity<Orders>(entity =>
-        {
-            entity.Property(e => e.CustomerId).IsFixedLength();
+            entity.Property(e => e.CustomerID).IsFixedLength();
             entity.Property(e => e.Freight).HasDefaultValue(0m);
 
             entity.HasOne(d => d.Customer).WithMany(p => p.Orders).HasConstraintName("FK_Orders_Customers");
@@ -197,19 +169,39 @@ public partial class NorthwindContext : DbContext
             entity.HasOne(d => d.ShipViaNavigation).WithMany(p => p.Orders).HasConstraintName("FK_Orders_Shippers");
         });
 
-        modelBuilder.Entity<OrdersQry>(entity =>
+        modelBuilder.Entity<Order_Detail>(entity =>
+        {
+            entity.HasKey(e => new { e.OrderID, e.ProductID }).HasName("PK_Order_Details");
+
+            entity.Property(e => e.Quantity).HasDefaultValue((short)1);
+
+            entity.HasOne(d => d.Order).WithMany(p => p.Order_Details)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Order_Details_Orders");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.Order_Details)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Order_Details_Products");
+        });
+
+        modelBuilder.Entity<Order_Details_Extended>(entity =>
+        {
+            entity.ToView("Order Details Extended");
+        });
+
+        modelBuilder.Entity<Order_Subtotal>(entity =>
+        {
+            entity.ToView("Order Subtotals");
+        });
+
+        modelBuilder.Entity<Orders_Qry>(entity =>
         {
             entity.ToView("Orders Qry");
 
-            entity.Property(e => e.CustomerId).IsFixedLength();
+            entity.Property(e => e.CustomerID).IsFixedLength();
         });
 
-        modelBuilder.Entity<ProductSalesFor1997>(entity =>
-        {
-            entity.ToView("Product Sales for 1997");
-        });
-
-        modelBuilder.Entity<Products>(entity =>
+        modelBuilder.Entity<Product>(entity =>
         {
             entity.Property(e => e.ReorderLevel).HasDefaultValue((short)0);
             entity.Property(e => e.UnitPrice).HasDefaultValue(0m);
@@ -221,54 +213,59 @@ public partial class NorthwindContext : DbContext
             entity.HasOne(d => d.Supplier).WithMany(p => p.Products).HasConstraintName("FK_Products_Suppliers");
         });
 
-        modelBuilder.Entity<ProductsAboveAveragePrice>(entity =>
+        modelBuilder.Entity<Product_Sales_for_1997>(entity =>
+        {
+            entity.ToView("Product Sales for 1997");
+        });
+
+        modelBuilder.Entity<Products_Above_Average_Price>(entity =>
         {
             entity.ToView("Products Above Average Price");
         });
 
-        modelBuilder.Entity<ProductsByCategory>(entity =>
+        modelBuilder.Entity<Products_by_Category>(entity =>
         {
             entity.ToView("Products by Category");
         });
 
-        modelBuilder.Entity<QuarterlyOrders>(entity =>
+        modelBuilder.Entity<Quarterly_Order>(entity =>
         {
             entity.ToView("Quarterly Orders");
 
-            entity.Property(e => e.CustomerId).IsFixedLength();
+            entity.Property(e => e.CustomerID).IsFixedLength();
         });
 
         modelBuilder.Entity<Region>(entity =>
         {
-            entity.HasKey(e => e.RegionId).IsClustered(false);
+            entity.HasKey(e => e.RegionID).IsClustered(false);
 
-            entity.Property(e => e.RegionId).ValueGeneratedNever();
+            entity.Property(e => e.RegionID).ValueGeneratedNever();
             entity.Property(e => e.RegionDescription).IsFixedLength();
         });
 
-        modelBuilder.Entity<SalesByCategory>(entity =>
-        {
-            entity.ToView("Sales by Category");
-        });
-
-        modelBuilder.Entity<SalesTotalsByAmount>(entity =>
+        modelBuilder.Entity<Sales_Totals_by_Amount>(entity =>
         {
             entity.ToView("Sales Totals by Amount");
         });
 
-        modelBuilder.Entity<SummaryOfSalesByQuarter>(entity =>
+        modelBuilder.Entity<Sales_by_Category>(entity =>
+        {
+            entity.ToView("Sales by Category");
+        });
+
+        modelBuilder.Entity<Summary_of_Sales_by_Quarter>(entity =>
         {
             entity.ToView("Summary of Sales by Quarter");
         });
 
-        modelBuilder.Entity<SummaryOfSalesByYear>(entity =>
+        modelBuilder.Entity<Summary_of_Sales_by_Year>(entity =>
         {
             entity.ToView("Summary of Sales by Year");
         });
 
-        modelBuilder.Entity<Territories>(entity =>
+        modelBuilder.Entity<Territory>(entity =>
         {
-            entity.HasKey(e => e.TerritoryId).IsClustered(false);
+            entity.HasKey(e => e.TerritoryID).IsClustered(false);
 
             entity.Property(e => e.TerritoryDescription).IsFixedLength();
 

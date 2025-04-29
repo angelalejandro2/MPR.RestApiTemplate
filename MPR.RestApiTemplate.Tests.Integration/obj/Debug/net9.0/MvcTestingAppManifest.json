@@ -1,0 +1,6 @@
+{
+  "MPR.RestApiTemplate.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Angel\\Sources\\Repos\\Github\\prico-architecture-restapitemplate\\MPR.RestApiTemplate\\MPR.RestApiTemplate.Api",
+  "MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Angel\\Sources\\Repos\\Github\\prico-architecture-restapitemplate\\MPR.RestApiTemplate\\MPR.RestApiTemplate.Application",
+  "MPR.RestApiTemplate.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Angel\\Sources\\Repos\\Github\\prico-architecture-restapitemplate\\MPR.RestApiTemplate\\MPR.RestApiTemplate.Domain",
+  "MPR.RestApiTemplate.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Angel\\Sources\\Repos\\Github\\prico-architecture-restapitemplate\\MPR.RestApiTemplate\\MPR.RestApiTemplate.Infrastructure"
+}

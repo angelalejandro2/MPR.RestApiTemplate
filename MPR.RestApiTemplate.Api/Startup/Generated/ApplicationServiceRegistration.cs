@@ -9,32 +9,32 @@ public static class ApplicationServiceRegistration
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddScoped<AlphabeticalListOfProductsService>();
-        services.AddScoped<CategoriesService>();
-        services.AddScoped<CategorySalesFor1997Service>();
-        services.AddScoped<CurrentProductListService>();
-        services.AddScoped<CustomerAndSuppliersByCityService>();
-        services.AddScoped<CustomerDemographicsService>();
-        services.AddScoped<CustomersService>();
-        services.AddScoped<EmployeesService>();
-        services.AddScoped<InvoicesService>();
-        services.AddScoped<OrderDetailsExtendedService>();
-        services.AddScoped<OrderDetailsService>();
-        services.AddScoped<OrdersQryService>();
-        services.AddScoped<OrdersService>();
-        services.AddScoped<OrderSubtotalsService>();
-        services.AddScoped<ProductsAboveAveragePriceService>();
-        services.AddScoped<ProductSalesFor1997Service>();
-        services.AddScoped<ProductsByCategoryService>();
-        services.AddScoped<ProductsService>();
-        services.AddScoped<QuarterlyOrdersService>();
+        services.AddScoped<CategoryService>();
+        services.AddScoped<Category_Sales_for_1997Service>();
+        services.AddScoped<Current_Product_ListService>();
+        services.AddScoped<CustomerDemographicService>();
+        services.AddScoped<CustomerService>();
+        services.AddScoped<Customer_and_Suppliers_by_CityService>();
+        services.AddScoped<EmployeeService>();
+        services.AddScoped<InvoiceService>();
+        services.AddScoped<OrderService>();
+        services.AddScoped<Orders_QryService>();
+        services.AddScoped<Order_DetailService>();
+        services.AddScoped<Order_Details_ExtendedService>();
+        services.AddScoped<Order_SubtotalService>();
+        services.AddScoped<ProductService>();
+        services.AddScoped<Products_Above_Average_PriceService>();
+        services.AddScoped<Products_by_CategoryService>();
+        services.AddScoped<Product_Sales_for_1997Service>();
+        services.AddScoped<Quarterly_OrderService>();
         services.AddScoped<RegionService>();
-        services.AddScoped<SalesByCategoryService>();
-        services.AddScoped<SalesTotalsByAmountService>();
-        services.AddScoped<ShippersService>();
-        services.AddScoped<SummaryOfSalesByQuarterService>();
-        services.AddScoped<SummaryOfSalesByYearService>();
-        services.AddScoped<SuppliersService>();
-        services.AddScoped<TerritoriesService>();
+        services.AddScoped<Sales_by_CategoryService>();
+        services.AddScoped<Sales_Totals_by_AmountService>();
+        services.AddScoped<ShipperService>();
+        services.AddScoped<Summary_of_Sales_by_QuarterService>();
+        services.AddScoped<Summary_of_Sales_by_YearService>();
+        services.AddScoped<SupplierService>();
+        services.AddScoped<TerritoryService>();
         return services;
     }
 }

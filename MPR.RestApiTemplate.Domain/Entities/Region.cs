@@ -6,15 +6,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MPR.RestApiTemplate.Domain.Entities;
 
+[Table("Region")]
 public partial class Region
 {
     [Key]
-    [Column("RegionID")]
-    public int RegionId { get; set; }
+    public int RegionID { get; set; }
 
     [StringLength(50)]
     public string RegionDescription { get; set; } = null!;
 
     [InverseProperty("Region")]
-    public virtual ICollection<Territories> Territories { get; set; } = new List<Territories>();
+    public virtual ICollection<Territory> Territories { get; set; } = new List<Territory>();
 }

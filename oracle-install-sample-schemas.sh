@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# Variables
+CONTAINER_NAME=oracle-xe
+SCHEMA_DIR=./db-sample-schemas
+REMOTE_GIT="https://github.com/oracle/db-sample-schemas.git"
+ORACLE_PWD="MySecurePassword" # cambia esto por la contraseña del SYS/SYSTEM
+PDB_NAME="XEPDB1"
+
+# Paso 1: Clonar repositorio de schemas
+echo "Clonando repositorio de Oracle Sample Schemas..."
+git clone $REMOTE_GIT $SCHEMA_DIR
+
+# Paso 2: Copiar los scripts al contenedor
+echo "Copiando schemas al contenedor Docker..."
+docker cp $SCHEMA_DIR $CONTAINER_NAME:/opt/
+
+# Paso 3: Preparar variables en el script mksample.sql (opcionalmente puedes editar manualmente)
+# Por simplicidad, aquí usamos el script original y completamos los prompts con un archivo .sql externo
+
+# Paso 4: Crear archivo de entrada para ejecución sin interacción
+cat <<EOF > run_samples.sql
+DEFINE _ORACLE_BASE = '/opt'
+DEFINE DEFAULT_TBS = 'USERS'
+DEFINE TEMP_TBS = 'TEMP'
+DEFINE HR_PASS = 'hr'
+DEFINE OE_PASS = 'oe'
+DEFINE PM_PASS = 'pm'
+DEFINE IX_PASS = 'ix'
+DEFINE SH_PASS = 'sh'
+DEFINE BI_PASS = 'bi'
+DEFINE LOG_FILE = 'sample_schema_install.log'
+@/opt/db-sample-schemas/mksample.sql
+EOF
+
+# Copiar el archivo .sql al contenedor
+docker cp run_samples.sql $CONTAINER_NAME:/opt/
+
+# Paso 5: Ejecutar desde dentro del contenedor
+echo "Ejecutando instalación de sample schemas..."
+docker exec -i $CONTAINER_NAME bash -c "
+  echo exit | sqlplus sys/$ORACLE_PWD@//localhost:1521/$PDB_NAME as sysdba @/opt/run_samples.sql
+"
+
+# Limpieza (opcional)
+rm -rf $SCHEMA_DIR run_samples.sql
+
+echo "¡Listo! Los esquemas HR, OE, SH, PM, IX, BI fueron instalados."
