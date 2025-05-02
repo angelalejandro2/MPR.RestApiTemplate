@@ -227,28 +227,28 @@ class CodeGeneratorTool(Tool):
     
     def _generate_controller(self, entity_name: str, endpoints: List[Dict[str, str]]) -> str:
         controller_template = f"""
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using {entity_name}Service.Interfaces;
-using {entity_name}Service.Models;
+        using Microsoft.AspNetCore.Mvc;
+        using System.Threading.Tasks;
+        using {entity_name}Service.Interfaces;
+        using {entity_name}Service.Models;
 
-namespace API.Controllers
-{{
-    [ApiController]
-    [Route("api/[controller]")]
-    public class {entity_name}sController : ControllerBase
-    {{
-        private readonly I{entity_name}Service _{entity_name.lower()}Service;
-
-        public {entity_name}sController(I{entity_name}Service {entity_name.lower()}Service)
+        namespace API.Controllers
         {{
-            _{entity_name.lower()}Service = {entity_name.lower()}Service;
-        }}
+            [ApiController]
+            [Route("api/[controller]")]
+            public class {entity_name}sController : ControllerBase
+            {{
+                private readonly I{entity_name}Service _{entity_name.lower()}Service;
 
-{self._generate_controller_methods(entity_name, endpoints)}
-    }}
-}}
-"""
+                public {entity_name}sController(I{entity_name}Service {entity_name.lower()}Service)
+                {{
+                    _{entity_name.lower()}Service = {entity_name.lower()}Service;
+                }}
+
+        {self._generate_controller_methods(entity_name, endpoints)}
+            }}
+        }}
+        """
         return controller_template
     
     def _generate_controller_methods(self, entity_name: str, endpoints: List[Dict[str, str]]) -> str:
@@ -482,66 +482,66 @@ namespace API.Controllers
     
     def _generate_entity_model(self, entity_name: str) -> str:
         model_template = f"""
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+        using System;
+        using System.Collections.Generic;
+        using System.ComponentModel.DataAnnotations;
 
-namespace {entity_name}Service.Models
-{{
-    public class {entity_name}
-    {{
-        public int Id {{ get; set; }}
-        
-        [Required]
-        [MaxLength(100)]
-        public string Name {{ get; set; }}
-        
-        public string Description {{ get; set; }}
-        
-        public DateTime CreatedAt {{ get; set; }} = DateTime.UtcNow;
-        
-        public DateTime? UpdatedAt {{ get; set; }}
-        
-        // Add navigation properties as needed
-    }}
-    
-    public class {entity_name}Dto
-    {{
-        public int Id {{ get; set; }}
-        public string Name {{ get; set; }}
-        public string Description {{ get; set; }}
-        public DateTime CreatedAt {{ get; set; }}
-        public DateTime? UpdatedAt {{ get; set; }}
-    }}
-    
-    public class {entity_name}CreateDto
-    {{
-        [Required]
-        [MaxLength(100)]
-        public string Name {{ get; set; }}
-        
-        public string Description {{ get; set; }}
-    }}
-    
-    public class {entity_name}UpdateDto
-    {{
-        public int Id {{ get; set; }}
-        
-        [Required]
-        [MaxLength(100)]
-        public string Name {{ get; set; }}
-        
-        public string Description {{ get; set; }}
-    }}
-    
-    public class {entity_name}SearchParams
-    {{
-        public string Keyword {{ get; set; }}
-        public int PageNumber {{ get; set; }} = 1;
-        public int PageSize {{ get; set; }} = 10;
-    }}
-}}
-"""
+        namespace {entity_name}Service.Models
+        {{
+            public class {entity_name}
+            {{
+                public int Id {{ get; set; }}
+                
+                [Required]
+                [MaxLength(100)]
+                public string Name {{ get; set; }}
+                
+                public string Description {{ get; set; }}
+                
+                public DateTime CreatedAt {{ get; set; }} = DateTime.UtcNow;
+                
+                public DateTime? UpdatedAt {{ get; set; }}
+                
+                // Add navigation properties as needed
+            }}
+            
+            public class {entity_name}Dto
+            {{
+                public int Id {{ get; set; }}
+                public string Name {{ get; set; }}
+                public string Description {{ get; set; }}
+                public DateTime CreatedAt {{ get; set; }}
+                public DateTime? UpdatedAt {{ get; set; }}
+            }}
+            
+            public class {entity_name}CreateDto
+            {{
+                [Required]
+                [MaxLength(100)]
+                public string Name {{ get; set; }}
+                
+                public string Description {{ get; set; }}
+            }}
+            
+            public class {entity_name}UpdateDto
+            {{
+                public int Id {{ get; set; }}
+                
+                [Required]
+                [MaxLength(100)]
+                public string Name {{ get; set; }}
+                
+                public string Description {{ get; set; }}
+            }}
+            
+            public class {entity_name}SearchParams
+            {{
+                public string Keyword {{ get; set; }}
+                public int PageNumber {{ get; set; }} = 1;
+                public int PageSize {{ get; set; }} = 10;
+            }}
+        }}
+        """
         return model_template
     
     def _run(self, entity_name: str, endpoints: List[Dict[str, str]], db_engine: str = "sqlserver") -> str:
@@ -560,66 +560,66 @@ class PlaywrightTestGeneratorTool(Tool):
     
     def _generate_test_fixture(self, entity_name: str) -> str:
         fixture_template = f"""
-using System.Threading.Tasks;
-using Microsoft.Playwright;
-using Xunit;
+        using System.Threading.Tasks;
+        using Microsoft.Playwright;
+        using Xunit;
 
-namespace API.Tests.Fixtures
-{{
-    public class {entity_name}ApiFixture : IAsyncLifetime
-    {{
-        public IAPIRequestContext Request {{ get; private set; }}
-        public string BaseUrl {{ get; private set; }} = "http://localhost:5000";
-        
-        public async Task InitializeAsync()
+        namespace API.Tests.Fixtures
         {{
-            var playwright = await Playwright.CreateAsync();
-            Request = await playwright.APIRequest.NewContextAsync(new APIRequestNewContextOptions
+            public class {entity_name}ApiFixture : IAsyncLifetime
             {{
-                BaseURL = BaseUrl,
-                IgnoreHTTPSErrors = true
-            }});
-        }}
-        
-        public async Task DisposeAsync()
-        {{
-            if (Request != null)
-            {{
-                await Request.DisposeAsync();
-                Request = null;
+                public IAPIRequestContext Request {{ get; private set; }}
+                public string BaseUrl {{ get; private set; }} = "http://localhost:5000";
+                
+                public async Task InitializeAsync()
+                {{
+                    var playwright = await Playwright.CreateAsync();
+                    Request = await playwright.APIRequest.NewContextAsync(new APIRequestNewContextOptions
+                    {{
+                        BaseURL = BaseUrl,
+                        IgnoreHTTPSErrors = true
+                    }});
+                }}
+                
+                public async Task DisposeAsync()
+                {{
+                    if (Request != null)
+                    {{
+                        await Request.DisposeAsync();
+                        Request = null;
+                    }}
+                }}
             }}
         }}
-    }}
-}}
-"""
+        """
         return fixture_template
     
     def _generate_api_test_class(self, entity_name: str, endpoints: List[Dict[str, str]]) -> str:
         test_class_template = f"""
-using System.Threading.Tasks;
-using System.Text.Json;
-using Microsoft.Playwright;
-using Xunit;
-using API.Tests.Fixtures;
-using System.Collections.Generic;
-using System.Net;
+        using System.Threading.Tasks;
+        using System.Text.Json;
+        using Microsoft.Playwright;
+        using Xunit;
+        using API.Tests.Fixtures;
+        using System.Collections.Generic;
+        using System.Net;
 
-namespace API.Tests
-{{
-    public class {entity_name}ApiTests : IClassFixture<{entity_name}ApiFixture>
-    {{
-        private readonly {entity_name}ApiFixture _fixture;
-        private readonly string _apiEndpoint = "/api/{entity_name.lower()}s";
-        
-        public {entity_name}ApiTests({entity_name}ApiFixture fixture)
+        namespace API.Tests
         {{
-            _fixture = fixture;
+            public class {entity_name}ApiTests : IClassFixture<{entity_name}ApiFixture>
+            {{
+                private readonly {entity_name}ApiFixture _fixture;
+                private readonly string _apiEndpoint = "/api/{entity_name.lower()}s";
+                
+                public {entity_name}ApiTests({entity_name}ApiFixture fixture)
+                {{
+                    _fixture = fixture;
+                }}
+                
+        {self._generate_api_test_methods(entity_name, endpoints)}
+            }}
         }}
-        
-{self._generate_api_test_methods(entity_name, endpoints)}
-    }}
-}}
-"""
+        """
         return test_class_template
     
     def _generate_api_test_methods(self, entity_name: str, endpoints: List[Dict[str, str]]) -> str:
@@ -988,24 +988,24 @@ if (_environment.IsDevelopment())
         
         if db_engine.lower() == "sqlserver":
             recommendations += """- Use appropriate SQL Server indexing strategies for frequently queried columns
-- Apply AsSplitQuery() for complex includes to prevent cartesian explosion
-- Use compiled queries for frequently executed database operations
-- Configure appropriate transaction isolation levels
-- Apply strategic AsNoTracking() for read-only queries
-- Consider SQL Server-specific features like table hints where appropriate
-- Add query tags for easier profiling with SQL Server Profiler
-- Configure command timeout settings appropriate for your operations
-"""
+            - Apply AsSplitQuery() for complex includes to prevent cartesian explosion
+            - Use compiled queries for frequently executed database operations
+            - Configure appropriate transaction isolation levels
+            - Apply strategic AsNoTracking() for read-only queries
+            - Consider SQL Server-specific features like table hints where appropriate
+            - Add query tags for easier profiling with SQL Server Profiler
+            - Configure command timeout settings appropriate for your operations
+            """
         elif db_engine.lower() == "oracle":
             recommendations += """- Configure Oracle-specific connection settings in DbContext
-- Use function-based indexes for complex filtering conditions
-- Implement Oracle-specific batch processing for bulk operations
-- Apply appropriate FetchSize configuration for large result sets
-- Use EF.Functions.Like() instead of string Contains() for better index usage
-- Use bind variables correctly to prevent hard parsing
-- Configure statement caching appropriately
-- Set appropriate MaxBatchSize for optimal performance
-"""
+            - Use function-based indexes for complex filtering conditions
+            - Implement Oracle-specific batch processing for bulk operations
+            - Apply appropriate FetchSize configuration for large result sets
+            - Use EF.Functions.Like() instead of string Contains() for better index usage
+            - Use bind variables correctly to prevent hard parsing
+            - Configure statement caching appropriately
+            - Set appropriate MaxBatchSize for optimal performance
+            """
         
         return recommendations
     
@@ -1023,602 +1023,6 @@ if (_environment.IsDevelopment())
         
             recommendations = self._generate_optimization_recommendations(analysis)
             return recommendations
-        # Check for cache expiration
-        if not re.search(r'TimeSpan|ExpirationScanFrequency|AbsoluteExpiration|SlidingExpiration', code):
-                analysis["issues"].append("Caching implemented but no explicit expiration policy detected")
-                analysis["recommendations"].append("Set appropriate cache expiration policies to avoid stale data")
-        return analysis
-    
-    def _analyze_validation(self, code: str) -> Dict[str, Any]:
-        """Analyze validation implementation in the code"""
-        analysis = {
-            "validation_approach": None,
-            "validation_coverage": 0,
-            "issues": [],
-            "recommendations": []
-        }
-        
-        # Detect validation approach
-        validation_approaches = {
-            "Data Annotations": r'(\[Required\]|\[StringLength\]|\[Range\]|\[RegularExpression\])',
-            "FluentValidation": r'(AbstractValidator|RuleFor|ValidationResult)',
-            "Manual Validation": r'(if\s*\([^)]*==\s*null|if\s*\([^)]*\.Length|ModelState\.IsValid)',
-            "Guard Clauses": r'(Guard\.|Throw\.|ArgumentNullException)'
-        }
-        
-        for approach, pattern in validation_approaches.items():
-            if re.search(pattern, code):
-                analysis["validation_approach"] = approach
-                break
-        
-        # Estimate validation coverage
-        if analysis["validation_approach"]:
-            # Count public methods with parameters
-            public_methods = re.findall(r'public\s+(?:async\s+)?[\w<>[\],\s]+\s+\w+\s*\([^)]+\)', code)
-            public_method_count = len(public_methods)
-            
-            # Count methods with validation
-            validation_pattern = r'(ModelState\.IsValid|RuleFor|Required|StringLength|if\s*\([^)]*==\s*null)'
-            methods_with_validation = re.findall(r'public\s+(?:async\s+)?[\w<>[\],\s]+\s+\w+\s*\([^)]+\)[^{]*\{[^}]*' + validation_pattern, code, re.DOTALL)
-            methods_with_validation_count = len(methods_with_validation)
-            
-            # Calculate coverage percentage
-            if public_method_count > 0:
-                analysis["validation_coverage"] = round((methods_with_validation_count / public_method_count) * 100)
-        
-        # Identify issues and recommendations
-        if not analysis["validation_approach"]:
-            analysis["issues"].append("No structured validation approach detected")
-            analysis["recommendations"].append("Implement a consistent validation approach (FluentValidation or Data Annotations recommended)")
-        elif analysis["validation_coverage"] < 50:
-            analysis["issues"].append(f"Low validation coverage ({analysis['validation_coverage']}%)")
-            analysis["recommendations"].append("Increase validation coverage for all input parameters")
-        
-        if analysis["validation_approach"] == "Manual Validation":
-            analysis["issues"].append("Using manual validation which can be inconsistent and error-prone")
-            analysis["recommendations"].append("Consider using a structured validation approach like FluentValidation or Data Annotations")
-        
-        # Check for validation error handling
-        if analysis["validation_approach"] and not re.search(r'(ModelState\.IsValid|ValidationResult|TryValidateModel)', code):
-            analysis["issues"].append("Validation may be implemented but no proper error handling detected")
-            analysis["recommendations"].append("Ensure validation errors are properly returned to clients")
-        
-        return analysis
-    
-    def _generate_cross_cutting_implementation(self, missing_concerns: List[str]) -> Dict[str, str]:
-        """Generate implementation code for missing cross-cutting concerns"""
-        implementations = {}
-        
-        for concern in missing_concerns:
-            if concern == "logging":
-                implementations["logging"] = self._generate_logging_implementation()
-            elif concern == "error_handling":
-                implementations["error_handling"] = self._generate_error_handling_implementation()
-            elif concern == "caching":
-                implementations["caching"] = self._generate_caching_implementation()
-            elif concern == "validation":
-                implementations["validation"] = self._generate_validation_implementation()
-        
-        return implementations
-    
-    def _generate_logging_implementation(self) -> str:
-        """Generate logging implementation code"""
-        return """
-// 1. Add this to your .csproj file
-// <ItemGroup>
-//   <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-//   <PackageReference Include="Serilog.AspNetCore" Version="6.0.0" />
-//   <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
-//   <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-// </ItemGroup>
-
-// 2. Add this to Program.cs
-using Serilog;
-
-var builder = WebApplication.CreateBuilder(args);
-
-// Configure Serilog
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()
-    .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .WriteTo.File("logs/app-.log", rollingInterval: RollingInterval.Day)
-    .CreateLogger();
-
-builder.Host.UseSerilog();
-
-// 3. Example of using logging in a controller
-public class ExampleController : ControllerBase
-{
-    private readonly ILogger<ExampleController> _logger;
-
-    public ExampleController(ILogger<ExampleController> logger)
-    {
-        _logger = logger;
-    }
-
-    [HttpGet]
-    public IActionResult Get()
-    {
-        _logger.LogInformation("Getting resources");
-        
-        try
-        {
-            // Your code here
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occurred while getting resources");
-            throw;
-        }
-    }
-}
-
-// 4. Example of structured logging
-public class StructuredLoggingExample
-{
-    private readonly ILogger<StructuredLoggingExample> _logger;
-
-    public StructuredLoggingExample(ILogger<StructuredLoggingExample> logger)
-    {
-        _logger = logger;
-    }
-
-    public void ProcessOrder(Order order)
-    {
-        _logger.LogInformation("Processing order {OrderId} for customer {CustomerId} with total {Total}",
-            order.Id, order.CustomerId, order.Total);
-        
-        // Instead of:
-        // _logger.LogInformation($"Processing order {order.Id} for customer {order.CustomerId} with total {order.Total}");
-    }
-}
-"""
-    
-    def _generate_error_handling_implementation(self) -> str:
-        """Generate error handling implementation code"""
-        return """
-// 1. Create an error handling middleware
-public class ErrorHandlingMiddleware
-{
-    private readonly RequestDelegate _next;
-    private readonly ILogger<ErrorHandlingMiddleware> _logger;
-
-    public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
-    {
-        _next = next;
-        _logger = logger;
-    }
-
-    public async Task InvokeAsync(HttpContext context)
-    {
-        try
-        {
-            await _next(context);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An unhandled exception occurred");
-            await HandleExceptionAsync(context, ex);
-        }
-    }
-
-    private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
-    {
-        context.Response.ContentType = "application/json";
-        
-        var response = new 
-        {
-            error = new 
-            {
-                message = "An error occurred while processing your request.",
-                detail = exception.Message
-            }
-        };
-
-        switch (exception)
-        {
-            case NotFoundException notFoundEx:
-                context.Response.StatusCode = StatusCodes.Status404NotFound;
-                response = new { error = new { message = notFoundEx.Message } };
-                break;
-                
-            case ValidationException validationEx:
-                context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                response = new { error = new { message = "Validation failed", errors = validationEx.Errors } };
-                break;
-                
-            case UnauthorizedAccessException:
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                response = new { error = new { message = "Unauthorized access" } };
-                break;
-                
-            default:
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                break;
-        }
-
-        await context.Response.WriteAsJsonAsync(response);
-    }
-}
-
-// 2. Create custom exception classes
-public class NotFoundException : Exception
-{
-    public NotFoundException(string message) : base(message) { }
-}
-
-public class ValidationException : Exception
-{
-    public IEnumerable<ValidationError> Errors { get; }
-
-    public ValidationException(string message, IEnumerable<ValidationError> errors) : base(message)
-    {
-        Errors = errors;
-    }
-}
-
-public class ValidationError
-{
-    public string PropertyName { get; set; }
-    public string ErrorMessage { get; set; }
-}
-
-// 3. Register the middleware in Program.cs
-var app = builder.Build();
-
-// Add middleware (before routing middleware)
-app.UseMiddleware<ErrorHandlingMiddleware>();
-
-// 4. Example of throwing custom exceptions
-public class ExampleService
-{
-    public async Task<Entity> GetByIdAsync(int id)
-    {
-        var entity = await _repository.GetByIdAsync(id);
-        
-        if (entity == null)
-        {
-            throw new NotFoundException($"Entity with ID {id} not found");
-        }
-        
-        return entity;
-    }
-    
-    public async Task CreateAsync(EntityDto dto)
-    {
-        // Validation example
-        var validator = new EntityValidator();
-        var validationResult = await validator.ValidateAsync(dto);
-        
-        if (!validationResult.IsValid)
-        {
-            var errors = validationResult.Errors.Select(e => new ValidationError 
-            { 
-                PropertyName = e.PropertyName, 
-                ErrorMessage = e.ErrorMessage 
-            });
-            
-            throw new ValidationException("Validation failed", errors);
-        }
-        
-        // Processing logic
-    }
-}
-"""
-    
-    def _generate_caching_implementation(self) -> str:
-        """Generate caching implementation code"""
-        return """
-// 1. Add this to your .csproj file
-// <ItemGroup>
-//   <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.0" />
-// </ItemGroup>
-
-// 2. Register caching in Program.cs
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddMemoryCache();
-
-// For distributed caching:
-// builder.Services.AddDistributedMemoryCache();
-// Or for Redis:
-// builder.Services.AddStackExchangeRedisCache(options =>
-// {
-//     options.Configuration = builder.Configuration.GetConnectionString("Redis");
-//     options.InstanceName = "Example";
-// });
-
-// 3. Create a caching service
-public interface ICacheService
-{
-    T Get<T>(string key);
-    void Set<T>(string key, T value, TimeSpan? absoluteExpiration = null);
-    void Remove(string key);
-}
-
-public class MemoryCacheService : ICacheService
-{
-    private readonly IMemoryCache _cache;
-    private readonly ILogger<MemoryCacheService> _logger;
-    
-    // Default expiration time of 15 minutes
-    private readonly TimeSpan _defaultExpiration = TimeSpan.FromMinutes(15);
-
-    public MemoryCacheService(IMemoryCache cache, ILogger<MemoryCacheService> logger)
-    {
-        _cache = cache;
-        _logger = logger;
-    }
-
-    public T Get<T>(string key)
-    {
-        if (_cache.TryGetValue(key, out T cachedValue))
-        {
-            _logger.LogDebug("Cache hit for key: {Key}", key);
-            return cachedValue;
-        }
-        
-        _logger.LogDebug("Cache miss for key: {Key}", key);
-        return default;
-    }
-
-    public void Set<T>(string key, T value, TimeSpan? absoluteExpiration = null)
-    {
-        var expirationTime = absoluteExpiration ?? _defaultExpiration;
-        
-        var cacheOptions = new MemoryCacheEntryOptions()
-            .SetAbsoluteExpiration(expirationTime)
-            .SetPriority(CacheItemPriority.Normal);
-            
-        _cache.Set(key, value, cacheOptions);
-        
-        _logger.LogDebug("Cache set for key: {Key} with expiration: {Expiration}", key, expirationTime);
-    }
-
-    public void Remove(string key)
-    {
-        _cache.Remove(key);
-        _logger.LogDebug("Cache removed for key: {Key}", key);
-    }
-}
-
-// 4. Register the cache service
-builder.Services.AddSingleton<ICacheService, MemoryCacheService>();
-
-// 5. Example of using caching in a service
-public class CachedProductService
-{
-    private readonly IProductRepository _repository;
-    private readonly ICacheService _cacheService;
-    private readonly ILogger<CachedProductService> _logger;
-
-    public CachedProductService(
-        IProductRepository repository,
-        ICacheService cacheService,
-        ILogger<CachedProductService> logger)
-    {
-        _repository = repository;
-        _cacheService = cacheService;
-        _logger = logger;
-    }
-
-    public async Task<Product> GetByIdAsync(int id)
-    {
-        string cacheKey = $"product:{id}";
-        
-        // Try to get from cache first
-        var cachedProduct = _cacheService.Get<Product>(cacheKey);
-        
-        if (cachedProduct != null)
-        {
-            return cachedProduct;
-        }
-        
-        // Cache miss, get from repository
-        var product = await _repository.GetByIdAsync(id);
-        
-        if (product != null)
-        {
-            // Cache the product with a 15-minute expiration
-            _cacheService.Set(cacheKey, product, TimeSpan.FromMinutes(15));
-        }
-        
-        return product;
-    }
-
-    public async Task<IEnumerable<Product>> GetAllAsync()
-    {
-        string cacheKey = "products:all";
-        
-        // Try to get from cache first
-        var cachedProducts = _cacheService.Get<IEnumerable<Product>>(cacheKey);
-        
-        if (cachedProducts != null)
-        {
-            return cachedProducts;
-        }
-        
-        // Cache miss, get from repository
-        var products = await _repository.GetAllAsync();
-        
-        // Cache with a shorter expiration since the full list might change more frequently
-        _cacheService.Set(cacheKey, products, TimeSpan.FromMinutes(5));
-        
-        return products;
-    }
-
-    public async Task UpdateAsync(Product product)
-    {
-        await _repository.UpdateAsync(product);
-        
-        // Invalidate cache
-        _cacheService.Remove($"product:{product.Id}");
-        _cacheService.Remove("products:all");
-    }
-}
-"""
-    
-    def _generate_validation_implementation(self) -> str:
-        """Generate validation implementation code"""
-        return """
-// 1. Add this to your .csproj file
-// <ItemGroup>
-//   <PackageReference Include="FluentValidation.AspNetCore" Version="11.0.0" />
-// </ItemGroup>
-
-// 2. Register FluentValidation in Program.cs
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddControllers()
-    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Program>());
-
-// 3. Create validator classes
-public class ProductValidator : AbstractValidator<ProductDto>
-{
-    public ProductValidator()
-    {
-        RuleFor(p => p.Name)
-            .NotEmpty().WithMessage("Name is required")
-            .MaximumLength(100).WithMessage("Name cannot exceed 100 characters");
-            
-        RuleFor(p => p.Price)
-            .GreaterThan(0).WithMessage("Price must be greater than zero");
-            
-        RuleFor(p => p.CategoryId)
-            .NotEmpty().WithMessage("Category is required");
-            
-        // Conditional validation example
-        When(p => p.IsOnSale, () => {
-            RuleFor(p => p.SalePrice)
-                .NotNull().WithMessage("Sale price is required when product is on sale")
-                .GreaterThan(0).WithMessage("Sale price must be greater than zero")
-                .LessThan(p => p.Price).WithMessage("Sale price must be less than regular price");
-        });
-    }
-}
-
-// 4. Example of a DTO with Data Annotations (alternative approach)
-public class CustomerDto
-{
-    [Required(ErrorMessage = "Name is required")]
-    [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters")]
-    public string Name { get; set; }
-    
-    [Required(ErrorMessage = "Email is required")]
-    [EmailAddress(ErrorMessage = "Invalid email format")]
-    public string Email { get; set; }
-    
-    [Phone(ErrorMessage = "Invalid phone number format")]
-    public string Phone { get; set; }
-    
-    [Range(18, 120, ErrorMessage = "Age must be between 18 and 120")]
-    public int Age { get; set; }
-}
-
-// 5. Example of validation in a controller using FluentValidation
-[ApiController]
-[Route("api/[controller]")]
-public class ProductsController : ControllerBase
-{
-    private readonly IProductService _productService;
-    
-    public ProductsController(IProductService productService)
-    {
-        _productService = productService;
-    }
-    
-    [HttpPost]
-    public async Task<IActionResult> Create(ProductDto productDto)
-    {
-        // ModelState validation is handled automatically with [ApiController]
-        // If validation fails, a 400 Bad Request is returned with validation errors
-        
-        var product = await _productService.CreateAsync(productDto);
-        return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
-    }
-}
-
-// 6. Example of manual validation in a service
-public class OrderService
-{
-    private readonly IValidator<OrderDto> _validator;
-    
-    public OrderService(IValidator<OrderDto> validator)
-    {
-        _validator = validator;
-    }
-    
-    public async Task<Order> CreateOrderAsync(OrderDto orderDto)
-    {
-        // Validate the order
-        var validationResult = await _validator.ValidateAsync(orderDto);
-        
-        if (!validationResult.IsValid)
-        {
-            var errors = validationResult.Errors.Select(e => new ValidationError 
-            { 
-                PropertyName = e.PropertyName, 
-                ErrorMessage = e.ErrorMessage 
-            });
-            
-            throw new ValidationException("Order validation failed", errors);
-        }
-        
-        // Process the valid order
-        var order = new Order
-        {
-            // Map properties from DTO
-        };
-        
-        // Save the order
-        
-        return order;
-    }
-}
-"""
-    
-    def _run(self, code: str) -> str:
-        """
-        Analyze cross-cutting concerns implementation and suggest improvements
-        """
-        # Analyze various cross-cutting concerns
-        logging_analysis = self._analyze_logging(code)
-        error_handling_analysis = self._analyze_error_handling(code)
-        caching_analysis = self._analyze_caching(code)
-        validation_analysis = self._analyze_validation(code)
-        
-        # Identify missing or inadequate concerns
-        missing_concerns = []
-        
-        if not logging_analysis["logging_framework_detected"]:
-            missing_concerns.append("logging")
-        
-        if not error_handling_analysis["global_error_handling"]:
-            missing_concerns.append("error_handling")
-        
-        if not caching_analysis["caching_detected"]:
-            missing_concerns.append("caching")
-        
-        if not validation_analysis["validation_approach"]:
-            missing_concerns.append("validation")
-        
-        # Generate implementation code for missing concerns
-        implementations = self._generate_cross_cutting_implementation(missing_concerns)
-        
-        # Prepare comprehensive analysis report
-        analysis_report = {
-            "logging": logging_analysis,
-            "error_handling": error_handling_analysis,
-            "caching": caching_analysis,
-            "validation": validation_analysis,
-            "missing_concerns": missing_concerns,
-            "implementations": implementations
-        }
-        
-        return json.dumps(analysis_report, indent=2)
 
 class DatabaseMigrationTool(Tool):
     name = "DatabaseMigrationTool"
@@ -1728,7 +1132,7 @@ class DatabaseMigrationTool(Tool):
     
     def _generate_migration_script(self, new_entities: List[Dict[str, Any]], db_context: Dict[str, Any], db_engine: str) -> str:
         """Generate migration script for the detected entities"""
-        migration_script = f"""
+        migration_script = """
         // Entity Framework Core Migration Script
         // Generated for {db_engine}
 
@@ -1766,8 +1170,8 @@ class DatabaseMigrationTool(Tool):
         # Add DbSet properties
         for entity in new_entities:
             pass  # Ensure proper separation of statements
-                migration_script += f"    public DbSet<{entity['name']}> {entity['name']}s {{ get; set; }}\n"
-            }
+            migration_script += f"    public DbSet<{entity['name']}> {entity['name']}s {{ get; set; }}\n"
+            
                 
             migration_script += "\n    protected override void OnModelCreating(ModelBuilder modelBuilder)\n    {\n"
             
@@ -1859,12 +1263,12 @@ class DatabaseMigrationTool(Tool):
                 
                 if db_engine.lower() == "sqlserver":
                     migration_script += f"""
-CREATE TABLE [dbo].[{entity_name}s] (
-"""
+                                        CREATE TABLE [dbo].[{entity_name}s] (
+                                        """
                 elif db_engine.lower() == "oracle":
                     migration_script += f"""
-CREATE TABLE {entity_name.upper()}S (
-"""
+                                        CREATE TABLE {entity_name.upper()}S (
+                                        """
                 
                 # Add columns
                 columns = []
@@ -2016,25 +1420,25 @@ CREATE TABLE {entity_name.upper()}S (
     def _generate_ef_core_migration_commands(self, context_name: str) -> str:
         """Generate EF Core commands for migration"""
         commands = f"""
-// EF Core Migration Commands
+                    // EF Core Migration Commands
 
-// Using Package Manager Console:
-Add-Migration InitialCreate -Context {context_name}
-Update-Database -Context {context_name}
+                    // Using Package Manager Console:
+                    Add-Migration InitialCreate -Context {context_name}
+                    Update-Database -Context {context_name}
 
-// Using .NET CLI:
-dotnet ef migrations add InitialCreate --context {context_name}
-dotnet ef database update --context {context_name}
+                    // Using .NET CLI:
+                    dotnet ef migrations add InitialCreate --context {context_name}
+                    dotnet ef database update --context {context_name}
 
-// To generate an SQL script (for review or production deployment):
-dotnet ef migrations script --context {context_name} --output migration.sql
+                    // To generate an SQL script (for review or production deployment):
+                    dotnet ef migrations script --context {context_name} --output migration.sql
 
-// To remove last migration (if not applied to database):
-dotnet ef migrations remove --context {context_name}
+                    // To remove last migration (if not applied to database):
+                    dotnet ef migrations remove --context {context_name}
 
-// To revert to a specific migration:
-dotnet ef database update [MigrationName] --context {context_name}
-"""
+                    // To revert to a specific migration:
+                    dotnet ef database update [MigrationName] --context {context_name}
+                    """
         return commands
     
     def _run(self, code: str, db_engine: str = "sqlserver", previous_version: str = None) -> str:
@@ -2069,1021 +1473,7 @@ dotnet ef database update [MigrationName] --context {context_name}
             "ef_core_commands": ef_commands
         }
         
-        return json.dumps(result, indent=2)// Configure Serilog
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()
-    .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .WriteTo.File("logs/app-.log", rollingInterval: RollingInterval.Day)
-    .CreateLogger();
-
-builder.Host.UseSerilog();
-
-// 3. Example of using logging in a controller
-public class ExampleController : ControllerBase
-{
-    private readonly ILogger<ExampleController> _logger;
-
-    public ExampleController(ILogger<ExampleController> logger)
-    {
-        _logger = logger;
-    }
-
-    [HttpGet]
-    public IActionResult Get()
-    {
-        _logger.LogInformation("Getting resources");
-        
-        try
-        {
-            // Your code here
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occurred while getting resources");
-            throw;
-        }
-    }
-}
-
-// 4. Example of structured logging
-public class StructuredLoggingExample
-{
-    private readonly ILogger<StructuredLoggingExample> _logger;
-
-    public StructuredLoggingExample(ILogger<StructuredLoggingExample> logger)
-    {
-        _logger = logger;
-    }
-
-    public void ProcessOrder(Order order)
-    {
-        _logger.LogInformation("Processing order {OrderId} for customer {CustomerId} with total {Total}",
-            order.Id, order.CustomerId, order.Total);
-        
-        // Instead of:
-        // _logger.LogInformation($"Processing order {order.Id} for customer {order.CustomerId} with total {order.Total}");
-    }
-}
-"""
-    
-    def _generate_error_handling_implementation(self) -> str:
-        """Generate error handling implementation code"""
-        return """
-// 1. Create an error handling middleware
-public class ErrorHandlingMiddleware
-{
-    private readonly RequestDelegate _next;
-    private readonly ILogger<ErrorHandlingMiddleware> _logger;
-
-    public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
-    {
-        _next = next;
-        _logger = logger;
-    }
-
-    public async Task InvokeAsync(HttpContext context)
-    {
-        try
-        {
-            await _next(context);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An unhandled exception occurred");
-            await HandleExceptionAsync(context, ex);
-        }
-    }
-
-    private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
-    {
-        context.Response.ContentType = "application/json";
-        
-        var response = new 
-        {
-            error = new 
-            {
-                message = "An error occurred while processing your request.",
-                detail = exception.Message
-            }
-        };
-
-        switch (exception)
-        {
-            case NotFoundException notFoundEx:
-                context.Response.StatusCode = StatusCodes.Status404NotFound;
-                response = new { error = new { message = notFoundEx.Message } };
-                break;
-                
-            case ValidationException validationEx:
-                context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                response = new { error = new { message = "Validation failed", errors = validationEx.Errors } };
-                break;
-                
-            case UnauthorizedAccessException:
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                response = new { error = new { message = "Unauthorized access" } };
-                break;
-                
-            default:
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                break;
-        }
-
-        await context.Response.WriteAsJsonAsync(response);
-    }
-}
-
-// 2. Create custom exception classes
-public class NotFoundException : Exception
-{
-    public NotFoundException(string message) : base(message) { }
-}
-
-public class ValidationException : Exception
-{
-    public IEnumerable<ValidationError> Errors { get; }
-
-    public ValidationException(string message, IEnumerable<ValidationError> errors) : base(message)
-    {
-        Errors = errors;
-    }
-}
-
-public class ValidationError
-{
-    public string PropertyName { get; set; }
-    public string ErrorMessage { get; set; }
-}
-
-// 3. Register the middleware in Program.cs
-var app = builder.Build();
-
-// Add middleware (before routing middleware)
-app.UseMiddleware<ErrorHandlingMiddleware>();
-
-// 4. Example of throwing custom exceptions
-public class ExampleService
-{
-    public async Task<Entity> GetByIdAsync(int id)
-    {
-        var entity = await _repository.GetByIdAsync(id);
-        
-        if (entity == null)
-        {
-            throw new NotFoundException($"Entity with ID {id} not found");
-        }
-        
-        return entity;
-    }
-    
-    public async Task CreateAsync(EntityDto dto)
-    {
-        // Validation example
-        var validator = new EntityValidator();
-        var validationResult = await validator.ValidateAsync(dto);
-        
-        if (!validationResult.IsValid)
-        {
-            var errors = validationResult.Errors.Select(e => new ValidationError 
-            { 
-                PropertyName = e.PropertyName, 
-                ErrorMessage = e.ErrorMessage 
-            });
-            
-            throw new ValidationException("Validation failed", errors);
-        }
-        
-        // Processing logic
-    }
-}
-"""
-    
-    def _generate_caching_implementation(self) -> str:
-        """Generate caching implementation code"""
-        return """
-// 1. Add this to your .csproj file
-// <ItemGroup>
-//   <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.0" />
-// </ItemGroup>
-
-// 2. Register caching in Program.cs
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddMemoryCache();
-
-// For distributed caching:
-// builder.Services.AddDistributedMemoryCache();
-// Or for Redis:
-// builder.Services.AddStackExchangeRedisCache(options =>
-// {
-//     options.Configuration = builder.Configuration.GetConnectionString("Redis");
-//     options.InstanceName = "Example";
-// });
-
-// 3. Create a caching service
-public interface ICacheService
-{
-    T Get<T>(string key);
-    void Set<T>(string key, T value, TimeSpan? absoluteExpiration = null);
-    void Remove(string key);
-}
-
-public class MemoryCacheService : ICacheService
-{
-    private readonly IMemoryCache _cache;
-    private readonly ILogger<MemoryCacheService> _logger;
-    
-    // Default expiration time of 15 minutes
-    private readonly TimeSpan _defaultExpiration = TimeSpan.FromMinutes(15);
-
-    public MemoryCacheService(IMemoryCache cache, ILogger<MemoryCacheService> logger)
-    {
-        _cache = cache;
-        _logger = logger;
-    }
-
-    public T Get<T>(string key)
-    {
-        if (_cache.TryGetValue(key, out T cachedValue))
-        {
-            _logger.LogDebug("Cache hit for key: {Key}", key);
-            return cachedValue;
-        }
-        
-        _logger.LogDebug("Cache miss for key: {Key}", key);
-        return default;
-    }
-
-    public void Set<T>(string key, T value, TimeSpan? absoluteExpiration = null)
-    {
-        var expirationTime = absoluteExpiration ?? _defaultExpiration;
-        
-        var cacheOptions = new MemoryCacheEntryOptions()
-            .SetAbsoluteExpiration(expirationTime)
-            .SetPriority(CacheItemPriority.Normal);
-            
-        _cache.Set(key, value, cacheOptions);
-        
-        _logger.LogDebug("Cache set for key: {Key} with expiration: {Expiration}", key, expirationTime);
-    }
-
-    public void Remove(string key)
-    {
-        _cache.Remove(key);
-        _logger.LogDebug("Cache removed for key: {Key}", key);
-    }
-}
-
-// 4. Register the cache service
-builder.Services.AddSingleton<ICacheService, MemoryCacheService>();
-
-// 5. Example of using caching in a service
-public class CachedProductService
-{
-    private readonly IProductRepository _repository;
-    private readonly ICacheService _cacheService;
-    private readonly ILogger<CachedProductService> _logger;
-
-    public CachedProductService(
-        IProductRepository repository,
-        ICacheService cacheService,
-        ILogger<CachedProductService> logger)
-    {
-        _repository = repository;
-        _cacheService = cacheService;
-        _logger = logger;
-    }
-
-    public async Task<Product> GetByIdAsync(int id)
-    {
-        string cacheKey = $"product:{id}";
-        
-        // Try to get from cache first
-        var cachedProduct = _cacheService.Get<Product>(cacheKey);
-        
-        if (cachedProduct != null)
-        {
-            return cachedProduct;
-        }
-        
-        // Cache miss, get from repository
-        var product = await _repository.GetByIdAsync(id);
-        
-        if (product != null)
-        {
-            // Cache the product with a 15-minute expiration
-            _cacheService.Set(cacheKey, product, TimeSpan.FromMinutes(15));
-        }
-        
-        return product;
-    }
-
-    public async Task<IEnumerable<Product>> GetAllAsync()
-    {
-        string cacheKey = "products:all";
-        
-        // Try to get from cache first
-        var cachedProducts = _cacheService.Get<IEnumerable<Product>>(cacheKey);
-        
-        if (cachedProducts != null)
-        {
-            return cachedProducts;
-        }
-        
-        // Cache miss, get from repository
-        var products = await _repository.GetAllAsync();
-        
-        // Cache with a shorter expiration since the full list might change more frequently
-        _cacheService.Set(cacheKey, products, TimeSpan.FromMinutes(5));
-        
-        return products;
-    }
-
-    public async Task UpdateAsync(Product product)
-    {
-        await _repository.UpdateAsync(product);
-        
-        // Invalidate cache
-        _cacheService.Remove($"product:{product.Id}");
-        _cacheService.Remove("products:all");
-    }
-}
-"""
-    
-    def _generate_validation_implementation(self) -> str:
-        """Generate validation implementation code"""
-        return """
-// 1. Add this to your .csproj file
-// <ItemGroup>
-//   <PackageReference Include="FluentValidation.AspNetCore" Version="11.0.0" />
-// </ItemGroup>
-
-// 2. Register FluentValidation in Program.cs
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddControllers()
-    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Program>());
-
-// 3. Create validator classes
-public class ProductValidator : AbstractValidator<ProductDto>
-{
-    public ProductValidator()
-    {
-        RuleFor(p => p.Name)
-            .NotEmpty().WithMessage("Name is required")
-            .MaximumLength(100).WithMessage("Name cannot exceed 100 characters");
-            
-        RuleFor(p => p.Price)
-            .GreaterThan(0).WithMessage("Price must be greater than zero");
-            
-        RuleFor(p => p.CategoryId)
-            .NotEmpty().WithMessage("Category is required");
-            
-        // Conditional validation example
-        When(p => p.IsOnSale, () => {
-            RuleFor(p => p.SalePrice)
-                .NotNull().WithMessage("Sale price is required when product is on sale")
-                .GreaterThan(0).WithMessage("Sale price must be greater than zero")
-                .LessThan(p => p.Price).WithMessage("Sale price must be less than regular price");
-        });
-    }
-}
-
-// 4. Example of a DTO with Data Annotations (alternative approach)
-public class CustomerDto
-{
-    [Required(ErrorMessage = "Name is required")]
-    [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters")]
-    public string Name { get; set; }
-    
-    [Required(ErrorMessage = "Email is required")]
-    [EmailAddress(ErrorMessage = "Invalid email format")]
-    public string Email { get; set; }
-    
-    [Phone(ErrorMessage = "Invalid phone number format")]
-    public string Phone { get; set; }
-    
-    [Range(18, 120, ErrorMessage = "Age must be between 18 and 120")]
-    public int Age { get; set; }
-}
-
-// 5. Example of validation in a controller using FluentValidation
-[ApiController]
-[Route("api/[controller]")]
-public class ProductsController : ControllerBase
-{
-    private readonly IProductService _productService;
-    
-    public ProductsController(IProductService productService)
-    {
-        _productService = productService;
-    }
-    
-    [HttpPost]
-    public async Task<IActionResult> Create(ProductDto productDto)
-    {
-        // ModelState validation is handled automatically with [ApiController]
-        // If validation fails, a 400 Bad Request is returned with validation errors
-        
-        var product = await _productService.CreateAsync(productDto);
-        return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
-    }
-}
-
-// 6. Example of manual validation in a service
-public class OrderService
-{
-    private readonly IValidator<OrderDto> _validator;
-    
-    public OrderService(IValidator<OrderDto> validator)
-    {
-        _validator = validator;
-    }
-    
-    public async Task<Order> CreateOrderAsync(OrderDto orderDto)
-    {
-        // Validate the order
-        var validationResult = await _validator.ValidateAsync(orderDto);
-        
-        if (!validationResult.IsValid)
-        {
-            var errors = validationResult.Errors.Select(e => new ValidationError 
-            { 
-                PropertyName = e.PropertyName, 
-                ErrorMessage = e.ErrorMessage 
-            });
-            
-            throw new ValidationException("Order validation failed", errors);
-        }
-        
-        // Process the valid order
-        var order = new Order
-        {
-            // Map properties from DTO
-        };
-        
-        // Save the order
-        
-        return order;
-    }
-}
-"""
-    
-    def _run(self, code: str) -> str:
-        """
-        Analyze cross-cutting concerns implementation and suggest improvements
-        """
-        # Analyze various cross-cutting concerns
-        logging_analysis = self._analyze_logging(code)
-        error_handling_analysis = self._analyze_error_handling(code)
-        caching_analysis = self._analyze_caching(code)
-        validation_analysis = self._analyze_validation(code)
-        
-        # Identify missing or inadequate concerns
-        missing_concerns = []
-        
-        if not logging_analysis["logging_framework_detected"]:
-            missing_concerns.append("logging")
-        
-        if not error_handling_analysis["global_error_handling"]:
-            missing_concerns.append("error_handling")
-        
-        if not caching_analysis["caching_detected"]:
-            missing_concerns.append("caching")
-        
-        if not validation_analysis["validation_approach"]:
-            missing_concerns.append("validation")
-        
-        # Generate implementation code for missing concerns
-        implementations = self._generate_cross_cutting_implementation(missing_concerns)
-        
-        # Prepare comprehensive analysis report
-        analysis_report = {
-            "logging": logging_analysis,
-            "error_handling": error_handling_analysis,
-            "caching": caching_analysis,
-            "validation": validation_analysis,
-            "missing_concerns": missing_concerns,
-            "implementations": implementations
-        }
-        
-        return json.dumps(analysis_report, indent=2)
-
-class DatabaseMigrationTool(Tool):
-    name = "DatabaseMigrationTool"
-    description = "Generates and manages database migration scripts for schema changes"
-    
-    def _extract_entity_models(self, code: str) -> List[Dict[str, Any]]:
-        """Extract entity models from code"""
-        entities = []
-        
-        # Look for class definitions that might be entity models
-        class_pattern = r'public\s+class\s+(\w+)(?:\s*:\s*\w+)?\s*\{([^}]*)\}'
-        class_matches = re.findall(class_pattern, code, re.DOTALL)
-        
-        for class_name, class_body in class_matches:
-            # Skip obvious non-entity classes
-            if class_name.endswith("Controller") or class_name.endswith("Service") or class_name.endswith("Factory"):
-                continue
-            
-            # Look for properties that might indicate an entity
-            property_pattern = r'public\s+([\w<>[\],\s]+)\s+(\w+)\s*{\s*get;\s*set;\s*}'
-            properties = re.findall(property_pattern, class_body)
-            
-            if not properties:
-                continue
-            
-            # Check if it has an Id property or key attribute
-            has_id = any(prop_name == "Id" for _, prop_name in properties)
-            has_key = "[Key]" in class_body
-            
-            if has_id or has_key:
-                entity = {
-                    "name": class_name,
-                    "properties": []
-                }
-                
-                # Process properties
-                for prop_type, prop_name in properties:
-                    property_info = {
-                        "name": prop_name,
-                        "type": prop_type.strip(),
-                        "nullable": "?" in prop_type.strip(),
-                        "attributes": []
-                    }
-                    
-                    # Extract property attributes
-                    attr_pattern = r'\[([^\]]+)\]\s*public\s+([\w<>[\],\s]+)\s+' + re.escape(prop_name)
-                    attr_matches = re.findall(attr_pattern, class_body)
-                    
-                    if attr_matches:
-                        for attr_match in attr_matches:
-                            attribute = attr_match[0]
-                            property_info["attributes"].append(attribute)
-                    
-                    entity["properties"].append(property_info)
-                
-                entities.append(entity)
-        
-        return entities
-    
-    def _extract_dbcontext(self, code: str) -> Dict[str, Any]:
-        """Extract DbContext configuration from code"""
-        context_info = {
-            "name": None,
-            "db_sets": [],
-            "configurations": []
-        }
-        
-        # Look for DbContext class
-        context_pattern = r'public\s+class\s+(\w+)\s*:\s*DbContext\s*\{([^}]*)\}'
-        context_matches = re.findall(context_pattern, code, re.DOTALL)
-        
-        if not context_matches:
-            return context_info
-        
-        context_name, context_body = context_matches[0]
-        context_info["name"] = context_name
-        
-        # Extract DbSet properties
-        dbset_pattern = r'public\s+DbSet<(\w+)>\s+(\w+)\s*{\s*get;\s*set;\s*}'
-        dbset_matches = re.findall(dbset_pattern, context_body)
-        
-        for entity_type, set_name in dbset_matches:
-            context_info["db_sets"].append({
-                "entity_type": entity_type,
-                "set_name": set_name
-            })
-        
-        # Look for entity configurations
-        config_pattern = r'modelBuilder\.Entity<(\w+)>\(\)\s*\.((?:[^;}]|;(?=\s*\.))*)'
-        config_matches = re.findall(config_pattern, code, re.DOTALL)
-        
-        for entity_type, config_body in config_matches:
-            configuration = {
-                "entity_type": entity_type,
-                "configurations": []
-            }
-            
-            # Extract individual configurations
-            for config_line in config_body.strip().split('\n'):
-                config_line = config_line.strip()
-                if config_line and not config_line.startswith("//"):
-                    configuration["configurations"].append(config_line)
-            
-            context_info["configurations"].append(configuration)
-        
-        return context_info
-    
-    def _generate_migration_script(self, new_entities: List[Dict[str, Any]], db_context: Dict[str, Any], db_engine: str) -> str:
-        """Generate migration script for the detected entities"""
-        migration_script = f"""
-// Entity Framework Core Migration Script
-// Generated for {db_engine}
-
-// 1. First, add Microsoft.EntityFrameworkCore.Tools package to your project:
-// <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.0" />
-
-// 2. Add the appropriate database provider:
-// For SQL Server:
-// <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0" />
-// For Oracle:
-// <PackageReference Include="Oracle.EntityFrameworkCore" Version="6.0.0" />
-
-// 3. Execute the following commands in Package Manager Console:
-
-// To create a new migration:
-// Add-Migration InitialCreate -Context {db_context.get('name', 'ApplicationDbContext')}
-
-// To apply the migration to the database:
-// Update-Database -Context {db_context.get('name', 'ApplicationDbContext')}
-
-// 4. Alternatively, use the .NET CLI:
-// dotnet ef migrations add InitialCreate --context {db_context.get('name', 'ApplicationDbContext')}
-// dotnet ef database update --context {db_context.get('name', 'ApplicationDbContext')}
-
-// DbContext Example:
-public class {db_context.get('name', 'ApplicationDbContext')} : DbContext
-{
-    public {db_context.get('name', 'ApplicationDbContext')}(DbContextOptions<{db_context.get('name', 'ApplicationDbContext')}> options)
-        : base(options)
-    {
-    }
-
-"""
-        
-        # Add DbSet properties
-        for entity in new_entities:
-            migration_script += f"    public DbSet<{entity['name']}> {entity['name']}s {{ get; set; }}\n"
-        
-        migration_script += "\n    protected override void OnModelCreating(ModelBuilder modelBuilder)\n    {\n"
-        
-        # Add entity configurations
-        for entity in new_entities:
-            migration_script += f"        modelBuilder.Entity<{entity['name']}>(entity =>\n        {{\n"
-            
-            # Add primary key configuration
-            id_property = next((p for p in entity["properties"] if p["name"] == "Id"), None)
-            if id_property:
-                migration_script += f"            entity.HasKey(e => e.Id);\n"
-            
-            # Add property configurations
-            for prop in entity["properties"]:
-                if any("Required" in attr for attr in prop["attributes"]):
-                    migration_script += f"            entity.Property(e => e.{prop['name']}).IsRequired();\n"
-                
-                if any("StringLength" in attr for attr in prop["attributes"]):
-                    # Extract string length from attribute
-                    string_length_attr = next((attr for attr in prop["attributes"] if "StringLength" in attr), None)
-                    if string_length_attr:
-                        length_match = re.search(r'StringLength\((\d+)\)', string_length_attr)
-                        if length_match:
-                            length = length_match.group(1)
-                            migration_script += f"            entity.Property(e => e.{prop['name']}).HasMaxLength({length});\n"
-                
-                # Add database-specific configurations
-                if db_engine.lower() == "sqlserver":
-                    if prop["type"] == "string" or prop["type"].startswith("string"):
-                        migration_script += f"            entity.Property(e => e.{prop['name']}).HasColumnType(\"nvarchar(max)\");\n"
-                    elif prop["type"] == "decimal" or prop["type"].startswith("decimal"):
-                        migration_script += f"            entity.Property(e => e.{prop['name']}).HasColumnType(\"decimal(18,2)\");\n"
-                elif db_engine.lower() == "oracle":
-                    if prop["type"] == "string" or prop["type"].startswith("string"):
-                        migration_script += f"            entity.Property(e => e.{prop['name']}).HasColumnType(\"NVARCHAR2(2000)\");\n"
-                    elif prop["type"] == "decimal" or prop["type"].startswith("decimal"):
-                        migration_script += f"            entity.Property(e => e.{prop['name']}).HasColumnType(\"NUMBER(18,2)\");\n"
-            
-            migration_script += "        });\n\n"
-        
-        migration_script += "    }\n}\n"
-        
-        # Add migration notes
-        migration_script += """
-// Important Notes:
-// 1. Always review generated migrations before applying them to production databases
-// 2. Consider creating seed data in migrations for reference or lookup tables
-// 3. For complex changes, consider using Fluent API in the DbContext.OnModelCreating method
-
-// Example of a data seeding operation:
-// modelBuilder.Entity<Category>().HasData(
-//     new Category { Id = 1, Name = "Electronics" },
-//     new Category { Id = 2, Name = "Books" }
-// );
-
-// Example of adding an index:
-// entity.HasIndex(e => e.Email).IsUnique();
-
-// Example of configuring a relationship:
-// modelBuilder.Entity<Order>()
-//     .HasOne(o => o.Customer)
-//     .WithMany(c => c.Orders)
-//     .HasForeignKey(o => o.CustomerId);
-"""
-        
-        return migration_script
-    
-    def _generate_schema_change_script(self, old_entities: List[Dict[str, Any]], new_entities: List[Dict[str, Any]], db_engine: str) -> str:
-        """Generate migration script for schema changes between old and new entities"""
-        # Find entities that exist in both old and new
-        common_entity_names = set(e["name"] for e in old_entities).intersection(set(e["name"] for e in new_entities))
-        
-        # Find new entities
-        new_entity_names = set(e["name"] for e in new_entities) - set(e["name"] for e in old_entities)
-        
-        # Find removed entities
-        removed_entity_names = set(e["name"] for e in old_entities) - set(e["name"] for e in new_entities)
-        
-        # Generate migration script
-        migration_script = f"// Schema Change Migration Script for {db_engine}\n\n"
-        
-        # Add new tables
-        if new_entity_names:
-            migration_script += "// New Tables\n"
-            for entity_name in new_entity_names:
-                entity = next(e for e in new_entities if e["name"] == entity_name)
-                
-                if db_engine.lower() == "sqlserver":
-                    migration_script += f"""
-CREATE TABLE [dbo].[{entity_name}s] (
-"""
-                elif db_engine.lower() == "oracle":
-                    migration_script += f"""
-CREATE TABLE {entity_name.upper()}S (
-"""
-                
-                # Add columns
-                columns = []
-                for prop in entity["properties"]:
-                    column_def = ""
-                    if db_engine.lower() == "sqlserver":
-                        column_type = self._get_sql_server_type(prop["type"])
-                        nullability = "NULL" if prop["nullable"] else "NOT NULL"
-                        
-                        if prop["name"] == "Id":
-                            column_def = f"    [Id] {column_type} IDENTITY(1,1) PRIMARY KEY"
-                        else:
-                            column_def = f"    [{prop['name']}] {column_type} {nullability}"
-                    elif db_engine.lower() == "oracle":
-                        column_type = self._get_oracle_type(prop["type"])
-                        nullability = "NULL" if prop["nullable"] else "NOT NULL"
-                        
-                        if prop["name"] == "Id":
-                            column_def = f"    ID {column_type} PRIMARY KEY"
-                        else:
-                            column_def = f"    {prop['name'].upper()} {column_type} {nullability}"
-                    
-                    columns.append(column_def)
-                
-                migration_script += ",\n".join(columns)
-                
-                if db_engine.lower() == "sqlserver":
-                    migration_script += "\n);\nGO\n\n"
-                elif db_engine.lower() == "oracle":
-                    migration_script += "\n);\n/\n\n"
-        
-        # Modified tables
-        if common_entity_names:
-            migration_script += "// Modified Tables\n"
-            for entity_name in common_entity_names:
-                old_entity = next(e for e in old_entities if e["name"] == entity_name)
-                new_entity = next(e for e in new_entities if e["name"] == entity_name)
-                
-                old_props = {p["name"]: p for p in old_entity["properties"]}
-                new_props = {p["name"]: p for p in new_entity["properties"]}
-                
-                # Find added properties
-                added_props = set(new_props.keys()) - set(old_props.keys())
-                if added_props:
-                    migration_script += f"-- Add columns to {entity_name}s table\n"
-                    for prop_name in added_props:
-                        prop = new_props[prop_name]
-                        
-                        if db_engine.lower() == "sqlserver":
-                            column_type = self._get_sql_server_type(prop["type"])
-                            nullability = "NULL" if prop["nullable"] else "NOT NULL"
-                            migration_script += f"ALTER TABLE [dbo].[{entity_name}s] ADD [{prop_name}] {column_type} {nullability};\nGO\n"
-                        elif db_engine.lower() == "oracle":
-                            column_type = self._get_oracle_type(prop["type"])
-                            nullability = "NULL" if prop["nullable"] else "NOT NULL"
-                            migration_script += f"ALTER TABLE {entity_name.upper()}S ADD {prop_name.upper()} {column_type} {nullability};\n/\n"
-                
-                # Find removed properties
-                removed_props = set(old_props.keys()) - set(new_props.keys())
-                if removed_props:
-                    migration_script += f"-- Drop columns from {entity_name}s table\n"
-                    for prop_name in removed_props:
-                        if db_engine.lower() == "sqlserver":
-                            migration_script += f"ALTER TABLE [dbo].[{entity_name}s] DROP COLUMN [{prop_name}];\nGO\n"
-                        elif db_engine.lower() == "oracle":
-                            migration_script += f"ALTER TABLE {entity_name.upper()}S DROP COLUMN {prop_name.upper()};\n/\n"
-                
-                # Find modified properties
-                common_props = set(old_props.keys()).intersection(set(new_props.keys()))
-                for prop_name in common_props:
-                    old_prop = old_props[prop_name]
-                    new_prop = new_props[prop_name]
-                    
-                    if old_prop["type"] != new_prop["type"] or old_prop["nullable"] != new_prop["nullable"]:
-                        migration_script += f"-- Modify column in {entity_name}s table\n"
-                        
-                        if db_engine.lower() == "sqlserver":
-                            column_type = self._get_sql_server_type(new_prop["type"])
-                            nullability = "NULL" if new_prop["                    "code_pattern": "POST/PUT/DELETE without ValidateAntiForgeryToken",
-                    "match_count": 1
-                })
-        
-        return vulnerabilities
-    
-    def _check_for_authorization_issues(self, code: str) -> List[Dict[str, Any]]:
-        """Check for potential authorization issues"""
-        vulnerabilities = []
-        
-        # Check for controllers without authorization
-        if "Controller" in code and "public class" in code:
-            # Look for controller class definitions
-            controller_classes = re.findall(r'public\s+class\s+(\w+Controller)', code)
-            
-            if controller_classes:
-                # Check if any authorization attributes are present
-                auth_patterns = [
-                    r'\[Authorize',
-                    r'\[AllowAnonymous',
-                    r'\[RequireHttps',
-                ]
-                
-                auth_found = any(re.search(pattern, code) for pattern in auth_patterns)
-                
-                if not auth_found:
-                    vulnerabilities.append({
-                        "type": "missing_authorization",
-                        "severity": "high",
-                        "description": "Missing authorization: controller class without authorization attributes",
-                        "remediation": "Add [Authorize] attributes to controllers or actions that require authentication",
-                        "code_pattern": "Controller without [Authorize]",
-                        "match_count": len(controller_classes)
-                    })
-        
-        # Check for direct role strings instead of role constants
-        role_string_patterns = [
-            r'IsInRole\("(.*?)"\)',
-            r'Authorize\(Roles = "(.*?)"\)',
-        ]
-        
-        for pattern in role_string_patterns:
-            matches = re.findall(pattern, code)
-            if matches:
-                vulnerabilities.append({
-                    "type": "hardcoded_roles",
-                    "severity": "low",
-                    "description": "Hardcoded role strings: using string literals for role names instead of constants",
-                    "remediation": "Use role constants or enums to avoid typos and improve maintainability",
-                    "code_pattern": pattern,
-                    "match_count": len(matches)
-                })
-        
-        return vulnerabilities
-    
-    def _check_for_sensitive_data_exposure(self, code: str) -> List[Dict[str, Any]]:
-        """Check for potential sensitive data exposure issues"""
-        vulnerabilities = []
-        
-        # Check for sensitive data in model classes
-        sensitive_property_patterns = [
-            (r'(Password|Secret|ApiKey|Token|SSN|SocialSecurity|CreditCard|CardNumber)\b', "high"),
-            (r'(Email|Phone|Address|DateOfBirth|BirthDate|DOB)\b', "medium"),
-        ]
-        
-        for pattern, severity in sensitive_property_patterns:
-            matches = re.findall(pattern, code)
-            if matches:
-                # Check if [DataProtection] or [Sensitive] attributes are used
-                protection_patterns = [
-                    r'\[(?:DataProtection|Sensitive|JsonIgnore|NotMapped)\]',
-                    r'\[(?:ProtectedPersonalData|PersonalData)\]',
-                ]
-                
-                protection_found = any(re.search(pattern, code) for pattern in protection_patterns)
-                
-                if not protection_found:
-                    vulnerabilities.append({
-                        "type": "sensitive_data_exposure",
-                        "severity": severity,
-                        "description": f"Potential sensitive data exposure: {', '.join(set(matches))} properties without proper protection attributes",
-                        "remediation": "Add [JsonIgnore], [PersonalData], or encryption for sensitive data",
-                        "code_pattern": pattern,
-                        "match_count": len(matches)
-                    })
-        
-        # Check for logging sensitive data
-        logging_patterns = [
-            r'Log\.(Debug|Info|Warning|Error|Critical)\([^)]*({0})[^)]*\)',
-            r'(Debug|Info|Warning|Error|Critical)\([^)]*({0})[^)]*\)',
-            r'logger\.(LogDebug|LogInformation|LogWarning|LogError|LogCritical)\([^)]*({0})[^)]*\)',
-        ]
-        
-        sensitive_terms = "(Password|Secret|ApiKey|Token|SSN|SocialSecurity|CreditCard|CardNumber)"
-        
-        for base_pattern in logging_patterns:
-            pattern = base_pattern.format(sensitive_terms)
-            matches = re.findall(pattern, code)
-            if matches:
-                vulnerabilities.append({
-                    "type": "sensitive_data_logging",
-                    "severity": "high",
-                    "description": "Potential sensitive data in logs: logging statements contain sensitive information",
-                    "remediation": "Remove sensitive data from logging statements or redact it before logging",
-                    "code_pattern": pattern,
-                    "match_count": len(matches)
-                })
-        
-        # Check for unsecured transmission (HTTP instead of HTTPS)
-        if "http://" in code and not "https://" in code:
-            vulnerabilities.append({
-                "type": "unsecured_transmission",
-                "severity": "medium",
-                "description": "Unsecured data transmission: using HTTP instead of HTTPS",
-                "remediation": "Use HTTPS for all external communication and add [RequireHttps] attribute",
-                "code_pattern": "http://",
-                "match_count": code.count("http://")
-            })
-        
-        return vulnerabilities
-    
-    def _run(self, code: str) -> str:
-        """
-        Analyze code for security vulnerabilities and best practices
-        """
-        # Run various security checks
-        sql_injection = self._check_for_sql_injection(code)
-        xss = self._check_for_xss(code)
-        csrf = self._check_for_csrf(code)
-        authorization = self._check_for_authorization_issues(code)
-        sensitive_data = self._check_for_sensitive_data_exposure(code)
-        
-        # Combine all vulnerabilities
-        all_vulnerabilities = sql_injection + xss + csrf + authorization + sensitive_data
-        
-        # Count vulnerabilities by severity
-        severity_counts = {
-            "high": sum(1 for v in all_vulnerabilities if v["severity"] == "high"),
-            "medium": sum(1 for v in all_vulnerabilities if v["severity"] == "medium"),
-            "low": sum(1 for v in all_vulnerabilities if v["severity"] == "low")
-        }
-        
-        # Generate overall security score (simple algorithm)
-        # Start with 100 points and subtract for vulnerabilities
-        security_score = 100
-        security_score -= severity_counts["high"] * 20
-        security_score -= severity_counts["medium"] * 10
-        security_score -= severity_counts["low"] * 5
-        
-        # Ensure score doesn't go below 0
-        security_score = max(0, security_score)
-        
-        # Generate security rating
-        if security_score >= 90:
-            security_rating = "Excellent"
-        elif security_score >= 80:
-            security_rating = "Good"
-        elif security_score >= 70:
-            security_rating = "Satisfactory"
-        elif security_score >= 60:
-            security_rating = "Needs Improvement"
-        else:
-            security_rating = "Poor"
-        
-        # Group vulnerabilities by type
-        vulnerability_types = {}
-        for vuln in all_vulnerabilities:
-            vuln_type = vuln["type"]
-            if vuln_type not in vulnerability_types:
-                vulnerability_types[vuln_type] = []
-            vulnerability_types[vuln_type].append(vuln)
-        
-        # Generate recommendations
-        recommendations = []
-        if security_score < 80:
-            for vuln_type, vulns in vulnerability_types.items():
-                highest_severity = max([v["severity"] for v in vulns], key=lambda s: {"high": 3, "medium": 2, "low": 1}[s])
-                if highest_severity in ["high", "medium"]:
-                    # Get a unique list of remediations
-                    unique_remediations = list(set([v["remediation"] for v in vulns]))
-                    remediation_text = "; ".join(unique_remediations)
-                    recommendations.append(f"Fix {vuln_type} issues: {remediation_text}")
-        
-        # Combine all analysis into a comprehensive report
-        security_report = {
-            "security_score": security_score,
-            "security_rating": security_rating,
-            "vulnerability_counts": severity_counts,
-            "vulnerabilities": all_vulnerabilities,
-            "recommendations": recommendations
-        }
-        
-        return json.dumps(security_report, indent=2)
+        return json.dumps(result, indent=2)
 
 class DependencyManagementTool(Tool):
     name = "DependencyManager"
@@ -3530,6 +1920,7 @@ class CrossCuttingConcernsTool(Tool):
     def _generate_cross_cutting_implementation(self, missing_concerns: List[str]) -> Dict[str, str]:
         """Generate implementation code for missing cross-cutting concerns"""
         implementations = {}
+
         
         for concern in missing_concerns:
             if concern == "logging":
@@ -3546,224 +1937,519 @@ class CrossCuttingConcernsTool(Tool):
     def _generate_logging_implementation(self) -> str:
         """Generate logging implementation code"""
         return """
-// 1. Add this to your .csproj file
-// <ItemGroup>
-//   <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-//   <PackageReference Include="Serilog.AspNetCore" Version="6.0.0" />
-//   <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
-//   <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-// </ItemGroup>
+        // 1. Add this to your .csproj file
+        // <ItemGroup>
+        //   <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+        //   <PackageReference Include="Serilog.AspNetCore" Version="6.0.0" />
+        //   <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+        //   <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+        // </ItemGroup>
 
-// 2. Add this to Program.cs
-using Serilog;
+        // 2. Add this to Program.cs
+        using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(args);
 
-// Configure S            elif lines > 15:
-                smells.append({
-                    "type": "long_method",
-                    "description": f"Method '{method_match[3]}' has {lines} lines. Consider if it could be simplified.",
-                    "severity": "medium"
-                })
-        
-        # Check for large classes
-        class_pattern = r'class\s+(\w+)[^{]*\{([^}]*)\}'
-        classes = re.findall(class_pattern, code, re.DOTALL)
-        for class_match in classes:
-            class_body = class_match[1]
-            method_count = len(re.findall(method_pattern, class_body, re.DOTALL))
-            if method_count > 20:
-                smells.append({
-                    "type": "large_class",
-                    "description": f"Class '{class_match[0]}' has {method_count} methods. Consider breaking it down into smaller classes.",
-                    "severity": "high"
-                })
-            elif method_count > 10:
-                smells.append({
-                    "type": "large_class",
-                    "description": f"Class '{class_match[0]}' has {method_count} methods. Consider if it has too many responsibilities.",
-                    "severity": "medium"
-                })
-        
-        # Check for commented out code
-        comment_pattern = r'//.*'
-        comments = re.findall(comment_pattern, code)
-        code_like_comments = [c for c in comments if ';' in c or '{' in c or '}' in c]
-        if len(code_like_comments) > 3:
-            smells.append({
-                "type": "commented_code",
-                "description": f"Found {len(code_like_comments)} potential instances of commented-out code. This should be removed.",
-                "severity": "low"
-            })
-        
-        # Check for string concatenation in loops
-        string_concat_in_loops = re.findall(r'(for|foreach|while)[^{]*\{[^}]*\+=[^}]*\}', code, re.DOTALL)
-        if string_concat_in_loops:
-            smells.append({
-                "type": "string_concatenation_in_loop",
-                "description": "Found string concatenation in loops. Consider using StringBuilder for better performance.",
-                "severity": "medium"
-            })
-        
-        return smells
+        // Configure Serilog
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
+            .Enrich.FromLogContext()
+            .WriteTo.Console()
+            .WriteTo.File("logs/app-.log", rollingInterval: RollingInterval.Day)
+            .CreateLogger();
+
+        builder.Host.UseSerilog();
+
+        // 3. Example of using logging in a controller
+        public class ExampleController : ControllerBase
+        {
+            private readonly ILogger<ExampleController> _logger;
+
+            public ExampleController(ILogger<ExampleController> logger)
+            {
+                _logger = logger;
+            }
+
+            [HttpGet]
+            public IActionResult Get()
+            {
+                _logger.LogInformation("Getting resources");
+                
+                try
+                {
+                    // Your code here
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error occurred while getting resources");
+                    throw;
+                }
+            }
+        }
+
+        // 4. Example of structured logging
+        public class StructuredLoggingExample
+        {
+            private readonly ILogger<StructuredLoggingExample> _logger;
+
+            public StructuredLoggingExample(ILogger<StructuredLoggingExample> logger)
+            {
+                _logger = logger;
+            }
+
+            public void ProcessOrder(Order order)
+            {
+                _logger.LogInformation("Processing order {OrderId} for customer {CustomerId} with total {Total}",
+                    order.Id, order.CustomerId, order.Total);
+                
+                // Instead of:
+                // _logger.LogInformation($"Processing order {order.Id} for customer {order.CustomerId} with total {order.Total}");
+            }
+        }
+        """
     
-    def _analyze_best_practices(self, code: str) -> List[Dict[str, str]]:
-        """Check adherence to C# best practices"""
-        best_practices = []
-        
-        # Check for async/await usage
-        async_methods = re.findall(r'async\s+[\w<>[\],\s]+\s+\w+\s*\(', code)
-        await_usage = re.findall(r'await\s+', code)
-        if async_methods and not await_usage:
-            best_practices.append({
-                "type": "async_without_await",
-                "description": "Methods marked as async but no await operators found. This may indicate missing await statements.",
-                "recommendation": "Ensure all async methods use await or remove the async modifier if not needed."
-            })
-        
-        # Check for proper disposal of IDisposable objects
-        disposable_patterns = [
-            r'new\s+SqlConnection',
-            r'new\s+StreamReader',
-            r'new\s+StreamWriter',
-            r'new\s+FileStream',
-            r'new\s+MemoryStream'
-        ]
-        
-        using_statements = re.findall(r'using\s*\(', code)
-        for pattern in disposable_patterns:
-            disposable_objects = re.findall(pattern, code)
-            if disposable_objects and len(disposable_objects) > len(using_statements):
-                best_practices.append({
-                    "type": "disposable_not_disposed",
-                    "description": f"Potential improper disposal of IDisposable objects ({pattern.replace('new\\s+', '')})",
-                    "recommendation": "Use 'using' statements or blocks to ensure proper disposal of resources."
-                })
-        
-        # Check for proper exception handling
-        catch_blocks = re.findall(r'catch\s*\([^)]*\)\s*\{([^}]*)\}', code, re.DOTALL)
-        general_exceptions = re.findall(r'catch\s*\(\s*Exception\s+', code)
-        empty_catches = [b for b in catch_blocks if not b.strip()]
-        
-        if empty_catches:
-            best_practices.append({
-                "type": "empty_catch_block",
-                "description": f"Found {len(empty_catches)} empty catch blocks. This suppresses exceptions without handling them.",
-                "recommendation": "Handle exceptions properly or rethrow them if they cannot be handled at this level."
-            })
-        
-        if general_exceptions and len(general_exceptions) == len(catch_blocks):
-            best_practices.append({
-                "type": "catching_general_exception",
-                "description": "All catch blocks are catching general Exception type. This may hide unexpected exceptions.",
-                "recommendation": "Catch specific exception types when possible to handle each case appropriately."
-            })
-        
-        # Check for proper validation
-        controller_methods = re.findall(r'(public|private|protected|internal)\s+(async\s+)?([\w<>[\],\s]+)\s+(\w+)\s*\([^)]*\)\s*\{([^}]*)\}', code, re.DOTALL)
-        model_state_checks = re.findall(r'ModelState\.IsValid', code)
-        
-        if "Controller" in code and controller_methods and not model_state_checks:
-            best_practices.append({
-                "type": "missing_model_validation",
-                "description": "Controller methods may be missing ModelState validation checks.",
-                "recommendation": "Add ModelState.IsValid checks to validate request data before processing."
-            })
-        
-        return best_practices
+    def _generate_error_handling_implementation(self) -> str:
+        """Generate error handling implementation code"""
+        return """
+        // 1. Create an error handling middleware
+        public class ErrorHandlingMiddleware
+        {
+            private readonly RequestDelegate _next;
+            private readonly ILogger<ErrorHandlingMiddleware> _logger;
+
+            public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
+            {
+                _next = next;
+                _logger = logger;
+            }
+
+            public async Task InvokeAsync(HttpContext context)
+            {
+                try
+                {
+                    await _next(context);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "An unhandled exception occurred");
+                    await HandleExceptionAsync(context, ex);
+                }
+            }
+
+            private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
+            {
+                context.Response.ContentType = "application/json";
+                
+                var response = new 
+                {
+                    error = new 
+                    {
+                        message = "An error occurred while processing your request.",
+                        detail = exception.Message
+                    }
+                };
+
+                switch (exception)
+                {
+                    case NotFoundException notFoundEx:
+                        context.Response.StatusCode = StatusCodes.Status404NotFound;
+                        response = new { error = new { message = notFoundEx.Message } };
+                        break;
+                        
+                    case ValidationException validationEx:
+                        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                        response = new { error = new { message = "Validation failed", errors = validationEx.Errors } };
+                        break;
+                        
+                    case UnauthorizedAccessException:
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        response = new { error = new { message = "Unauthorized access" } };
+                        break;
+                        
+                    default:
+                        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                        break;
+                }
+
+                await context.Response.WriteAsJsonAsync(response);
+            }
+        }
+
+        // 2. Create custom exception classes
+        public class NotFoundException : Exception
+        {
+            public NotFoundException(string message) : base(message) { }
+        }
+
+        public class ValidationException : Exception
+        {
+            public IEnumerable<ValidationError> Errors { get; }
+
+            public ValidationException(string message, IEnumerable<ValidationError> errors) : base(message)
+            {
+                Errors = errors;
+            }
+        }
+
+        public class ValidationError
+        {
+            public string PropertyName { get; set; }
+            public string ErrorMessage { get; set; }
+        }
+
+        // 3. Register the middleware in Program.cs
+        var app = builder.Build();
+
+        // Add middleware (before routing middleware)
+        app.UseMiddleware<ErrorHandlingMiddleware>();
+
+        // 4. Example of throwing custom exceptions
+        public class ExampleService
+        {
+            public async Task<Entity> GetByIdAsync(int id)
+            {
+                var entity = await _repository.GetByIdAsync(id);
+                
+                if (entity == null)
+                {
+                    throw new NotFoundException($"Entity with ID {id} not found");
+                }
+                
+                return entity;
+            }
+            
+            public async Task CreateAsync(EntityDto dto)
+            {
+                // Validation example
+                var validator = new EntityValidator();
+                var validationResult = await validator.ValidateAsync(dto);
+                
+                if (!validationResult.IsValid)
+                {
+                    var errors = validationResult.Errors.Select(e => new ValidationError 
+                    { 
+                        PropertyName = e.PropertyName, 
+                        ErrorMessage = e.ErrorMessage 
+                    });
+                    
+                    throw new ValidationException("Validation failed", errors);
+                }
+                
+                // Processing logic
+            }
+        }
+        """
+    
+    def _generate_caching_implementation(self) -> str:
+        """Generate caching implementation code"""
+        return """
+        // 1. Add this to your .csproj file
+        // <ItemGroup>
+        //   <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.0" />
+        // </ItemGroup>
+
+        // 2. Register caching in Program.cs
+        var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddMemoryCache();
+
+        // For distributed caching:
+        // builder.Services.AddDistributedMemoryCache();
+        // Or for Redis:
+        // builder.Services.AddStackExchangeRedisCache(options =>
+        // {
+        //     options.Configuration = builder.Configuration.GetConnectionString("Redis");
+        //     options.InstanceName = "Example";
+        // });
+
+        // 3. Create a caching service
+        public interface ICacheService
+        {
+            T Get<T>(string key);
+            void Set<T>(string key, T value, TimeSpan? absoluteExpiration = null);
+            void Remove(string key);
+        }
+
+        public class MemoryCacheService : ICacheService
+        {
+            private readonly IMemoryCache _cache;
+            private readonly ILogger<MemoryCacheService> _logger;
+            
+            // Default expiration time of 15 minutes
+            private readonly TimeSpan _defaultExpiration = TimeSpan.FromMinutes(15);
+
+            public MemoryCacheService(IMemoryCache cache, ILogger<MemoryCacheService> logger)
+            {
+                _cache = cache;
+                _logger = logger;
+            }
+
+            public T Get<T>(string key)
+            {
+                if (_cache.TryGetValue(key, out T cachedValue))
+                {
+                    _logger.LogDebug("Cache hit for key: {Key}", key);
+                    return cachedValue;
+                }
+                
+                _logger.LogDebug("Cache miss for key: {Key}", key);
+                return default;
+            }
+
+            public void Set<T>(string key, T value, TimeSpan? absoluteExpiration = null)
+            {
+                var expirationTime = absoluteExpiration ?? _defaultExpiration;
+                
+                var cacheOptions = new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(expirationTime)
+                    .SetPriority(CacheItemPriority.Normal);
+                    
+                _cache.Set(key, value, cacheOptions);
+                
+                _logger.LogDebug("Cache set for key: {Key} with expiration: {Expiration}", key, expirationTime);
+            }
+
+            public void Remove(string key)
+            {
+                _cache.Remove(key);
+                _logger.LogDebug("Cache removed for key: {Key}", key);
+            }
+        }
+
+        // 4. Register the cache service
+        builder.Services.AddSingleton<ICacheService, MemoryCacheService>();
+
+        // 5. Example of using caching in a service
+        public class CachedProductService
+        {
+            private readonly IProductRepository _repository;
+            private readonly ICacheService _cacheService;
+            private readonly ILogger<CachedProductService> _logger;
+
+            public CachedProductService(
+                IProductRepository repository,
+                ICacheService cacheService,
+                ILogger<CachedProductService> logger)
+            {
+                _repository = repository;
+                _cacheService = cacheService;
+                _logger = logger;
+            }
+
+            public async Task<Product> GetByIdAsync(int id)
+            {
+                string cacheKey = $"product:{id}";
+                
+                // Try to get from cache first
+                var cachedProduct = _cacheService.Get<Product>(cacheKey);
+                
+                if (cachedProduct != null)
+                {
+                    return cachedProduct;
+                }
+                
+                // Cache miss, get from repository
+                var product = await _repository.GetByIdAsync(id);
+                
+                if (product != null)
+                {
+                    // Cache the product with a 15-minute expiration
+                    _cacheService.Set(cacheKey, product, TimeSpan.FromMinutes(15));
+                }
+                
+                return product;
+            }
+
+            public async Task<IEnumerable<Product>> GetAllAsync()
+            {
+                string cacheKey = "products:all";
+                
+                // Try to get from cache first
+                var cachedProducts = _cacheService.Get<IEnumerable<Product>>(cacheKey);
+                
+                if (cachedProducts != null)
+                {
+                    return cachedProducts;
+                }
+                
+                // Cache miss, get from repository
+                var products = await _repository.GetAllAsync();
+                
+                // Cache with a shorter expiration since the full list might change more frequently
+                _cacheService.Set(cacheKey, products, TimeSpan.FromMinutes(5));
+                
+                return products;
+            }
+
+            public async Task UpdateAsync(Product product)
+            {
+                await _repository.UpdateAsync(product);
+                
+                // Invalidate cache
+                _cacheService.Remove($"product:{product.Id}");
+                _cacheService.Remove("products:all");
+            }
+        }
+        """
+    
+    def _generate_validation_implementation(self) -> str:
+        """Generate validation implementation code"""
+        return """
+        // 1. Add this to your .csproj file
+        // <ItemGroup>
+        //   <PackageReference Include="FluentValidation.AspNetCore" Version="11.0.0" />
+        // </ItemGroup>
+
+        // 2. Register FluentValidation in Program.cs
+        var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddControllers()
+            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Program>());
+
+        // 3. Create validator classes
+        public class ProductValidator : AbstractValidator<ProductDto>
+        {
+            public ProductValidator()
+            {
+                RuleFor(p => p.Name)
+                    .NotEmpty().WithMessage("Name is required")
+                    .MaximumLength(100).WithMessage("Name cannot exceed 100 characters");
+                    
+                RuleFor(p => p.Price)
+                    .GreaterThan(0).WithMessage("Price must be greater than zero");
+                    
+                RuleFor(p => p.CategoryId)
+                    .NotEmpty().WithMessage("Category is required");
+                    
+                // Conditional validation example
+                When(p => p.IsOnSale, () => {
+                    RuleFor(p => p.SalePrice)
+                        .NotNull().WithMessage("Sale price is required when product is on sale")
+                        .GreaterThan(0).WithMessage("Sale price must be greater than zero")
+                        .LessThan(p => p.Price).WithMessage("Sale price must be less than regular price");
+                });
+            }
+        }
+
+        // 4. Example of a DTO with Data Annotations (alternative approach)
+        public class CustomerDto
+        {
+            [Required(ErrorMessage = "Name is required")]
+            [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters")]
+            public string Name { get; set; }
+            
+            [Required(ErrorMessage = "Email is required")]
+            [EmailAddress(ErrorMessage = "Invalid email format")]
+            public string Email { get; set; }
+            
+            [Phone(ErrorMessage = "Invalid phone number format")]
+            public string Phone { get; set; }
+            
+            [Range(18, 120, ErrorMessage = "Age must be between 18 and 120")]
+            public int Age { get; set; }
+        }
+
+        // 5. Example of validation in a controller using FluentValidation
+        [ApiController]
+        [Route("api/[controller]")]
+        public class ProductsController : ControllerBase
+        {
+            private readonly IProductService _productService;
+            
+            public ProductsController(IProductService productService)
+            {
+                _productService = productService;
+            }
+            
+            [HttpPost]
+            public async Task<IActionResult> Create(ProductDto productDto)
+            {
+                // ModelState validation is handled automatically with [ApiController]
+                // If validation fails, a 400 Bad Request is returned with validation errors
+                
+                var product = await _productService.CreateAsync(productDto);
+                return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
+            }
+        }
+
+        // 6. Example of manual validation in a service
+        public class OrderService
+        {
+            private readonly IValidator<OrderDto> _validator;
+            
+            public OrderService(IValidator<OrderDto> validator)
+            {
+                _validator = validator;
+            }
+            
+            public async Task<Order> CreateOrderAsync(OrderDto orderDto)
+            {
+                // Validate the order
+                var validationResult = await _validator.ValidateAsync(orderDto);
+                
+                if (!validationResult.IsValid)
+                {
+                    var errors = validationResult.Errors.Select(e => new ValidationError 
+                    { 
+                        PropertyName = e.PropertyName, 
+                        ErrorMessage = e.ErrorMessage 
+                    });
+                    
+                    throw new ValidationException("Order validation failed", errors);
+                }
+                
+                // Process the valid order
+                var order = new Order
+                {
+                    // Map properties from DTO
+                };
+                
+                // Save the order
+                
+                return order;
+            }
+        }
+        """
     
     def _run(self, code: str) -> str:
         """
-        Analyze code quality against best practices and coding standards
+        Analyze cross-cutting concerns implementation and suggest improvements
         """
-        # Run various analysis methods
-        complexity_analysis = self._analyze_code_complexity(code)
-        naming_issues = self._check_naming_conventions(code)
-        code_smells = self._check_code_smells(code)
-        best_practices_issues = self._analyze_best_practices(code)
+        # Analyze various cross-cutting concerns
+        logging_analysis = self._analyze_logging(code)
+        error_handling_analysis = self._analyze_error_handling(code)
+        caching_analysis = self._analyze_caching(code)
+        validation_analysis = self._analyze_validation(code)
         
-        # Determine overall quality score (simple algorithm)
-        # Start with 100 points and subtract for issues
-        quality_score = 100
+        # Identify missing or inadequate concerns
+        missing_concerns = []
         
-        # Complexity penalties
-        if complexity_analysis["cyclomatic_complexity"] > 30:
-            quality_score -= 15
-        elif complexity_analysis["cyclomatic_complexity"] > 15:
-            quality_score -= 5
+        if not logging_analysis["logging_framework_detected"]:
+            missing_concerns.append("logging")
         
-        if complexity_analysis["nesting_depth"] > 5:
-            quality_score -= 15
-        elif complexity_analysis["nesting_depth"] > 3:
-            quality_score -= 5
+        if not error_handling_analysis["global_error_handling"]:
+            missing_concerns.append("error_handling")
         
-        if complexity_analysis["method_length"] > 50:
-            quality_score -= 15
-        elif complexity_analysis["method_length"] > 30:
-            quality_score -= 5
+        if not caching_analysis["caching_detected"]:
+            missing_concerns.append("caching")
         
-        # Naming convention penalties
-        naming_count = sum(len(issues) for issues in naming_issues.values())
-        if naming_count > 10:
-            quality_score -= 15
-        elif naming_count > 5:
-            quality_score -= 10
-        elif naming_count > 0:
-            quality_score -= 5
+        if not validation_analysis["validation_approach"]:
+            missing_concerns.append("validation")
         
-        # Code smell penalties
-        high_severity_smells = [smell for smell in code_smells if smell["severity"] == "high"]
-        medium_severity_smells = [smell for smell in code_smells if smell["severity"] == "medium"]
-        low_severity_smells = [smell for smell in code_smells if smell["severity"] == "low"]
+        # Generate implementation code for missing concerns
+        implementations = self._generate_cross_cutting_implementation(missing_concerns)
         
-        quality_score -= len(high_severity_smells) * 10
-        quality_score -= len(medium_severity_smells) * 5
-        quality_score -= len(low_severity_smells) * 2
-        
-        # Best practices penalties
-        quality_score -= len(best_practices_issues) * 5
-        
-        # Ensure score doesn't go below 0
-        quality_score = max(0, quality_score)
-        
-        # Generate quality rating
-        if quality_score >= 90:
-            quality_rating = "Excellent"
-        elif quality_score >= 80:
-            quality_rating = "Good"
-        elif quality_score >= 70:
-            quality_rating = "Satisfactory"
-        elif quality_score >= 60:
-            quality_rating = "Needs Improvement"
-        else:
-            quality_rating = "Poor"
-        
-        # Combine all analysis into a comprehensive report
+        # Prepare comprehensive analysis report
         analysis_report = {
-            "quality_score": quality_score,
-            "quality_rating": quality_rating,
-            "complexity_metrics": complexity_analysis,
-            "naming_convention_issues": naming_issues,
-            "code_smells": code_smells,
-            "best_practices_issues": best_practices_issues,
-            "recommendations": []
+            "logging": logging_analysis,
+            "error_handling": error_handling_analysis,
+            "caching": caching_analysis,
+            "validation": validation_analysis,
+            "missing_concerns": missing_concerns,
+            "implementations": implementations
         }
-        
-        # Generate top recommendations
-        if complexity_analysis["cyclomatic_complexity"] > 15:
-            analysis_report["recommendations"].append("Reduce code complexity by breaking down complex methods")
-        
-        if complexity_analysis["nesting_depth"] > 3:
-            analysis_report["recommendations"].append("Reduce nesting depth by extracting code to separate methods")
-        
-        if naming_count > 0:
-            analysis_report["recommendations"].append("Follow .NET naming conventions consistently")
-        
-        if high_severity_smells:
-            analysis_report["recommendations"].append("Address high-severity code smells: " + ", ".join(set(smell["type"] for smell in high_severity_smells)))
-        
-        if best_practices_issues:
-            analysis_report["recommendations"].append("Follow best practices: " + ", ".join(set(issue["type"] for issue in best_practices_issues)))
         
         return json.dumps(analysis_report, indent=2)
 
@@ -3990,29 +2676,29 @@ class ApiTestingTool(Tool):
         entity = endpoint.get("entity", "resource")
         
         test_code = f"""
-using System.Threading.Tasks;
-using System.Text.Json;
-using Microsoft.Playwright;
-using Xunit;
-using API.Tests.Fixtures;
-using System.Collections.Generic;
-using System.Net;
+        using System.Threading.Tasks;
+        using System.Text.Json;
+        using Microsoft.Playwright;
+        using Xunit;
+        using API.Tests.Fixtures;
+        using System.Collections.Generic;
+        using System.Net;
 
-namespace API.Tests
-{{
-    public class {entity}ApiTests : IClassFixture<TestFixture>
-    {{
-        private readonly TestFixture _fixture;
-        private readonly string _baseUrl;
-        private readonly string _apiEndpoint = "{path}";
-        
-        public {entity}ApiTests(TestFixture fixture)
+        namespace API.Tests
         {{
-            _fixture = fixture;
-            _baseUrl = "http://localhost:5000";
-        }}
-        
-"""
+            public class {entity}ApiTests : IClassFixture<TestFixture>
+            {{
+                private readonly TestFixture _fixture;
+                private readonly string _baseUrl;
+                private readonly string _apiEndpoint = "{path}";
+                
+                public {entity}ApiTests(TestFixture fixture)
+                {{
+                    _fixture = fixture;
+                    _baseUrl = "http://localhost:5000";
+                }}
+                
+        """
         
         # Generate test methods for each test case
         for i, test_case in enumerate(test_cases):
@@ -4024,7 +2710,7 @@ namespace API.Tests
         public async Task {method_name}()
         {{
             // Arrange
-"""
+            """
             
             # Request setup
             if test_case["request"]["body"]:
@@ -4292,46 +2978,199 @@ class SecurityAnalysisTool(Tool):
                     "severity": "medium",
                     "description": "Potential CSRF vulnerability: missing anti-forgery token validation on state-changing operations",
                     "remediation": "Add [ValidateAntiForgeryToken] attribute to controllers and @Html.AntiForgeryToken() to forms",
-                    "code_pattern": "POST/PUT                    story_title = user_story.get("title", "Unnamed User Story")
-                    all_questions.append({
-                        "section": f"User Story: {story_id} - {story_title}",
-                        "questions": questions
+                    "code_pattern": "POST/PUT/DELETE without ValidateAntiForgeryToken",
+                    "match_count": 1
+               })
+        
+        return vulnerabilities
+    
+    def _check_for_authorization_issues(self, code: str) -> List[Dict[str, Any]]:
+        """Check for potential authorization issues"""
+        vulnerabilities = []
+        
+        # Check for controllers without authorization
+        if "Controller" in code and "public class" in code:
+            # Look for controller class definitions
+            controller_classes = re.findall(r'public\s+class\s+(\w+Controller)', code)
+            
+            if controller_classes:
+                # Check if any authorization attributes are present
+                auth_patterns = [
+                    r'\[Authorize',
+                    r'\[AllowAnonymous',
+                    r'\[RequireHttps',
+                ]
+                
+                auth_found = any(re.search(pattern, code) for pattern in auth_patterns)
+                
+                if not auth_found:
+                    vulnerabilities.append({
+                        "type": "missing_authorization",
+                        "severity": "high",
+                        "description": "Missing authorization: controller class without authorization attributes",
+                        "remediation": "Add [Authorize] attributes to controllers or actions that require authentication",
+                        "code_pattern": "Controller without [Authorize]",
+                        "match_count": len(controller_classes)
                     })
         
-        # Technical requirements questions
-        if "technical_requirements" in requirements:
-            for tech_req in requirements["technical_requirements"]:
-                questions = self._generate_questions_for_technical_requirement(tech_req)
-                if questions:
-                    req_id = tech_req.get("id", "")
-                    req_title = tech_req.get("title", "Unnamed Technical Requirement")
-                    all_questions.append({
-                        "section": f"Technical Requirement: {req_id} - {req_title}",
-                        "questions": questions
+        # Check for direct role strings instead of role constants
+        role_string_patterns = [
+            r'IsInRole\("(.*?)"\)',
+            r'Authorize\(Roles = "(.*?)"\)',
+        ]
+        
+        for pattern in role_string_patterns:
+            matches = re.findall(pattern, code)
+            if matches:
+                vulnerabilities.append({
+                    "type": "hardcoded_roles",
+                    "severity": "low",
+                    "description": "Hardcoded role strings: using string literals for role names instead of constants",
+                    "remediation": "Use role constants or enums to avoid typos and improve maintainability",
+                    "code_pattern": pattern,
+                    "match_count": len(matches)
+                })
+        
+        return vulnerabilities
+    
+    def _check_for_sensitive_data_exposure(self, code: str) -> List[Dict[str, Any]]:
+        """Check for potential sensitive data exposure issues"""
+        vulnerabilities = []
+        
+        # Check for sensitive data in model classes
+        sensitive_property_patterns = [
+            (r'(Password|Secret|ApiKey|Token|SSN|SocialSecurity|CreditCard|CardNumber)\b', "high"),
+            (r'(Email|Phone|Address|DateOfBirth|BirthDate|DOB)\b', "medium"),
+        ]
+        
+        for pattern, severity in sensitive_property_patterns:
+            matches = re.findall(pattern, code)
+            if matches:
+                # Check if [DataProtection] or [Sensitive] attributes are used
+                protection_patterns = [
+                    r'\[(?:DataProtection|Sensitive|JsonIgnore|NotMapped)\]',
+                    r'\[(?:ProtectedPersonalData|PersonalData)\]',
+                ]
+                
+                protection_found = any(re.search(pattern, code) for pattern in protection_patterns)
+                
+                if not protection_found:
+                    vulnerabilities.append({
+                        "type": "sensitive_data_exposure",
+                        "severity": severity,
+                        "description": f"Potential sensitive data exposure: {', '.join(set(matches))} properties without proper protection attributes",
+                        "remediation": "Add [JsonIgnore], [PersonalData], or encryption for sensitive data",
+                        "code_pattern": pattern,
+                        "match_count": len(matches)
                     })
         
-        # Non-functional requirements questions
-        if "non_functional_requirements" in requirements:
-            for nfr in requirements["non_functional_requirements"]:
-                questions = self._generate_questions_for_non_functional_requirement(nfr)
-                if questions:
-                    nfr_id = nfr.get("id", "")
-                    nfr_title = nfr.get("title", "Unnamed Non-Functional Requirement")
-                    all_questions.append({
-                        "section": f"Non-Functional Requirement: {nfr_id} - {nfr_title}",
-                        "questions": questions
-                    })
+        # Check for logging sensitive data
+        logging_patterns = [
+            r'Log\.(Debug|Info|Warning|Error|Critical)\([^)]*({0})[^)]*\)',
+            r'(Debug|Info|Warning|Error|Critical)\([^)]*({0})[^)]*\)',
+            r'logger\.(LogDebug|LogInformation|LogWarning|LogError|LogCritical)\([^)]*({0})[^)]*\)',
+        ]
         
-        # Format the questions as a markdown document
-        markdown = "# Requirements Clarification Questions\n\n"
+        sensitive_terms = "(Password|Secret|ApiKey|Token|SSN|SocialSecurity|CreditCard|CardNumber)"
         
-        for section in all_questions:
-            markdown += f"## {section['section']}\n\n"
-            for i, question in enumerate(section['questions'], 1):
-                markdown += f"{i}. {question}\n"
-            markdown += "\n"
+        for base_pattern in logging_patterns:
+            pattern = base_pattern.format(sensitive_terms)
+            matches = re.findall(pattern, code)
+            if matches:
+                vulnerabilities.append({
+                    "type": "sensitive_data_logging",
+                    "severity": "high",
+                    "description": "Potential sensitive data in logs: logging statements contain sensitive information",
+                    "remediation": "Remove sensitive data from logging statements or redact it before logging",
+                    "code_pattern": pattern,
+                    "match_count": len(matches)
+                })
         
-        return markdown
+        # Check for unsecured transmission (HTTP instead of HTTPS)
+        if "http://" in code and not "https://" in code:
+            vulnerabilities.append({
+                "type": "unsecured_transmission",
+                "severity": "medium",
+                "description": "Unsecured data transmission: using HTTP instead of HTTPS",
+                "remediation": "Use HTTPS for all external communication and add [RequireHttps] attribute",
+                "code_pattern": "http://",
+                "match_count": code.count("http://")
+            })
+        
+        return vulnerabilities
+    
+    def _run(self, code: str) -> str:
+        """
+        Analyze code for security vulnerabilities and best practices
+        """
+        # Run various security checks
+        sql_injection = self._check_for_sql_injection(code)
+        xss = self._check_for_xss(code)
+        csrf = self._check_for_csrf(code)
+        authorization = self._check_for_authorization_issues(code)
+        sensitive_data = self._check_for_sensitive_data_exposure(code)
+        
+        # Combine all vulnerabilities
+        all_vulnerabilities = sql_injection + xss + csrf + authorization + sensitive_data
+        
+        # Count vulnerabilities by severity
+        severity_counts = {
+            "high": sum(1 for v in all_vulnerabilities if v["severity"] == "high"),
+            "medium": sum(1 for v in all_vulnerabilities if v["severity"] == "medium"),
+            "low": sum(1 for v in all_vulnerabilities if v["severity"] == "low")
+        }
+        
+        # Generate overall security score (simple algorithm)
+        # Start with 100 points and subtract for vulnerabilities
+        security_score = 100
+        security_score -= severity_counts["high"] * 20
+        security_score -= severity_counts["medium"] * 10
+        security_score -= severity_counts["low"] * 5
+        
+        # Ensure score doesn't go below 0
+        security_score = max(0, security_score)
+        
+        # Generate security rating
+        if security_score >= 90:
+            security_rating = "Excellent"
+        elif security_score >= 80:
+            security_rating = "Good"
+        elif security_score >= 70:
+            security_rating = "Satisfactory"
+        elif security_score >= 60:
+            security_rating = "Needs Improvement"
+        else:
+            security_rating = "Poor"
+        
+        # Group vulnerabilities by type
+        vulnerability_types = {}
+        for vuln in all_vulnerabilities:
+            vuln_type = vuln["type"]
+            if vuln_type not in vulnerability_types:
+                vulnerability_types[vuln_type] = []
+            vulnerability_types[vuln_type].append(vuln)
+        
+        # Generate recommendations
+        recommendations = []
+        if security_score < 80:
+            for vuln_type, vulns in vulnerability_types.items():
+                highest_severity = max([v["severity"] for v in vulns], key=lambda s: {"high": 3, "medium": 2, "low": 1}[s])
+                if highest_severity in ["high", "medium"]:
+                    # Get a unique list of remediations
+                    unique_remediations = list(set([v["remediation"] for v in vulns]))
+                    remediation_text = "; ".join(unique_remediations)
+                    recommendations.append(f"Fix {vuln_type} issues: {remediation_text}")
+        
+        # Combine all analysis into a comprehensive report
+        security_report = {
+            "security_score": security_score,
+            "security_rating": security_rating,
+            "vulnerability_counts": severity_counts,
+            "vulnerabilities": all_vulnerabilities,
+            "recommendations": recommendations
+        }
+        
+        return json.dumps(security_report, indent=2)
 
 class RequirementTransformationTool(Tool):
     name = "RequirementTransformer"
@@ -4927,241 +3766,213 @@ class CodeQualityAnalysisTool(Tool):
                     "description": f"Method '{method_match[3]}' has {lines} lines. Consider breaking it down into smaller methods.",
                     "severity": "high"
                 })
-            elif lines > 15:        [Fact]
-        public async Task Search{entity_name}s_ReturnsFilteredList()
-        {{
-            // Arrange - Create test items with similar names
-            var items = new[] 
-            {{
-                new {{ name = "Test {entity_name} ABC", description = "Test description 1" }},
-                new {{ name = "Test {entity_name} XYZ", description = "Test description 2" }}
-            }};
+            elif lines > 15:
+                    smells.append({
+                        "type": "long_method",
+                        "description": f"Method '{method_match[3]}' has {lines} lines. Consider if it could be simplified.",
+                        "severity": "medium"
+                    })
             
-            foreach (var item in items)
-            {{
-                await _fixture.Request.PostAsync(_apiEndpoint, new APIRequestContextOptions
-                {{
-                    DataObject = item
-                }});
-            }}
-            
-            // Act - Search for specific keyword
-            var response = await _fixture.Request.GetAsync($"{{_apiEndpoint}}/search?keyword=ABC");
-            
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)response.Status);
-            var responseBody = await response.JsonAsync();
-            Assert.NotNull(responseBody);
-            Assert.True(responseBody.Value.ValueKind == JsonValueKind.Array);
-            
-            // Check that results contain only the items with the keyword
-            var results = responseBody.Value.EnumerateArray();
-            foreach (var result in results)
-            {{
-                Assert.Contains("ABC", result.GetProperty("name").GetString());
-            }}
-        }}""")
-        
-        return "\n\n".join(methods)
-    
-    def _run(self, entity_name: str, endpoints: List[Dict[str, str]]) -> str:
-        generated_tests = {
-            "test_fixture": self._generate_test_fixture(entity_name),
-            "api_test_class": self._generate_api_test_class(entity_name, endpoints)
-        }
-        
-        return json.dumps(generated_tests, indent=2)
-
-class PerformanceAnalyzerTool(Tool):
-    name = "PerformanceAnalyzer"
-    description = "Analyzes and optimizes code for performance, with database-specific optimizations"
-    
-    def _analyze_query(self, query: str, db_engine: str) -> Dict[str, Any]:
-        analysis = {
-            "query": query,
-            "db_engine": db_engine,
-            "issues": [],
-            "optimizations": []
-        }
-        
-        # Check for common EF Core performance issues
-        if "Include" in query and "ThenInclude" in query and ".ToList()" in query:
-            analysis["issues"].append({
-                "type": "eager_loading",
-                "description": "Multiple eager loading operations may cause cartesian explosion",
-                "severity": "high"
-            })
-            
-            if db_engine.lower() == "sqlserver":
-                analysis["optimizations"].append({
-                    "description": "Use AsSplitQuery() to prevent cartesian explosion",
-                    "code": query.replace(".Include", ".AsSplitQuery().Include")
+        # Check for large classes
+        class_pattern = r'class\s+(\w+)[^{]*\{([^}]*)\}'
+        classes = re.findall(class_pattern, code, re.DOTALL)
+        for class_match in classes:
+            class_body = class_match[1]
+            method_count = len(re.findall(method_pattern, class_body, re.DOTALL))
+            if method_count > 20:
+                smells.append({
+                    "type": "large_class",
+                    "description": f"Class '{class_match[0]}' has {method_count} methods. Consider breaking it down into smaller classes.",
+                    "severity": "high"
                 })
-            elif db_engine.lower() == "oracle":
-                analysis["optimizations"].append({
-                    "description": "Use AsSplitQuery() to prevent cartesian explosion with Oracle",
-                    "code": query.replace(".Include", ".AsSplitQuery().Include")
-                })
-        
-        if ".Where" in query and not ".AsNoTracking()" in query and ".ToList()" in query:
-            analysis["issues"].append({
-                "type": "unnecessary_tracking",
-                "description": "Query is tracking entities unnecessarily for read-only operation",
-                "severity": "medium"
-            })
-            
-            analysis["optimizations"].append({
-                "description": "Use AsNoTracking() for read-only queries",
-                "code": query.replace(".Where", ".AsNoTracking().Where")
-            })
-        
-        if ".OrderBy" in query and ".Skip" in query and ".Take" in query:
-            if db_engine.lower() == "sqlserver":
-                analysis["optimizations"].append({
-                    "description": "Add index to improve SQL Server paging performance",
-                    "code": f"// Add index to the OrderBy column\n// CREATE NONCLUSTERED INDEX IX_OrderByColumn ON TableName(OrderByColumn);"
-                })
-            elif db_engine.lower() == "oracle":
-                analysis["optimizations"].append({
-                    "description": "Configure optimal fetch size for Oracle paging",
-                    "code": "// In DbContext OnConfiguring:\noptions.UseOracle(connectionString, options => options.MaxBatchSize(100));"
-                })
-        
-        # Database-specific optimizations
-        if db_engine.lower() == "sqlserver":
-            if not ".TagWith" in query and (".Where" in query or ".OrderBy" in query):
-                analysis["optimizations"].append({
-                    "description": "Tag queries for better profiling in SQL Server",
-                    "code": query.replace("_context", "_context.TagWith(\"QueryName\")")
-                })
-        elif db_engine.lower() == "oracle":
-            if ".Contains" in query:
-                analysis["issues"].append({
-                    "type": "inefficient_contains",
-                    "description": "String Contains() may not use Oracle indexes efficiently",
+            elif method_count > 10:
+                smells.append({
+                    "type": "large_class",
+                    "description": f"Class '{class_match[0]}' has {method_count} methods. Consider if it has too many responsibilities.",
                     "severity": "medium"
                 })
-                
-                analysis["optimizations"].append({
-                    "description": "Use EF.Functions.Like for better Oracle performance with indexing",
-                    "code": query.replace(".Contains(", ".StartsWith(") + "\n// Or use: EF.Functions.Like(e.Property, $\"%{keyword}%\")"
-                })
         
-        return analysis
-    
-    def _analyze_db_context(self, context_code: str, db_engine: str) -> Dict[str, Any]:
-        analysis = {
-            "db_engine": db_engine,
-            "issues": [],
-            "optimizations": []
-        }
-        
-        # Check for common DbContext configuration issues
-        if not "optionsBuilder.UseLoggerFactory" in context_code:
-            analysis["issues"].append({
-                "type": "missing_logging",
-                "description": "No query logging configured for performance troubleshooting",
+        # Check for commented out code
+        comment_pattern = r'//.*'
+        comments = re.findall(comment_pattern, code)
+        code_like_comments = [c for c in comments if ';' in c or '{' in c or '}' in c]
+        if len(code_like_comments) > 3:
+            smells.append({
+                "type": "commented_code",
+                "description": f"Found {len(code_like_comments)} potential instances of commented-out code. This should be removed.",
                 "severity": "low"
             })
-            
-            analysis["optimizations"].append({
-                "description": "Add logger factory configuration for query logging",
-                "code": """// In OnConfiguring:
-optionsBuilder.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));"""
+        
+        # Check for string concatenation in loops
+        string_concat_in_loops = re.findall(r'(for|foreach|while)[^{]*\{[^}]*\+=[^}]*\}', code, re.DOTALL)
+        if string_concat_in_loops:
+            smells.append({
+                "type": "string_concatenation_in_loop",
+                "description": "Found string concatenation in loops. Consider using StringBuilder for better performance.",
+                "severity": "medium"
             })
         
-        if not "optionsBuilder.EnableSensitiveDataLogging" in context_code and not "EnableSensitiveDataLogging" in context_code:
-            analysis["optimizations"].append({
-                "description": "Enable sensitive data logging for development environments",
-                "code": """// In OnConfiguring for development only:
-if (_environment.IsDevelopment())
-{
-    optionsBuilder.EnableSensitiveDataLogging();
-}"""
+        return smells
+    
+    def _analyze_best_practices(self, code: str) -> List[Dict[str, str]]:
+        """Check adherence to C# best practices"""
+        best_practices = []
+        
+        # Check for async/await usage
+        async_methods = re.findall(r'async\s+[\w<>[\],\s]+\s+\w+\s*\(', code)
+        await_usage = re.findall(r'await\s+', code)
+        if async_methods and not await_usage:
+            best_practices.append({
+                "type": "async_without_await",
+                "description": "Methods marked as async but no await operators found. This may indicate missing await statements.",
+                "recommendation": "Ensure all async methods use await or remove the async modifier if not needed."
             })
         
-        # Database-specific optimizations
-        if db_engine.lower() == "sqlserver":
-            if not "optionsBuilder.UseSqlServer" in context_code or not "CommandTimeout" in context_code:
-                analysis["optimizations"].append({
-                    "description": "Configure SQL Server with appropriate command timeout",
-                    "code": """optionsBuilder.UseSqlServer(
-    connectionString,
-    options => {
-        options.CommandTimeout(30);
-        options.EnableRetryOnFailure(3);
-    });"""
-                })
-        elif db_engine.lower() == "oracle":
-            if not "options.MaxBatchSize" in context_code:
-                analysis["optimizations"].append({
-                    "description": "Configure optimal batch size for Oracle",
-                    "code": """optionsBuilder.UseOracle(
-    connectionString,
-    options => {
-        options.MaxBatchSize(100);
-        options.UseOracleSQLCompatibility("12");
-    });"""
+        # Check for proper disposal of IDisposable objects
+        disposable_patterns = [
+            r'new\s+SqlConnection',
+            r'new\s+StreamReader',
+            r'new\s+StreamWriter',
+            r'new\s+FileStream',
+            r'new\s+MemoryStream'
+        ]
+        
+        using_statements = re.findall(r'using\s*\(', code)
+        for pattern in disposable_patterns:
+            disposable_objects = re.findall(pattern, code)
+            if disposable_objects and len(disposable_objects) > len(using_statements):
+                best_practices.append({
+                    "type": "disposable_not_disposed",
+                    "description": f"Potential improper disposal of IDisposable objects ({pattern.replace('new\\s+', '')})",
+                    "recommendation": "Use 'using' statements or blocks to ensure proper disposal of resources."
                 })
         
-        return analysis
+        # Check for proper exception handling
+        catch_blocks = re.findall(r'catch\s*\([^)]*\)\s*\{([^}]*)\}', code, re.DOTALL)
+        general_exceptions = re.findall(r'catch\s*\(\s*Exception\s+', code)
+        empty_catches = [b for b in catch_blocks if not b.strip()]
+        
+        if empty_catches:
+            best_practices.append({
+                "type": "empty_catch_block",
+                "description": f"Found {len(empty_catches)} empty catch blocks. This suppresses exceptions without handling them.",
+                "recommendation": "Handle exceptions properly or rethrow them if they cannot be handled at this level."
+            })
+        
+        if general_exceptions and len(general_exceptions) == len(catch_blocks):
+            best_practices.append({
+                "type": "catching_general_exception",
+                "description": "All catch blocks are catching general Exception type. This may hide unexpected exceptions.",
+                "recommendation": "Catch specific exception types when possible to handle each case appropriately."
+            })
+        
+        # Check for proper validation
+        controller_methods = re.findall(r'(public|private|protected|internal)\s+(async\s+)?([\w<>[\],\s]+)\s+(\w+)\s*\([^)]*\)\s*\{([^}]*)\}', code, re.DOTALL)
+        model_state_checks = re.findall(r'ModelState\.IsValid', code)
+        
+        if "Controller" in code and controller_methods and not model_state_checks:
+            best_practices.append({
+                "type": "missing_model_validation",
+                "description": "Controller methods may be missing ModelState validation checks.",
+                "recommendation": "Add ModelState.IsValid checks to validate request data before processing."
+            })
+        
+        return best_practices
     
-    def _generate_optimization_recommendations(self, analysis: Dict[str, Any]) -> str:
-        db_engine = analysis.get("db_engine", "sqlserver")
-        recommendations = f"# Performance Optimization Recommendations for {db_engine.upper()}\n\n"
+    def _run(self, code: str) -> str:
+        """
+        Analyze code quality against best practices and coding standards
+        """
+        # Run various analysis methods
+        complexity_analysis = self._analyze_code_complexity(code)
+        naming_issues = self._check_naming_conventions(code)
+        code_smells = self._check_code_smells(code)
+        best_practices_issues = self._analyze_best_practices(code)
         
-        if "issues" in analysis and analysis["issues"]:
-            recommendations += "## Identified Issues\n\n"
-            for issue in analysis["issues"]:
-                recommendations += f"### {issue['type']} ({issue['severity']} severity)\n\n"
-                recommendations += f"{issue['description']}\n\n"
+        # Determine overall quality score (simple algorithm)
+        # Start with 100 points and subtract for issues
+        quality_score = 100
         
-        if "optimizations" in analysis and analysis["optimizations"]:
-            recommendations += "## Recommended Optimizations\n\n"
-            for i, opt in enumerate(analysis["optimizations"], 1):
-                recommendations += f"### Optimization {i}: {opt['description']}\n\n"
-                recommendations += f"```csharp\n{opt['code']}\n```\n\n"
+        # Complexity penalties
+        if complexity_analysis["cyclomatic_complexity"] > 30:
+            quality_score -= 15
+        elif complexity_analysis["cyclomatic_complexity"] > 15:
+            quality_score -= 5
         
-        # Add database-specific general recommendations
-        recommendations += "## General Recommendations\n\n"
+        if complexity_analysis["nesting_depth"] > 5:
+            quality_score -= 15
+        elif complexity_analysis["nesting_depth"] > 3:
+            quality_score -= 5
         
-        if db_engine.lower() == "sqlserver":
-            recommendations += """- Use appropriate SQL Server indexing strategies for frequently queried columns
-- Apply AsSplitQuery() for complex includes to prevent cartesian explosion
-- Use compiled queries for frequently executed database operations
-- Configure appropriate transaction isolation levels
-- Apply strategic AsNoTracking() for read-only queries
-- Consider SQL Server-specific features like table hints where appropriate
-- Add query tags for easier profiling with SQL Server Profiler
-- Configure command timeout settings appropriate for your operations
-"""
-        elif db_engine.lower() == "oracle":
-            recommendations += """- Configure Oracle-specific connection settings in DbContext
-- Use function-based indexes for complex filtering conditions
-- Implement Oracle-specific batch processing for bulk operations
-- Apply appropriate FetchSize configuration for large result sets
-- Use EF.Functions.Like() instead of string Contains() for better index usage
-- Use bind variables correctly to prevent hard parsing
-- Configure statement caching appropriately
-- Set appropriate MaxBatchSize for optimal performance
-"""
+        if complexity_analysis["method_length"] > 50:
+            quality_score -= 15
+        elif complexity_analysis["method_length"] > 30:
+            quality_score -= 5
         
-        return recommendations
-    
-    def _run(self, code: str, db_engine: str = "sqlserver") -> str:
-        if "DbContext" in code:
-            analysis = self._analyze_db_context(code, db_engine)
-        elif "Include" in code or "Where" in code or "OrderBy" in code:
-            analysis = self._analyze_query(code, db_engine)
+        # Naming convention penalties
+        naming_count = sum(len(issues) for issues in naming_issues.values())
+        if naming_count > 10:
+            quality_score -= 15
+        elif naming_count > 5:
+            quality_score -= 10
+        elif naming_count > 0:
+            quality_score -= 5
+        
+        # Code smell penalties
+        high_severity_smells = [smell for smell in code_smells if smell["severity"] == "high"]
+        medium_severity_smells = [smell for smell in code_smells if smell["severity"] == "medium"]
+        low_severity_smells = [smell for smell in code_smells if smell["severity"] == "low"]
+        
+        quality_score -= len(high_severity_smells) * 10
+        quality_score -= len(medium_severity_smells) * 5
+        quality_score -= len(low_severity_smells) * 2
+        
+        # Best practices penalties
+        quality_score -= len(best_practices_issues) * 5
+        
+        # Ensure score doesn't go below 0
+        quality_score = max(0, quality_score)
+        
+        # Generate quality rating
+        if quality_score >= 90:
+            quality_rating = "Excellent"
+        elif quality_score >= 80:
+            quality_rating = "Good"
+        elif quality_score >= 70:
+            quality_rating = "Satisfactory"
+        elif quality_score >= 60:
+            quality_rating = "Needs Improvement"
         else:
-            analysis = {
-                "db_engine": db_engine,
-                "issues": [],
-                "optimizations": []
-            }
+            quality_rating = "Poor"
         
-        recommendations = self._generate_optimization_recommendations(analysis)
-        return recommendations
+        # Combine all analysis into a comprehensive report
+        analysis_report = {
+            "quality_score": quality_score,
+            "quality_rating": quality_rating,
+            "complexity_metrics": complexity_analysis,
+            "naming_convention_issues": naming_issues,
+            "code_smells": code_smells,
+            "best_practices_issues": best_practices_issues,
+            "recommendations": []
+        }
+        
+        # Generate top recommendations
+        if complexity_analysis["cyclomatic_complexity"] > 15:
+            analysis_report["recommendations"].append("Reduce code complexity by breaking down complex methods")
+        
+        if complexity_analysis["nesting_depth"] > 3:
+            analysis_report["recommendations"].append("Reduce nesting depth by extracting code to separate methods")
+        
+        if naming_count > 0:
+            analysis_report["recommendations"].append("Follow .NET naming conventions consistently")
+        
+        if high_severity_smells:
+            analysis_report["recommendations"].append("Address high-severity code smells: " + ", ".join(set(smell["type"] for smell in high_severity_smells)))
+        
+        if best_practices_issues:
+           analysis_report["recommendations"].append("Follow best practices: " + ", ".join(set(issue["type"] for issue in best_practices_issues)))
+        
+        return json.dumps(analysis_report, indent=2)
 
 class DocumentationGeneratorTool(Tool):
     name = "DocumentationGenerator"
@@ -5580,4 +4391,43 @@ class RequirementClarificationTool(Tool):
                 questions = self._generate_questions_for_user_story(user_story)
                 if questions:
                     story_id = user_story.get("id", "")
-                    story_title =# Specialized tools for code analysis, generation, and testing
+                    story_title = user_story.get("title", "Unnamed User Story")
+                    all_questions.append({
+                        "section": f"User Story: {story_id} - {story_title}",
+                        "questions": questions
+                    })
+
+        # Technical requirements questions
+        if "technical_requirements" in requirements:
+            for tech_req in requirements["technical_requirements"]:
+                questions = self._generate_questions_for_technical_requirement(tech_req)
+                if questions:
+                    req_id = tech_req.get("id", "")
+                    req_title = tech_req.get("title", "Unnamed Technical Requirement")
+                    all_questions.append({
+                        "section": f"Technical Requirement: {req_id} - {req_title}",
+                        "questions": questions
+                    })
+        
+        # Non-functional requirements questions
+        if "non_functional_requirements" in requirements:
+            for nfr in requirements["non_functional_requirements"]:
+                questions = self._generate_questions_for_non_functional_requirement(nfr)
+                if questions:
+                    nfr_id = nfr.get("id", "")
+                    nfr_title = nfr.get("title", "Unnamed Non-Functional Requirement")
+                    all_questions.append({
+                        "section": f"Non-Functional Requirement: {nfr_id} - {nfr_title}",
+                        "questions": questions
+                    })
+        
+        # Format the questions as a markdown document
+        markdown = "# Requirements Clarification Questions\n\n"
+        
+        for section in all_questions:
+            markdown += f"## {section['section']}\n\n"
+            for i, question in enumerate(section['questions'], 1):
+                markdown += f"{i}. {question}\n"
+            markdown += "\n"
+        
+        return markdown
