@@ -1,0 +1,179 @@
+Aquí tienes el documento completo en formato Markdown (CleanArchitecture.md), organizado para que lo puedas incluir directamente en tu wiki, repo o documentación oficial. El contenido está adaptado a tu enfoque real (sin CQRS/MediatR, con servicios en Application, generación por T4, y preparación para la nube).
+
+⸻
+
+
+# Arquitectura Limpia con Generación Automática y Preparación para la Nube
+
+## 1. Introducción
+
+Este documento describe cómo estructuramos nuestras APIs utilizando los principios de **Clean Architecture**, ajustados a la realidad de nuestro equipo.  
+Se explica cómo gestionamos la separación de capas, cómo automatizamos el código repetitivo con **T4 templates**, y cómo este enfoque facilita una futura migración a la nube.
+
+---
+
+## 2. ¿Qué problema resuelve Clean Architecture?
+
+Las arquitecturas tradicionales tienden a mezclar la lógica de negocio, los detalles técnicos y la presentación en un mismo lugar, generando:
+
+- Código difícil de mantener.
+- Alta dependencia entre componentes.
+- Problemas al escalar o cambiar tecnología.
+- Reutilización limitada y pruebas complicadas.
+
+Clean Architecture propone una forma clara y escalable de estructurar el sistema por capas bien definidas y desacopladas.
+
+---
+
+## 3. Capas de Clean Architecture
+
+### 3.1 Dominio (Domain)
+- Entidades con reglas de negocio puras.
+- Sin dependencias externas.
+- Totalmente testeables.
+
+### 3.2 Aplicación (Application)
+- Casos de uso representados por métodos dentro de servicios de aplicación.
+- Se orquesta la lógica de negocio usando entidades y repositorios.
+- Sin dependencias hacia Infraestructura ni hacia la web.
+
+### 3.3 Infraestructura (Infrastructure)
+- Implementación de bases de datos, correo, archivos, etc.
+- Contiene los repositorios concretos que heredan del repositorio genérico.
+
+### 3.4 API / Presentación
+- Controladores que reciben peticiones HTTP.
+- Validan entradas y delegan la ejecución a los servicios de aplicación.
+- Devuelven respuestas HTTP.
+
+---
+
+## 4. Beneficios de aplicar correctamente cada capa
+
+| Capa | Beneficios |
+|------|------------|
+| Dominio | Reglas claras, reusables y aisladas. Fácil de probar y migrar. |
+| Aplicación | Casos de uso explícitos. Lógica de negocio estructurada. |
+| Infraestructura | Se puede cambiar sin afectar el negocio. Ideal para nube. |
+| API | Ligera, fácil de testear y mantener. |
+
+---
+
+## 5. Migración a la nube: cómo ayuda esta arquitectura
+
+- **Separación por capas** permite migrar en fases (ej. primero base de datos, luego APIs).
+- Infraestructura desacoplada permite usar servicios cloud (ej. Azure SQL, Blob Storage).
+- Fácil de escalar horizontalmente sin romper otras capas.
+- Compatible con arquitecturas modernas (microservicios, serverless).
+- Mejora pruebas locales antes de subir a producción cloud.
+
+---
+
+## 6. Automatización con T4 Templates
+
+Usamos T4 Templates para generar automáticamente código repetitivo a partir de las entidades y DbContexts.
+
+### 6.1 Qué se genera
+
+- Interfaces de repositorios (`IClienteRepository`)
+- Repositorios concretos (`ClienteRepository`)
+- Repositorio genérico (`GenericRepository<TEntity>`)
+- Unit of Work (`IUnitOfWork`, `UnitOfWork`)
+- DTOs (`ClienteModel`, `CreateClienteModel`, etc.)
+- Mapeos con AutoMapper
+- Controladores REST (`ClienteController`)
+- Servicios de Aplicación (`ClienteAppService`)
+
+### 6.2 Diseño de extensibilidad
+
+- Clases generadas como `partial`: permiten extender el código sin perder cambios al regenerar.
+- Métodos `virtual`: permiten sobrescribir lógica si se requiere personalización o pruebas.
+
+---
+
+## 7. Flujo de ejecución: del controlador a la base de datos
+
+### 7.1 Secuencia paso a paso
+
+```plaintext
+[1] HTTP Request (POST /api/clientes)
+        │
+        ▼
+[2] ClienteController recibe el modelo
+        │
+        ▼
+[3] Llama a ClienteAppService.CrearClienteAsync()
+        │
+        ▼
+[4] El servicio:
+    - Mapea el DTO a la entidad
+    - Ejecuta reglas de negocio
+    - Persiste a través del repositorio
+        │
+        ▼
+[5] ClienteRepository (hereda de repositorio genérico)
+        │
+        ▼
+[6] UnitOfWork guarda cambios vía DbContext
+        │
+        ▼
+[7] Se persisten los datos en la base de datos
+        │
+        ▼
+[8] El resultado se devuelve al controlador → HTTP 201
+
+7.2 Ejemplo de código
+
+Controller
+
+[HttpPost]
+public async Task<IActionResult> Post(CreateClienteModel model)
+{
+    var result = await _clienteAppService.CrearClienteAsync(model);
+    return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+}
+
+Application Service
+
+public class ClienteAppService
+{
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
+
+    public ClienteAppService(IUnitOfWork unitOfWork, IMapper mapper)
+    {
+        _unitOfWork = unitOfWork;
+        _mapper = mapper;
+    }
+
+    public async Task<ClienteModel> CrearClienteAsync(CreateClienteModel model)
+    {
+        var cliente = _mapper.Map<Cliente>(model);
+        await _unitOfWork.Clientes.AddAsync(cliente);
+        await _unitOfWork.SaveChangesAsync();
+        return _mapper.Map<ClienteModel>(cliente);
+    }
+}
+
+
+⸻
+
+8. Conclusión
+
+Esta estrategia combina lo mejor de Clean Architecture con un enfoque práctico y automatizado que:
+	•	Acelera el desarrollo.
+	•	Mantiene buenas prácticas.
+	•	Prepara al equipo para escalar y migrar a la nube.
+	•	Se adapta al nivel actual del equipo, sin complicaciones innecesarias.
+
+⸻
+
+9. Próximos pasos sugeridos
+	•	Añadir pruebas unitarias sobre los servicios de aplicación.
+	•	Documentar los templates T4 individualmente.
+	•	Preparar generación de código como parte del pipeline de desarrollo.
+	•	Considerar una futura transición a CQRS/MediatR si el equipo evoluciona.
+
+---
+
+¿Quieres que también te lo convierta a PDF, lo prepare como archivo `.md` descargable o genere un README en un repo de ejemplo?
