@@ -12,7 +12,7 @@ param(
     [string]$OutputPath = "./output",
 
     [Parameter(Mandatory = $false)]
-    [string[]]$Exclude = @("MPR.RestApiTemplate.Vsix", ".git", ".gitignore", ".vs", "PrepareTemplate.ps1", "CHANGELOG.md", "README.md", "LICENSE", "LICENSE.txt", "CONTRIBUTING.md", "CONTRIBUTORS.md", ".vscode", ".editorconfig", ".gitattributes", ".gitkeep", ".github", "template_tmp", "TemplateConfig", "template.json", "oracle-install-sample-schemas.sh") # Exclude folders and files (wildcards are allowed)
+    [string[]]$Exclude = @("MPR.RestApiTemplate.Vsix", ".git", ".gitignore", ".vs", "PrepareTemplate.ps1", "CHANGELOG.md", "README.md", "LICENSE", "LICENSE.txt", "CONTRIBUTING.md", "CONTRIBUTORS.md", ".vscode", ".editorconfig", ".gitattributes", ".gitkeep", ".github", "template_tmp", "TemplateConfig", "template.json") # Exclude folders and files (wildcards are allowed)
 )
 
 $TempPath = "./template_tmp"

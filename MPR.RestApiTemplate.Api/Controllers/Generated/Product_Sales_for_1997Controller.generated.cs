@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MPR.RestApiTemplate.Application.DTOs;
 using MPR.RestApiTemplate.Application.Services;
@@ -17,11 +18,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
             _service = service;
         }
 
+        [Authorize(Policy = "GetProduct_Sales_for_1997")]
         [HttpGet]
         public virtual async Task<ActionResult<IEnumerable<Product_Sales_for_1997Dto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
         }
+
     }
 }

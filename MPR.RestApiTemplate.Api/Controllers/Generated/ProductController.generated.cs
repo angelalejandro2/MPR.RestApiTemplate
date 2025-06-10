@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MPR.RestApiTemplate.Application.DTOs;
 using MPR.RestApiTemplate.Application.Services;
@@ -17,6 +18,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             _service = service;
         }
 
+        [Authorize(Policy = "GetProduct")]
         [HttpGet]
         public virtual async Task<ActionResult<IEnumerable<ProductDto>>> GetAllAsync()
         {
@@ -24,6 +26,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "GetbyidProduct")]
         [HttpGet("{productID}")]
         public virtual async Task<ActionResult<ProductDto>> GetById(int productID)
         {
@@ -33,6 +36,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "DeleteProduct")]
         [HttpDelete("{productID}")]
         public virtual async Task<ActionResult> DeleteAsync(int productID)
         {
@@ -40,6 +44,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Policy = "PutProduct")]
         [HttpPut("{productID}")]
         public virtual async Task<ActionResult<ProductDto>> UpdateAsync(int productID, [FromBody] ProductUpdateDto model)
         {
@@ -49,11 +54,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Accepted(result);
         }
 
+        [Authorize(Policy = "PostProduct")]
         [HttpPost]
         public virtual async Task<ActionResult<ProductDto>> AddAsync([FromBody] ProductCreateDto model)
         {
             var result = await _service.AddAsync(model);
             return CreatedAtAction(nameof(GetById), new { ProductID = result.ProductID }, result);
         }
+
     }
 }

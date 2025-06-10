@@ -10,7 +10,7 @@ public static class AutoMapperRegistration
 {
     public static IServiceCollection AddMappingProfiles(this IServiceCollection services)
     {
-        services.AddSingleton<Profile, AlphabeticalListOfProductsMapping>();
+        services.AddSingleton<Profile, Alphabetical_list_of_productMapping>();
         services.AddSingleton<Profile, CategoryMapping>();
         services.AddSingleton<Profile, Category_Sales_for_1997Mapping>();
         services.AddSingleton<Profile, Current_Product_ListMapping>();
@@ -39,7 +39,7 @@ public static class AutoMapperRegistration
         services.AddSingleton<Profile, TerritoryMapping>();
         
         services.AddAutoMapper(
-            typeof(AlphabeticalListOfProductsMapping),
+            typeof(Alphabetical_list_of_productMapping),
             typeof(CategoryMapping),
             typeof(Category_Sales_for_1997Mapping),
             typeof(Current_Product_ListMapping),

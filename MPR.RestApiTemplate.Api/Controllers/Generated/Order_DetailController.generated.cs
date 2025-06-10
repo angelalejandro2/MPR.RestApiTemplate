@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MPR.RestApiTemplate.Application.DTOs;
 using MPR.RestApiTemplate.Application.Services;
@@ -17,6 +18,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             _service = service;
         }
 
+        [Authorize(Policy = "GetOrder_Detail")]
         [HttpGet]
         public virtual async Task<ActionResult<IEnumerable<Order_DetailDto>>> GetAllAsync()
         {
@@ -24,6 +26,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "GetbyidOrder_Detail")]
         [HttpGet("{orderID}/{productID}")]
         public virtual async Task<ActionResult<Order_DetailDto>> GetById(int orderID, int productID)
         {
@@ -33,6 +36,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "DeleteOrder_Detail")]
         [HttpDelete("{orderID}/{productID}")]
         public virtual async Task<ActionResult> DeleteAsync(int orderID, int productID)
         {
@@ -40,6 +44,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Policy = "PutOrder_Detail")]
         [HttpPut("{orderID}/{productID}")]
         public virtual async Task<ActionResult<Order_DetailDto>> UpdateAsync(int orderID, int productID, [FromBody] Order_DetailUpdateDto model)
         {
@@ -51,11 +56,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Accepted(result);
         }
 
+        [Authorize(Policy = "PostOrder_Detail")]
         [HttpPost]
         public virtual async Task<ActionResult<Order_DetailDto>> AddAsync([FromBody] Order_DetailCreateDto model)
         {
             var result = await _service.AddAsync(model);
             return CreatedAtAction(nameof(GetById), new { OrderID = result.OrderID, ProductID = result.ProductID }, result);
         }
+
     }
 }

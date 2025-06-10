@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MPR.RestApiTemplate.Application.DTOs;
 using MPR.RestApiTemplate.Application.Services;
@@ -17,6 +18,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             _service = service;
         }
 
+        [Authorize(Policy = "GetShipper")]
         [HttpGet]
         public virtual async Task<ActionResult<IEnumerable<ShipperDto>>> GetAllAsync()
         {
@@ -24,6 +26,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "GetbyidShipper")]
         [HttpGet("{shipperID}")]
         public virtual async Task<ActionResult<ShipperDto>> GetById(int shipperID)
         {
@@ -33,6 +36,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "DeleteShipper")]
         [HttpDelete("{shipperID}")]
         public virtual async Task<ActionResult> DeleteAsync(int shipperID)
         {
@@ -40,6 +44,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Policy = "PutShipper")]
         [HttpPut("{shipperID}")]
         public virtual async Task<ActionResult<ShipperDto>> UpdateAsync(int shipperID, [FromBody] ShipperUpdateDto model)
         {
@@ -49,11 +54,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Accepted(result);
         }
 
+        [Authorize(Policy = "PostShipper")]
         [HttpPost]
         public virtual async Task<ActionResult<ShipperDto>> AddAsync([FromBody] ShipperCreateDto model)
         {
             var result = await _service.AddAsync(model);
             return CreatedAtAction(nameof(GetById), new { ShipperID = result.ShipperID }, result);
         }
+
     }
 }

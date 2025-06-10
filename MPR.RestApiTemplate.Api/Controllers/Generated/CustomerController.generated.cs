@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MPR.RestApiTemplate.Application.DTOs;
 using MPR.RestApiTemplate.Application.Services;
@@ -17,6 +18,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             _service = service;
         }
 
+        [Authorize(Policy = "GetCustomer")]
         [HttpGet]
         public virtual async Task<ActionResult<IEnumerable<CustomerDto>>> GetAllAsync()
         {
@@ -24,6 +26,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "GetbyidCustomer")]
         [HttpGet("{customerID}")]
         public virtual async Task<ActionResult<CustomerDto>> GetById(string customerID)
         {
@@ -33,6 +36,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "DeleteCustomer")]
         [HttpDelete("{customerID}")]
         public virtual async Task<ActionResult> DeleteAsync(string customerID)
         {
@@ -40,6 +44,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Policy = "PutCustomer")]
         [HttpPut("{customerID}")]
         public virtual async Task<ActionResult<CustomerDto>> UpdateAsync(string customerID, [FromBody] CustomerUpdateDto model)
         {
@@ -49,11 +54,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Accepted(result);
         }
 
+        [Authorize(Policy = "PostCustomer")]
         [HttpPost]
         public virtual async Task<ActionResult<CustomerDto>> AddAsync([FromBody] CustomerCreateDto model)
         {
             var result = await _service.AddAsync(model);
             return CreatedAtAction(nameof(GetById), new { CustomerID = result.CustomerID }, result);
         }
+
     }
 }

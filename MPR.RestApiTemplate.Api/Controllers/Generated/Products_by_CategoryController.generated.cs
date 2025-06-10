@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MPR.RestApiTemplate.Application.DTOs;
 using MPR.RestApiTemplate.Application.Services;
@@ -17,11 +18,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
             _service = service;
         }
 
+        [Authorize(Policy = "GetProducts_by_Category")]
         [HttpGet]
         public virtual async Task<ActionResult<IEnumerable<Products_by_CategoryDto>>> GetAllAsync()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
         }
+
     }
 }

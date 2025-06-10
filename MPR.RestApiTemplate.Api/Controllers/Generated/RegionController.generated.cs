@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MPR.RestApiTemplate.Application.DTOs;
 using MPR.RestApiTemplate.Application.Services;
@@ -17,6 +18,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             _service = service;
         }
 
+        [Authorize(Policy = "GetRegion")]
         [HttpGet]
         public virtual async Task<ActionResult<IEnumerable<RegionDto>>> GetAllAsync()
         {
@@ -24,6 +26,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "GetbyidRegion")]
         [HttpGet("{regionID}")]
         public virtual async Task<ActionResult<RegionDto>> GetById(int regionID)
         {
@@ -33,6 +36,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "DeleteRegion")]
         [HttpDelete("{regionID}")]
         public virtual async Task<ActionResult> DeleteAsync(int regionID)
         {
@@ -40,6 +44,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Policy = "PutRegion")]
         [HttpPut("{regionID}")]
         public virtual async Task<ActionResult<RegionDto>> UpdateAsync(int regionID, [FromBody] RegionUpdateDto model)
         {
@@ -49,11 +54,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Accepted(result);
         }
 
+        [Authorize(Policy = "PostRegion")]
         [HttpPost]
         public virtual async Task<ActionResult<RegionDto>> AddAsync([FromBody] RegionCreateDto model)
         {
             var result = await _service.AddAsync(model);
             return CreatedAtAction(nameof(GetById), new { RegionID = result.RegionID }, result);
         }
+
     }
 }

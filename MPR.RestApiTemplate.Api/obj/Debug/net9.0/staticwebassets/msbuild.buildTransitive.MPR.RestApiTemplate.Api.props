@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\buildMultiTargeting\MPR.RestApiTemplate.Api.props" />
-</Project>

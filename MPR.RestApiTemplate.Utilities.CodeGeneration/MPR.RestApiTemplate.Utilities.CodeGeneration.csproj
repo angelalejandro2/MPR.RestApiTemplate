@@ -38,6 +38,15 @@
 			<Generator>TextTemplatingFileGenerator</Generator>
 			<LastGenOutput>DbContextRegistration.generated.cs</LastGenOutput>
 		</None>
+		<None Update="T4Templates\GeneratePolicies.generated.json">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>GeneratePolicies.tt</DependentUpon>
+		</None>
+		<None Update="T4Templates\GeneratePolicies.tt">
+		  <Generator>TextTemplatingFileGenerator</Generator>
+		  <LastGenOutput>GeneratePolicies.generated.json</LastGenOutput>
+		</None>
 		<None Update="T4Templates\IntegrationTests.tt">
 			<Generator>TextTemplatingFileGenerator</Generator>
 			<LastGenOutput>IntegrationTests.generated.cs</LastGenOutput>
@@ -85,15 +94,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="T4Templates\Controllers.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Controllers.tt</DependentUpon>
+	  </Compile>
 	  <Compile Update="T4Templates\DbContextRegistration.generated.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>DbContextRegistration.tt</DependentUpon>
-	  </Compile>
-	  <Compile Update="T4Templates\Dtos.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Dtos.tt</DependentUpon>
 	  </Compile>
 	  <Compile Update="T4Templates\Services.generated.cs">
 	    <DesignTime>True</DesignTime>

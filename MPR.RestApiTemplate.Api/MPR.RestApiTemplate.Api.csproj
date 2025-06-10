@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MPR.RestApiTemplate.Application\MPR.RestApiTemplate.Application.csproj" />
     <ProjectReference Include="..\MPR.RestApiTemplate.Infrastructure\MPR.RestApiTemplate.Infrastructure.csproj" />
+    <ProjectReference Include="..\MPR.RestApiTemplate.Security\MPR.RestApiTemplate.Security.csproj" />
   </ItemGroup>
 
   <ItemGroup>

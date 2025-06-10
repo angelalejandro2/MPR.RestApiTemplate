@@ -8,7 +8,7 @@ public static class ApplicationServiceRegistration
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        services.AddScoped<AlphabeticalListOfProductsService>();
+        services.AddScoped<Alphabetical_list_of_productService>();
         services.AddScoped<CategoryService>();
         services.AddScoped<Category_Sales_for_1997Service>();
         services.AddScoped<Current_Product_ListService>();

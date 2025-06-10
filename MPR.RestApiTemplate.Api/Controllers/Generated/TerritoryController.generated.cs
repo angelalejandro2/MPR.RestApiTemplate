@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MPR.RestApiTemplate.Application.DTOs;
 using MPR.RestApiTemplate.Application.Services;
@@ -17,6 +18,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             _service = service;
         }
 
+        [Authorize(Policy = "GetTerritory")]
         [HttpGet]
         public virtual async Task<ActionResult<IEnumerable<TerritoryDto>>> GetAllAsync()
         {
@@ -24,6 +26,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "GetbyidTerritory")]
         [HttpGet("{territoryID}")]
         public virtual async Task<ActionResult<TerritoryDto>> GetById(string territoryID)
         {
@@ -33,6 +36,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "DeleteTerritory")]
         [HttpDelete("{territoryID}")]
         public virtual async Task<ActionResult> DeleteAsync(string territoryID)
         {
@@ -40,6 +44,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Policy = "PutTerritory")]
         [HttpPut("{territoryID}")]
         public virtual async Task<ActionResult<TerritoryDto>> UpdateAsync(string territoryID, [FromBody] TerritoryUpdateDto model)
         {
@@ -49,11 +54,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Accepted(result);
         }
 
+        [Authorize(Policy = "PostTerritory")]
         [HttpPost]
         public virtual async Task<ActionResult<TerritoryDto>> AddAsync([FromBody] TerritoryCreateDto model)
         {
             var result = await _service.AddAsync(model);
             return CreatedAtAction(nameof(GetById), new { TerritoryID = result.TerritoryID }, result);
         }
+
     }
 }

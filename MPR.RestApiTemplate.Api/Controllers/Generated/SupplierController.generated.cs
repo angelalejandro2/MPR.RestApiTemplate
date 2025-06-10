@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MPR.RestApiTemplate.Application.DTOs;
 using MPR.RestApiTemplate.Application.Services;
@@ -17,6 +18,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             _service = service;
         }
 
+        [Authorize(Policy = "GetSupplier")]
         [HttpGet]
         public virtual async Task<ActionResult<IEnumerable<SupplierDto>>> GetAllAsync()
         {
@@ -24,6 +26,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "GetbyidSupplier")]
         [HttpGet("{supplierID}")]
         public virtual async Task<ActionResult<SupplierDto>> GetById(int supplierID)
         {
@@ -33,6 +36,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "DeleteSupplier")]
         [HttpDelete("{supplierID}")]
         public virtual async Task<ActionResult> DeleteAsync(int supplierID)
         {
@@ -40,6 +44,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Policy = "PutSupplier")]
         [HttpPut("{supplierID}")]
         public virtual async Task<ActionResult<SupplierDto>> UpdateAsync(int supplierID, [FromBody] SupplierUpdateDto model)
         {
@@ -49,11 +54,13 @@ namespace MPR.RestApiTemplate.Api.Controllers
             return Accepted(result);
         }
 
+        [Authorize(Policy = "PostSupplier")]
         [HttpPost]
         public virtual async Task<ActionResult<SupplierDto>> AddAsync([FromBody] SupplierCreateDto model)
         {
             var result = await _service.AddAsync(model);
             return CreatedAtAction(nameof(GetById), new { SupplierID = result.SupplierID }, result);
         }
+
     }
 }

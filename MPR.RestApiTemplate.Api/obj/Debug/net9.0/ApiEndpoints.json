@@ -20,16 +20,27 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.AlphabeticalListOfProductsController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/AlphabeticalListOfProducts",
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CountryController",
+    "Method": "GetAsync",
+    "RelativePath": "api/v1/Country",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "filters",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "includes",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.AlphabeticalListOfProductsDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.Dtos.CountryDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -40,42 +51,22 @@
     ]
   },
   {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CategoryController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Category",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.CategoryDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CategoryController",
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CountryController",
     "Method": "AddAsync",
-    "RelativePath": "api/v1/Category",
+    "RelativePath": "api/v1/Country",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.CategoryCreateDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.CountryCreateDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.CategoryDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.CountryDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -86,201 +77,27 @@
     ]
   },
   {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Category_Sales_for_1997Controller",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Category_Sales_for_",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.Category_Sales_for_1997Dto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CategoryController",
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CountryController",
     "Method": "GetById",
-    "RelativePath": "api/v1/Category/{categoryID}",
+    "RelativePath": "api/v1/Country/{country_Id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "categoryID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.CategoryDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CategoryController",
-    "Method": "DeleteAsync",
-    "RelativePath": "api/v1/Category/{categoryID}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "categoryID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CategoryController",
-    "Method": "UpdateAsync",
-    "RelativePath": "api/v1/Category/{categoryID}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "categoryID",
-        "Type": "System.Int32",
+        "Name": "country_Id",
+        "Type": "System.String",
         "IsRequired": true
       },
       {
-        "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.CategoryUpdateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.CategoryDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Current_Product_ListController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Current_Product_List",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.Current_Product_ListDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CustomerController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Customer",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.CustomerDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CustomerController",
-    "Method": "AddAsync",
-    "RelativePath": "api/v1/Customer",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.CustomerCreateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.CustomerDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Customer_and_Suppliers_by_CityController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Customer_and_Suppliers_by_City",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.Customer_and_Suppliers_by_CityDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CustomerController",
-    "Method": "GetById",
-    "RelativePath": "api/v1/Customer/{customerID}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "customerID",
+        "Name": "includes",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.CustomerDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.CountryDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -291,15 +108,15 @@
     ]
   },
   {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CustomerController",
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CountryController",
     "Method": "DeleteAsync",
-    "RelativePath": "api/v1/Customer/{customerID}",
+    "RelativePath": "api/v1/Country/{country_Id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "customerID",
+        "Name": "country_Id",
         "Type": "System.String",
         "IsRequired": true
       }
@@ -307,27 +124,27 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CustomerController",
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CountryController",
     "Method": "UpdateAsync",
-    "RelativePath": "api/v1/Customer/{customerID}",
+    "RelativePath": "api/v1/Country/{country_Id}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "customerID",
+        "Name": "country_Id",
         "Type": "System.String",
         "IsRequired": true
       },
       {
         "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.CustomerUpdateDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.CountryUpdateDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.CustomerDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.CountryDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -338,16 +155,27 @@
     ]
   },
   {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CustomerDemographicController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/CustomerDemographic",
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.DepartmentController",
+    "Method": "GetAsync",
+    "RelativePath": "api/v1/Department",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "filters",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "includes",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.CustomerDemographicDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.Dtos.DepartmentDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -358,22 +186,22 @@
     ]
   },
   {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CustomerDemographicController",
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.DepartmentController",
     "Method": "AddAsync",
-    "RelativePath": "api/v1/CustomerDemographic",
+    "RelativePath": "api/v1/Department",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.CustomerDemographicCreateDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.DepartmentCreateDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.CustomerDemographicDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.DepartmentDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -384,22 +212,27 @@
     ]
   },
   {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CustomerDemographicController",
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.DepartmentController",
     "Method": "GetById",
-    "RelativePath": "api/v1/CustomerDemographic/{customerTypeID}",
+    "RelativePath": "api/v1/Department/{department_Id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "customerTypeID",
-        "Type": "System.String",
+        "Name": "department_Id",
+        "Type": "System.Int32",
         "IsRequired": true
+      },
+      {
+        "Name": "includes",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.CustomerDemographicDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.DepartmentDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -410,43 +243,74 @@
     ]
   },
   {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CustomerDemographicController",
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.DepartmentController",
     "Method": "DeleteAsync",
-    "RelativePath": "api/v1/CustomerDemographic/{customerTypeID}",
+    "RelativePath": "api/v1/Department/{department_Id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "customerTypeID",
-        "Type": "System.String",
+        "Name": "department_Id",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.CustomerDemographicController",
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.DepartmentController",
     "Method": "UpdateAsync",
-    "RelativePath": "api/v1/CustomerDemographic/{customerTypeID}",
+    "RelativePath": "api/v1/Department/{department_Id}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "customerTypeID",
-        "Type": "System.String",
+        "Name": "department_Id",
+        "Type": "System.Int32",
         "IsRequired": true
       },
       {
         "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.CustomerDemographicUpdateDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.DepartmentUpdateDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.CustomerDemographicDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.DepartmentDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.EmpDetailsViewController",
+    "Method": "GetAsync",
+    "RelativePath": "api/v1/EmpDetailsView",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "filters",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "includes",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.Dtos.EmpDetailsViewDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -458,15 +322,26 @@
   },
   {
     "ContainingType": "MPR.RestApiTemplate.Api.Controllers.EmployeeController",
-    "Method": "GetAllAsync",
+    "Method": "GetAsync",
     "RelativePath": "api/v1/Employee",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "filters",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "includes",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.EmployeeDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.Dtos.EmployeeDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -486,13 +361,13 @@
     "Parameters": [
       {
         "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.EmployeeCreateDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.EmployeeCreateDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.EmployeeDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.EmployeeDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -505,20 +380,25 @@
   {
     "ContainingType": "MPR.RestApiTemplate.Api.Controllers.EmployeeController",
     "Method": "GetById",
-    "RelativePath": "api/v1/Employee/{employeeID}",
+    "RelativePath": "api/v1/Employee/{employee_Id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "employeeID",
+        "Name": "employee_Id",
         "Type": "System.Int32",
         "IsRequired": true
+      },
+      {
+        "Name": "includes",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.EmployeeDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.EmployeeDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -531,13 +411,13 @@
   {
     "ContainingType": "MPR.RestApiTemplate.Api.Controllers.EmployeeController",
     "Method": "DeleteAsync",
-    "RelativePath": "api/v1/Employee/{employeeID}",
+    "RelativePath": "api/v1/Employee/{employee_Id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "employeeID",
+        "Name": "employee_Id",
         "Type": "System.Int32",
         "IsRequired": true
       }
@@ -547,25 +427,77 @@
   {
     "ContainingType": "MPR.RestApiTemplate.Api.Controllers.EmployeeController",
     "Method": "UpdateAsync",
-    "RelativePath": "api/v1/Employee/{employeeID}",
+    "RelativePath": "api/v1/Employee/{employee_Id}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "employeeID",
+        "Name": "employee_Id",
         "Type": "System.Int32",
         "IsRequired": true
       },
       {
         "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.EmployeeUpdateDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.EmployeeUpdateDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.EmployeeDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.EmployeeDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.EmployeeController",
+    "Method": "ExecuteRawQueryExampleAsync",
+    "RelativePath": "api/v1/Employee/RawQuerySample/{departmentId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "departmentId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[MPR.RestApiTemplate.Application.Dtos.EmployeeRawQueryDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.EmployeeController",
+    "Method": "ExecuteSampleProcedureAsync",
+    "RelativePath": "api/v1/Employee/SampleProcedureExecute/{managerId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "managerId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[MPR.RestApiTemplate.Application.Dtos.EmployeeSampleProcedureDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -596,16 +528,27 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.InvoiceController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Invoice",
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.JobController",
+    "Method": "GetAsync",
+    "RelativePath": "api/v1/Job",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "filters",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "includes",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.InvoiceDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.Dtos.JobDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -616,42 +559,22 @@
     ]
   },
   {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.OrderController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Order",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.OrderDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.OrderController",
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.JobController",
     "Method": "AddAsync",
-    "RelativePath": "api/v1/Order",
+    "RelativePath": "api/v1/Job",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.OrderCreateDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.JobCreateDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.OrderDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.JobDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -662,73 +585,27 @@
     ]
   },
   {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Order_DetailController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Order_Detail",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.Order_DetailDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Order_DetailController",
-    "Method": "AddAsync",
-    "RelativePath": "api/v1/Order_Detail",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.Order_DetailCreateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.Order_DetailDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Order_DetailController",
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.JobController",
     "Method": "GetById",
-    "RelativePath": "api/v1/Order_Detail/{orderID}/{productID}",
+    "RelativePath": "api/v1/Job/{job_Id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "orderID",
-        "Type": "System.Int32",
+        "Name": "job_Id",
+        "Type": "System.String",
         "IsRequired": true
       },
       {
-        "Name": "productID",
-        "Type": "System.Int32",
-        "IsRequired": true
+        "Name": "includes",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.Order_DetailDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.JobDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -739,20 +616,300 @@
     ]
   },
   {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Order_DetailController",
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.JobController",
     "Method": "DeleteAsync",
-    "RelativePath": "api/v1/Order_Detail/{orderID}/{productID}",
+    "RelativePath": "api/v1/Job/{job_Id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "orderID",
+        "Name": "job_Id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.JobController",
+    "Method": "UpdateAsync",
+    "RelativePath": "api/v1/Job/{job_Id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "job_Id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "model",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.JobUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MPR.RestApiTemplate.Application.Dtos.JobDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.JobHistoryController",
+    "Method": "GetAsync",
+    "RelativePath": "api/v1/JobHistory",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "filters",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "includes",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.Dtos.JobHistoryDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.JobHistoryController",
+    "Method": "AddAsync",
+    "RelativePath": "api/v1/JobHistory",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.JobHistoryCreateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MPR.RestApiTemplate.Application.Dtos.JobHistoryDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.JobHistoryController",
+    "Method": "GetById",
+    "RelativePath": "api/v1/JobHistory/{employee_Id}/{start_Date}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "employee_Id",
         "Type": "System.Int32",
         "IsRequired": true
       },
       {
-        "Name": "productID",
+        "Name": "start_Date",
+        "Type": "System.DateTime",
+        "IsRequired": true
+      },
+      {
+        "Name": "includes",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MPR.RestApiTemplate.Application.Dtos.JobHistoryDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.JobHistoryController",
+    "Method": "DeleteAsync",
+    "RelativePath": "api/v1/JobHistory/{employee_Id}/{start_Date}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "employee_Id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "start_Date",
+        "Type": "System.DateTime",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.JobHistoryController",
+    "Method": "UpdateAsync",
+    "RelativePath": "api/v1/JobHistory/{employee_Id}/{start_Date}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "employee_Id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "start_Date",
+        "Type": "System.DateTime",
+        "IsRequired": true
+      },
+      {
+        "Name": "model",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.JobHistoryUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MPR.RestApiTemplate.Application.Dtos.JobHistoryDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.LocationController",
+    "Method": "GetAsync",
+    "RelativePath": "api/v1/Location",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "filters",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "includes",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.Dtos.LocationDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.LocationController",
+    "Method": "AddAsync",
+    "RelativePath": "api/v1/Location",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.LocationCreateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MPR.RestApiTemplate.Application.Dtos.LocationDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.LocationController",
+    "Method": "GetById",
+    "RelativePath": "api/v1/Location/{location_Id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "location_Id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "includes",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MPR.RestApiTemplate.Application.Dtos.LocationDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.LocationController",
+    "Method": "DeleteAsync",
+    "RelativePath": "api/v1/Location/{location_Id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "location_Id",
         "Type": "System.Int32",
         "IsRequired": true
       }
@@ -760,364 +917,27 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Order_DetailController",
+    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.LocationController",
     "Method": "UpdateAsync",
-    "RelativePath": "api/v1/Order_Detail/{orderID}/{productID}",
+    "RelativePath": "api/v1/Location/{location_Id}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "orderID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "productID",
+        "Name": "location_Id",
         "Type": "System.Int32",
         "IsRequired": true
       },
       {
         "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.Order_DetailUpdateDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.LocationUpdateDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.Order_DetailDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Order_Details_ExtendedController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Order_Details_Extended",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.Order_Details_ExtendedDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Order_SubtotalController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Order_Subtotal",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.Order_SubtotalDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.OrderController",
-    "Method": "GetById",
-    "RelativePath": "api/v1/Order/{orderID}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "orderID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.OrderDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.OrderController",
-    "Method": "DeleteAsync",
-    "RelativePath": "api/v1/Order/{orderID}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "orderID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.OrderController",
-    "Method": "UpdateAsync",
-    "RelativePath": "api/v1/Order/{orderID}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "orderID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.OrderUpdateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.OrderDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Orders_QryController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Orders_Qry",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.Orders_QryDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.ProductController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Product",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.ProductDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.ProductController",
-    "Method": "AddAsync",
-    "RelativePath": "api/v1/Product",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.ProductCreateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.ProductDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Product_Sales_for_1997Controller",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Product_Sales_for_",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.Product_Sales_for_1997Dto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.ProductController",
-    "Method": "GetById",
-    "RelativePath": "api/v1/Product/{productID}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "productID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.ProductDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.ProductController",
-    "Method": "DeleteAsync",
-    "RelativePath": "api/v1/Product/{productID}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "productID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.ProductController",
-    "Method": "UpdateAsync",
-    "RelativePath": "api/v1/Product/{productID}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "productID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.ProductUpdateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.ProductDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Products_Above_Average_PriceController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Products_Above_Average_Price",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.Products_Above_Average_PriceDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Products_by_CategoryController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Products_by_Category",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.Products_by_CategoryDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Quarterly_OrderController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Quarterly_Order",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.Quarterly_OrderDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.LocationDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1129,15 +949,26 @@
   },
   {
     "ContainingType": "MPR.RestApiTemplate.Api.Controllers.RegionController",
-    "Method": "GetAllAsync",
+    "Method": "GetAsync",
     "RelativePath": "api/v1/Region",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "filters",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "includes",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.RegionDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.Dtos.RegionDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1157,13 +988,13 @@
     "Parameters": [
       {
         "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.RegionCreateDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.RegionCreateDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.RegionDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.RegionDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1176,20 +1007,25 @@
   {
     "ContainingType": "MPR.RestApiTemplate.Api.Controllers.RegionController",
     "Method": "GetById",
-    "RelativePath": "api/v1/Region/{regionID}",
+    "RelativePath": "api/v1/Region/{region_Id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "regionID",
-        "Type": "System.Int32",
+        "Name": "region_Id",
+        "Type": "System.Decimal",
         "IsRequired": true
+      },
+      {
+        "Name": "includes",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.RegionDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.RegionDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1202,14 +1038,14 @@
   {
     "ContainingType": "MPR.RestApiTemplate.Api.Controllers.RegionController",
     "Method": "DeleteAsync",
-    "RelativePath": "api/v1/Region/{regionID}",
+    "RelativePath": "api/v1/Region/{region_Id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "regionID",
-        "Type": "System.Int32",
+        "Name": "region_Id",
+        "Type": "System.Decimal",
         "IsRequired": true
       }
     ],
@@ -1218,462 +1054,25 @@
   {
     "ContainingType": "MPR.RestApiTemplate.Api.Controllers.RegionController",
     "Method": "UpdateAsync",
-    "RelativePath": "api/v1/Region/{regionID}",
+    "RelativePath": "api/v1/Region/{region_Id}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "regionID",
-        "Type": "System.Int32",
+        "Name": "region_Id",
+        "Type": "System.Decimal",
         "IsRequired": true
       },
       {
         "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.RegionUpdateDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.RegionUpdateDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.RegionDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Sales_by_CategoryController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Sales_by_Category",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.Sales_by_CategoryDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Sales_Totals_by_AmountController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Sales_Totals_by_Amount",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.Sales_Totals_by_AmountDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.ShipperController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Shipper",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.ShipperDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.ShipperController",
-    "Method": "AddAsync",
-    "RelativePath": "api/v1/Shipper",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.ShipperCreateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.ShipperDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.ShipperController",
-    "Method": "GetById",
-    "RelativePath": "api/v1/Shipper/{shipperID}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "shipperID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.ShipperDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.ShipperController",
-    "Method": "DeleteAsync",
-    "RelativePath": "api/v1/Shipper/{shipperID}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "shipperID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.ShipperController",
-    "Method": "UpdateAsync",
-    "RelativePath": "api/v1/Shipper/{shipperID}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "shipperID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.ShipperUpdateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.ShipperDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Summary_of_Sales_by_QuarterController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Summary_of_Sales_by_Quarter",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.Summary_of_Sales_by_QuarterDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.Summary_of_Sales_by_YearController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Summary_of_Sales_by_Year",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.Summary_of_Sales_by_YearDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.SupplierController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Supplier",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.SupplierDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.SupplierController",
-    "Method": "AddAsync",
-    "RelativePath": "api/v1/Supplier",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.SupplierCreateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.SupplierDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.SupplierController",
-    "Method": "GetById",
-    "RelativePath": "api/v1/Supplier/{supplierID}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "supplierID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.SupplierDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.SupplierController",
-    "Method": "DeleteAsync",
-    "RelativePath": "api/v1/Supplier/{supplierID}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "supplierID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.SupplierController",
-    "Method": "UpdateAsync",
-    "RelativePath": "api/v1/Supplier/{supplierID}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "supplierID",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.SupplierUpdateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.SupplierDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.TerritoryController",
-    "Method": "GetAllAsync",
-    "RelativePath": "api/v1/Territory",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[MPR.RestApiTemplate.Application.DTOs.TerritoryDto, MPR.RestApiTemplate.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.TerritoryController",
-    "Method": "AddAsync",
-    "RelativePath": "api/v1/Territory",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.TerritoryCreateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.TerritoryDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.TerritoryController",
-    "Method": "GetById",
-    "RelativePath": "api/v1/Territory/{territoryID}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "territoryID",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.TerritoryDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.TerritoryController",
-    "Method": "DeleteAsync",
-    "RelativePath": "api/v1/Territory/{territoryID}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "territoryID",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "MPR.RestApiTemplate.Api.Controllers.TerritoryController",
-    "Method": "UpdateAsync",
-    "RelativePath": "api/v1/Territory/{territoryID}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "territoryID",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "model",
-        "Type": "MPR.RestApiTemplate.Application.DTOs.TerritoryUpdateDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "MPR.RestApiTemplate.Application.DTOs.TerritoryDto",
+        "Type": "MPR.RestApiTemplate.Application.Dtos.RegionDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
