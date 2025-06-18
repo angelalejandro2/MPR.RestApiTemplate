@@ -11,10 +11,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("5d00ede8-dceb-4f9f-b477-b469dbb9c29f")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("MPR.RestApiTemplate.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+27a336a6d3e90a24538e22de21691af1e998de17")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7844cf7906e5a46e9f294f18da93a9fed137ae42")]
 [assembly: System.Reflection.AssemblyProductAttribute("MPR.RestApiTemplate.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MPR.RestApiTemplate.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

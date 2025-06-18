@@ -6,54 +6,92 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Text" #>
-<#@ include file="..\T4Includes\ConfigHelper.ttinclude" #>
-
-
+<#@ include file="..\T4Includes\MprCodegenParser.ttinclude" #>
 <#
-    // Función para generar el contenido del controlador para una entidad específica
-    string GenerateControllerContent(string className, List<(string Type, string Name)> keyProps, bool isKeyless, CodeGenConfig config)
+    // Crear una instancia del MprCodegenParser para leer la configuración
+    var parser = new MprCodegenParser(Host.TemplateFile, @"..\mpr.codegen.json");
+    
+    // Función para obtener el nombre personalizado de la entidad desde mpr.codegen.json
+    string GetCustomEntityName(string entityName, MprCodegenParser parser)
     {
-        string dtoName = GetDtoName(className, config);
-        string createDto = GetCreateDtoName(className, config);
-        string updateDto = GetUpdateDtoName(className, config);
-        string lowerName = char.ToLower(className[0]) + className.Substring(1);
+        try
+        {
+            // Obtenemos los nombres de DTO para aprovechar la lógica que ya existe en el parser
+            var (dtoName, _, _) = parser.GetDtoNames(entityName);
+            
+            // Extraer el nombre base de la entidad del nombre del DTO (quitando "Dto" del final)
+            string customName = dtoName.EndsWith("Dto") ? dtoName.Substring(0, dtoName.Length - 3) : dtoName;
+            
+            return string.IsNullOrEmpty(customName) ? entityName : customName;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error al obtener nombre personalizado: {ex.Message}");
+            return entityName;
+        }
+    }
 
+    // Función para generar el contenido del controlador para una entidad específica
+    string GenerateControllerContent(string entityName, List<(string Type, string Name)> keyProps, bool isKeyless, MprCodegenParser parser)
+    {
+        // Obtener el nombre personalizado de la entidad desde la configuración
+        string customEntityName = GetCustomEntityName(entityName, parser);
+        
+        // Verificar si el nombre personalizado termina con un número
+        bool endsWithNumber = char.IsDigit(customEntityName[customEntityName.Length - 1]);
+        
+        // Obtener los nombres de DTO configurados o por defecto
+        var (dtoName, createDtoName, updateDtoName) = parser.GetDtoNames(entityName);
+        
+        string lowerName = char.ToLower(customEntityName[0]) + customEntityName.Substring(1);
+        
         StringBuilder sb = new StringBuilder();
         sb.AppendLine("using Asp.Versioning;");
-        sb.AppendLine("using Microsoft.AspNetCore.Authorization;");
+        //sb.AppendLine("using MapfreUserSecurityLibrary.Implementation;");
         sb.AppendLine("using Microsoft.AspNetCore.Mvc;");
-        sb.AppendLine("using MPR.RestApiTemplate.Application.DTOs;");
+        //sb.AppendLine("using MPR.RestApiTemplate.Api.Middlewares.UserContext.Interfaces;");
+        sb.AppendLine("using MPR.RestApiTemplate.Application.Dtos;");
         sb.AppendLine("using MPR.RestApiTemplate.Application.Services;");
-        sb.AppendLine();
+        sb.AppendLine("using NSwag.Annotations;");
+        sb.AppendLine("");
         sb.AppendLine("namespace MPR.RestApiTemplate.Api.Controllers");
         sb.AppendLine("{");
         sb.AppendLine("    [ApiController]");
         sb.AppendLine("    [ApiVersion(\"1.0\")]");
-        sb.AppendLine("    [Route(\"api/v{version:apiVersion}/[controller]\")]");
-        sb.AppendLine($"    public partial class {className}Controller : ControllerBase");
+        
+        //add open api tag for entities that ends with number si swagger behaves correctly
+        if (endsWithNumber)
+        {
+            sb.AppendLine($"    [OpenApiTag(\"{customEntityName}\")]");
+            sb.AppendLine($"    [Route(\"api/v{{version:apiVersion}}/{customEntityName}\")]");
+        }
+        else 
+        {
+                sb.AppendLine("    [Route(\"api/v{version:apiVersion}/[controller]\")]");
+        }
+
+        sb.AppendLine($"    public partial class {customEntityName}Controller : ControllerBase");
         sb.AppendLine("    {");
-        sb.AppendLine($"        private readonly {className}Service _service;");
-        sb.AppendLine();
-        sb.AppendLine($"        public {className}Controller({className}Service service)");
+        sb.AppendLine($"        private readonly {customEntityName}Service _service;");
+        //sb.AppendLine("        private readonly IUserContext _userContext;");
+        sb.AppendLine("");
+        //sb.AppendLine($"        public {customEntityName}Controller({customEntityName}Service service, IUserContext userContext)");
+        sb.AppendLine($"        public {customEntityName}Controller({customEntityName}Service service)");
         sb.AppendLine("        {");
         sb.AppendLine("            _service = service;");
+        //sb.AppendLine("            _userContext = userContext;");
         sb.AppendLine("        }");
-        sb.AppendLine();
-
-        // GET
-        var getPolicy = GetPolicy(className, "get", config);
-        if (!string.IsNullOrWhiteSpace(getPolicy))
-        {
-            sb.AppendLine($"        [Authorize(Policy = \"{getPolicy}\")]");
-        }
+        sb.AppendLine("");
         sb.AppendLine("        [HttpGet]");
-        sb.AppendLine($"        public virtual async Task<ActionResult<IEnumerable<{dtoName}>>> GetAllAsync()");
+        sb.AppendLine($"        public virtual async Task<ActionResult<IEnumerable<{dtoName}>>> GetAsync([FromQuery] string filters = null, [FromQuery] string includes = null)");
         sb.AppendLine("        {");
-        sb.AppendLine("            var result = await _service.GetAllAsync();");
+        sb.AppendLine("            var result = await _service.GetAsync(filters, includes);");
+        sb.AppendLine("");
+        //sb.AppendLine("            clsUsers.Traza_4_Busqueda(_userContext.NumUserId, _userContext.IpAddress, string.Empty, string.Empty, string.Empty, string.Empty, false, $\"\");");
         sb.AppendLine("            return Ok(result);");
         sb.AppendLine("        }");
-        sb.AppendLine();
 
+        // Si la entidad tiene claves primarias
         if (!isKeyless && keyProps.Any())
         {
             string routeParams = string.Join("/", keyProps.Select(p => $"{{{char.ToLower(p.Name[0]) + p.Name.Substring(1)}}}"));
@@ -61,78 +99,60 @@
             string paramArgs = string.Join(", ", keyProps.Select(p => $"{char.ToLower(p.Name[0]) + p.Name.Substring(1)}"));
             string keyObject = string.Join(", ", keyProps.Select(p => $"{p.Name} = result.{p.Name}"));
 
-            // GET BY ID
-            var getByIdPolicy = GetPolicy(className, "getById", config);
-            if (!string.IsNullOrWhiteSpace(getByIdPolicy))
-            {
-                sb.AppendLine($"        [Authorize(Policy = \"{getByIdPolicy}\")]");
-            }
+            sb.AppendLine("");
             sb.AppendLine($"        [HttpGet(\"{routeParams}\")]");
-            sb.AppendLine($"        public virtual async Task<ActionResult<{dtoName}>> GetById({methodParams})");
+            sb.AppendLine($"        public virtual async Task<ActionResult<{dtoName}>> GetById({methodParams}, [FromQuery] string includes = null)");
             sb.AppendLine("        {");
-            sb.AppendLine($"            var result = await _service.GetByIdAsync({paramArgs});");
+            sb.AppendLine($"            var result = await _service.GetByIdAsync({paramArgs}, includes);");
             sb.AppendLine("            if (result == null)");
             sb.AppendLine("                return NotFound();");
+            sb.AppendLine("");
+           // sb.AppendLine("            clsUsers.Traza_4_AccesoData(_userContext.NumUserId, _userContext.IpAddress, string.Empty, string.Empty, string.Empty, string.Empty, false, $\"\");");
             sb.AppendLine("            return Ok(result);");
             sb.AppendLine("        }");
-            sb.AppendLine();
-
-            // DELETE
-            var deletePolicy = GetPolicy(className, "delete", config);
-            if (!string.IsNullOrWhiteSpace(deletePolicy))
-            {
-                sb.AppendLine($"        [Authorize(Policy = \"{deletePolicy}\")]");
-            }
+            sb.AppendLine("");
             sb.AppendLine($"        [HttpDelete(\"{routeParams}\")]");
             sb.AppendLine($"        public virtual async Task<ActionResult> DeleteAsync({methodParams})");
             sb.AppendLine("        {");
             sb.AppendLine($"            await _service.DeleteAsync({paramArgs});");
+            sb.AppendLine("");
+            //sb.AppendLine("            clsUsers.Traza_6_EliminaData(_userContext.NumUserId, _userContext.IpAddress, string.Empty, string.Empty, string.Empty, string.Empty, false, $\"\");");
             sb.AppendLine("            return NoContent();");
             sb.AppendLine("        }");
-            sb.AppendLine();
-
-            // PUT
-            var putPolicy = GetPolicy(className, "put", config);
-            if (!string.IsNullOrWhiteSpace(putPolicy))
-            {
-                sb.AppendLine($"        [Authorize(Policy = \"{putPolicy}\")]");
-            }
+            sb.AppendLine("");
             sb.AppendLine($"        [HttpPut(\"{routeParams}\")]");
-            sb.AppendLine($"        public virtual async Task<ActionResult<{dtoName}>> UpdateAsync({methodParams}, [FromBody] {updateDto} model)");
+            sb.AppendLine($"        public virtual async Task<ActionResult<{dtoName}>> UpdateAsync({methodParams}, [FromBody] {updateDtoName} model)");
             sb.AppendLine("        {");
+
+            // Validación de coincidencia de claves
             foreach (var key in keyProps)
             {
                 var paramName = char.ToLower(key.Name[0]) + key.Name.Substring(1);
                 sb.AppendLine($"            if (model.{key.Name} != {paramName})");
                 sb.AppendLine("                return BadRequest(\"Key mismatch between route and payload\");");
             }
+
             sb.AppendLine("            var result = await _service.UpdateAsync(model);");
+            sb.AppendLine("");
+            //sb.AppendLine("            clsUsers.Traza_6_ModificaData(_userContext.NumUserId, _userContext.IpAddress, string.Empty, string.Empty, string.Empty, string.Empty, false, $\"\");");
             sb.AppendLine("            return Accepted(result);");
             sb.AppendLine("        }");
-            sb.AppendLine();
-
-            // POST
-            var postPolicy = GetPolicy(className, "post", config);
-            if (!string.IsNullOrWhiteSpace(postPolicy))
-            {
-                sb.AppendLine($"        [Authorize(Policy = \"{postPolicy}\")]");
-            }
+            sb.AppendLine("");
             sb.AppendLine("        [HttpPost]");
-            sb.AppendLine($"        public virtual async Task<ActionResult<{dtoName}>> AddAsync([FromBody] {createDto} model)");
+            sb.AppendLine($"        public virtual async Task<ActionResult<{dtoName}>> AddAsync([FromBody] {createDtoName} model)");
             sb.AppendLine("        {");
             sb.AppendLine("            var result = await _service.AddAsync(model);");
+            sb.AppendLine("");
+            //sb.AppendLine("            clsUsers.Traza_6_CreaData(_userContext.NumUserId, _userContext.IpAddress, string.Empty, string.Empty, string.Empty, string.Empty, false, $\"\");");
             sb.AppendLine($"            return CreatedAtAction(nameof(GetById), new {{ {keyObject} }}, result);");
             sb.AppendLine("        }");
-            sb.AppendLine();
         }
 
         sb.AppendLine("    }");
         sb.AppendLine("}");
-
+        
         return sb.ToString();
     }
-
-
 
     // Directorio donde se encuentran las entidades
     string entitiesPath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), @"..\..\MPR.RestApiTemplate.Domain\Entities");
@@ -145,16 +165,13 @@
         Directory.CreateDirectory(outputPath);
     }
 
-    // Cargar configuración desde mpr.codegen.json
-    CodeGenConfig config = LoadConfig(Host.TemplateFile);
-
     // Obtener todos los archivos de entidades
     var entityFiles = Directory.GetFiles(entitiesPath, "*.cs");
 
     // Para cada archivo de entidad, generar un controlador correspondiente
     foreach (var file in entityFiles)
     {
-        string className = Path.GetFileNameWithoutExtension(file);
+        string entityName = Path.GetFileNameWithoutExtension(file);
         var lines = File.ReadAllLines(file);
 
         bool isKeyless = lines.Any(l => l.Trim().StartsWith("[Keyless]"));
@@ -184,25 +201,19 @@
             }
         }
 
-        // Generar el contenido del controlador para esta entidad
-        string controllerContent = GenerateControllerContent(className, keyProps, isKeyless, config);
+        // Obtener el nombre personalizado para el archivo de salida
+        string customEntityName = GetCustomEntityName(entityName, parser);
         
-        // Escribir el contenido en un archivo independiente solo si no existe
-        string outputFileName = $"{className}Controller.generated.cs";
+        // Generar el contenido del controlador para esta entidad
+        string controllerContent = GenerateControllerContent(entityName, keyProps, isKeyless, parser);
+        
+        // Escribir el contenido en un archivo independiente
+        string outputFileName = $"{customEntityName}Controller.generated.cs";
         string outputFilePath = Path.Combine(outputPath, outputFileName);
         
-        // Verificar si el archivo ya existe antes de escribirlo
-        //if (!File.Exists(outputFilePath))
-        //{
-            File.WriteAllText(outputFilePath, controllerContent);
-        //}
-        //else
-        //{
-            // Se podría agregar alguna indicación de que el archivo no se sobrescribió
-            // Por ejemplo, registrarlo en un archivo de log o mostrar un mensaje
-        //}
+        File.WriteAllText(outputFilePath, controllerContent);
     }
 #>
 // Esta plantilla ha generado controladores individuales para cada entidad.
 // Los archivos generados se encuentran en la carpeta GeneratedControllers.
-// Nota: Los archivos existentes no han sido sobrescritos.
+// Los nombres de DTOs personalizados se configuran en mpr.codegen.json

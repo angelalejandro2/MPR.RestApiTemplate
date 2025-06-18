@@ -2,11 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MPR.RestApiTemplate.Application.DTOs
+namespace MPR.RestApiTemplate.Application.Dtos
 {
     public class RegionCreateDto
     {
-        public int RegionID { get; set; }
-        public string RegionDescription { get; set; }
+        public decimal Region_Id { get; set; }
+        public string? Region_Name { get; set; }
     }
 }

@@ -58,7 +58,7 @@ namespace MPR.RestApiTemplate.Infrastructure
 		var matches = Regex.Matches(dbContextCode, @"DbSet<(?<entity>\w+)>");
 		var entityNames = matches.Cast<Match>().Select(m => m.Groups["entity"].Value).Distinct().ToList();
 #>
-		private I<#= dbContextName #>SpRepository? _<#= dbContextNameLowered #>SpRepository;
+		private I<#= dbContextName #>SqlExecutor? _<#= dbContextNameLowered #>SqlExecutor;
 <#
 		foreach (var entityName in entityNames)
 		{
@@ -79,7 +79,7 @@ namespace MPR.RestApiTemplate.Infrastructure
 		var matches = Regex.Matches(dbContextCode, @"DbSet<(?<entity>\w+)>");
 		var entityNames = matches.Cast<Match>().Select(m => m.Groups["entity"].Value).Distinct().ToList();
 #>
-		public I<#= dbContextName #>SpRepository <#= dbContextName #>SpRepository => _<#= dbContextNameLowered #>SpRepository ??= new <#= dbContextName #>SpRepository(_<#= dbContextNameLowered #>);
+		public I<#= dbContextName #>SqlExecutor <#= dbContextName #>SqlExecutor => _<#= dbContextNameLowered #>SqlExecutor ??= new <#= dbContextName #>SqlExecutor(_<#= dbContextNameLowered #>);
 <#
 		foreach (var entityName in entityNames)
 		{

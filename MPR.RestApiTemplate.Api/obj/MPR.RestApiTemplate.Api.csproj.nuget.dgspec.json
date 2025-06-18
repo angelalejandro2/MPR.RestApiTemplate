@@ -37,9 +37,6 @@
               },
               "C:\\Angel\\Sources\\Repos\\Github\\prico-architecture-restapitemplate\\MPR.RestApiTemplate\\MPR.RestApiTemplate.Infrastructure\\MPR.RestApiTemplate.Infrastructure.csproj": {
                 "projectPath": "C:\\Angel\\Sources\\Repos\\Github\\prico-architecture-restapitemplate\\MPR.RestApiTemplate\\MPR.RestApiTemplate.Infrastructure\\MPR.RestApiTemplate.Infrastructure.csproj"
-              },
-              "C:\\Angel\\Sources\\Repos\\Github\\prico-architecture-restapitemplate\\MPR.RestApiTemplate\\MPR.RestApiTemplate.Security\\MPR.RestApiTemplate.Security.csproj": {
-                "projectPath": "C:\\Angel\\Sources\\Repos\\Github\\prico-architecture-restapitemplate\\MPR.RestApiTemplate\\MPR.RestApiTemplate.Security\\MPR.RestApiTemplate.Security.csproj"
               }
             }
           }
@@ -68,6 +65,10 @@
               "target": "Package",
               "version": "[8.1.0, )"
             },
+            "Microsoft.AspNetCore.Authentication.Negotiate": {
+              "target": "Package",
+              "version": "[9.0.5, )"
+            },
             "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
               "target": "Package",
               "version": "[9.0.3, )"
@@ -82,9 +83,13 @@
               "target": "Package",
               "version": "[9.0.3, )"
             },
-            "Scalar.AspNetCore": {
+            "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
               "target": "Package",
-              "version": "[2.1.1, )"
+              "version": "[1.22.1-Preview.1, )"
+            },
+            "NSwag.AspNetCore": {
+              "target": "Package",
+              "version": "[14.4.0, )"
             }
           },
           "imports": [
@@ -332,89 +337,6 @@
             "Oracle.EntityFrameworkCore": {
               "target": "Package",
               "version": "[9.23.60, )"
-            }
-          },
-          "imports": [
-            "net461",
-            "net462",
-            "net47",
-            "net471",
-            "net472",
-            "net48",
-            "net481"
-          ],
-          "assetTargetFallback": true,
-          "warn": true,
-          "frameworkReferences": {
-            "Microsoft.NETCore.App": {
-              "privateAssets": "all"
-            }
-          },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
-        }
-      }
-    },
-    "C:\\Angel\\Sources\\Repos\\Github\\prico-architecture-restapitemplate\\MPR.RestApiTemplate\\MPR.RestApiTemplate.Security\\MPR.RestApiTemplate.Security.csproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "C:\\Angel\\Sources\\Repos\\Github\\prico-architecture-restapitemplate\\MPR.RestApiTemplate\\MPR.RestApiTemplate.Security\\MPR.RestApiTemplate.Security.csproj",
-        "projectName": "MPR.RestApiTemplate.Security",
-        "projectPath": "C:\\Angel\\Sources\\Repos\\Github\\prico-architecture-restapitemplate\\MPR.RestApiTemplate\\MPR.RestApiTemplate.Security\\MPR.RestApiTemplate.Security.csproj",
-        "packagesPath": "C:\\Users\\ngelale\\.nuget\\packages\\",
-        "outputPath": "C:\\Angel\\Sources\\Repos\\Github\\prico-architecture-restapitemplate\\MPR.RestApiTemplate\\MPR.RestApiTemplate.Security\\obj\\",
-        "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
-        "configFilePaths": [
-          "C:\\Users\\ngelale\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
-        ],
-        "originalTargetFrameworks": [
-          "net9.0"
-        ],
-        "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {}
-        },
-        "frameworks": {
-          "net9.0": {
-            "targetAlias": "net9.0",
-            "projectReferences": {}
-          }
-        },
-        "warningProperties": {
-          "warnAsError": [
-            "NU1605"
-          ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "9.0.300"
-      },
-      "frameworks": {
-        "net9.0": {
-          "targetAlias": "net9.0",
-          "dependencies": {
-            "Microsoft.AspNetCore.Authorization": {
-              "target": "Package",
-              "version": "[9.0.5, )"
-            },
-            "Microsoft.AspNetCore.Http.Abstractions": {
-              "target": "Package",
-              "version": "[2.3.0, )"
-            },
-            "Microsoft.Extensions.Configuration.Abstractions": {
-              "target": "Package",
-              "version": "[9.0.3, )"
-            },
-            "Oracle.ManagedDataAccess.Core": {
-              "target": "Package",
-              "version": "[23.6.1, )"
             }
           },
           "imports": [

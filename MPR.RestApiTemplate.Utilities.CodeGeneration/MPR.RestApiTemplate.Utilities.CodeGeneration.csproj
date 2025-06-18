@@ -38,15 +38,6 @@
 			<Generator>TextTemplatingFileGenerator</Generator>
 			<LastGenOutput>DbContextRegistration.generated.cs</LastGenOutput>
 		</None>
-		<None Update="T4Templates\GeneratePolicies.generated.json">
-		  <DesignTime>True</DesignTime>
-		  <AutoGen>True</AutoGen>
-		  <DependentUpon>GeneratePolicies.tt</DependentUpon>
-		</None>
-		<None Update="T4Templates\GeneratePolicies.tt">
-		  <Generator>TextTemplatingFileGenerator</Generator>
-		  <LastGenOutput>GeneratePolicies.generated.json</LastGenOutput>
-		</None>
 		<None Update="T4Templates\IntegrationTests.tt">
 			<Generator>TextTemplatingFileGenerator</Generator>
 			<LastGenOutput>IntegrationTests.generated.cs</LastGenOutput>
@@ -68,7 +59,7 @@
 			<Generator>TextTemplatingFileGenerator</Generator>
 		</None>
 		<None Update="T4Templates\RepositoryInterfacesSp.tt">
-		  <LastGenOutput>RepositoryInterfaces.generated.cs</LastGenOutput>
+		  <LastGenOutput>RepositoryInterfacesSp.generated.cs</LastGenOutput>
 		  <Generator>TextTemplatingFileGenerator</Generator>
 		</None>
 		<None Update="T4Templates\RepositoryInterfaces.tt">
@@ -94,20 +85,20 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="T4Templates\Controllers.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Controllers.tt</DependentUpon>
-	  </Compile>
 	  <Compile Update="T4Templates\DbContextRegistration.generated.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>DbContextRegistration.tt</DependentUpon>
 	  </Compile>
-	  <Compile Update="T4Templates\Services.generated.cs">
+	  <Compile Update="T4Templates\RepositoryImplementation.generated.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Services.tt</DependentUpon>
+	    <DependentUpon>RepositoryImplementation.tt</DependentUpon>
+	  </Compile>
+	  <Compile Update="T4Templates\RepositoryInterfacesSp.generated.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>RepositoryInterfacesSp.tt</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 

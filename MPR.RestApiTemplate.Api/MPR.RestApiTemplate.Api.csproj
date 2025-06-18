@@ -4,24 +4,34 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>5d00ede8-dceb-4f9f-b477-b469dbb9c29f</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="9.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Scalar.AspNetCore" Version="2.1.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1-Preview.1" />
+    <PackageReference Include="NSwag.AspNetCore" Version="14.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MPR.RestApiTemplate.Application\MPR.RestApiTemplate.Application.csproj" />
     <ProjectReference Include="..\MPR.RestApiTemplate.Infrastructure\MPR.RestApiTemplate.Infrastructure.csproj" />
-    <ProjectReference Include="..\MPR.RestApiTemplate.Security\MPR.RestApiTemplate.Security.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="MapfreUserSecurityLibrary">
+      <HintPath>..\lib\MapfreUserSecurityLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

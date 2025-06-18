@@ -24,7 +24,6 @@ namespace MPR.RestApiTemplate.Api.Controllers
                 description = "REST API template",
                 documentation = new
                 {
-                    scalar = $"{Request.Scheme}://{Request.Host}/scalar",
                     swagger = $"{Request.Scheme}://{Request.Host}/swagger"
                 },
                 domains = new[] {"Lorem Ipsum"}, // Reemplazar según corresponda
@@ -53,8 +52,7 @@ namespace MPR.RestApiTemplate.Api.Controllers
                         <p class='lead'>Reusable REST API template. Customize this as needed.</p>
                         <hr class='my-4'>
                         <p>Explore the API documentation below:</p>
-                        <a class='btn btn-primary btn-lg' href='/scalar' role='button'>Scalar Docs</a>
-                        <a class='btn btn-outline-secondary btn-lg ml-2' href='/swagger' role='button'>Swagger UI</a>
+                        <a class='btn btn-primary btn-lg' href='/swagger' role='button'>Swagger UI</a>
                     </div>
                     <footer class='text-muted text-center'>
                         <small>Server time (UTC): {DateTime.UtcNow}</small>

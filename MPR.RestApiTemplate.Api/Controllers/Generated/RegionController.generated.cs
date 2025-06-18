@@ -1,8 +1,8 @@
 using Asp.Versioning;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MPR.RestApiTemplate.Application.DTOs;
+using MPR.RestApiTemplate.Application.Dtos;
 using MPR.RestApiTemplate.Application.Services;
+using NSwag.Annotations;
 
 namespace MPR.RestApiTemplate.Api.Controllers
 {
@@ -18,49 +18,48 @@ namespace MPR.RestApiTemplate.Api.Controllers
             _service = service;
         }
 
-        [Authorize(Policy = "GetRegion")]
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<RegionDto>>> GetAllAsync()
+        public virtual async Task<ActionResult<IEnumerable<RegionDto>>> GetAsync([FromQuery] string filters = null, [FromQuery] string includes = null)
         {
-            var result = await _service.GetAllAsync();
+            var result = await _service.GetAsync(filters, includes);
+
             return Ok(result);
         }
 
-        [Authorize(Policy = "GetbyidRegion")]
-        [HttpGet("{regionID}")]
-        public virtual async Task<ActionResult<RegionDto>> GetById(int regionID)
+        [HttpGet("{region_Id}")]
+        public virtual async Task<ActionResult<RegionDto>> GetById(decimal region_Id, [FromQuery] string includes = null)
         {
-            var result = await _service.GetByIdAsync(regionID);
+            var result = await _service.GetByIdAsync(region_Id, includes);
             if (result == null)
                 return NotFound();
+
             return Ok(result);
         }
 
-        [Authorize(Policy = "DeleteRegion")]
-        [HttpDelete("{regionID}")]
-        public virtual async Task<ActionResult> DeleteAsync(int regionID)
+        [HttpDelete("{region_Id}")]
+        public virtual async Task<ActionResult> DeleteAsync(decimal region_Id)
         {
-            await _service.DeleteAsync(regionID);
+            await _service.DeleteAsync(region_Id);
+
             return NoContent();
         }
 
-        [Authorize(Policy = "PutRegion")]
-        [HttpPut("{regionID}")]
-        public virtual async Task<ActionResult<RegionDto>> UpdateAsync(int regionID, [FromBody] RegionUpdateDto model)
+        [HttpPut("{region_Id}")]
+        public virtual async Task<ActionResult<RegionDto>> UpdateAsync(decimal region_Id, [FromBody] RegionUpdateDto model)
         {
-            if (model.RegionID != regionID)
+            if (model.Region_Id != region_Id)
                 return BadRequest("Key mismatch between route and payload");
             var result = await _service.UpdateAsync(model);
+
             return Accepted(result);
         }
 
-        [Authorize(Policy = "PostRegion")]
         [HttpPost]
         public virtual async Task<ActionResult<RegionDto>> AddAsync([FromBody] RegionCreateDto model)
         {
             var result = await _service.AddAsync(model);
-            return CreatedAtAction(nameof(GetById), new { RegionID = result.RegionID }, result);
-        }
 
+            return CreatedAtAction(nameof(GetById), new { Region_Id = result.Region_Id }, result);
+        }
     }
 }
