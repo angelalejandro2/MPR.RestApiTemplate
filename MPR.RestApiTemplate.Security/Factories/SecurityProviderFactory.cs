@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using MPR.RestApiTemplate.Security.Interfaces;
 using MPR.RestApiTemplate.Security.Providers;

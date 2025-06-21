@@ -3,6 +3,10 @@ using Microsoft.Extensions.Configuration;
 using System.Security.Claims;
 using MapfreUserSecurityLibrary.Implementation;
 using MPR.RestApiTemplate.Security.Interfaces;
+using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 public class MapfreSecurityProvider(IHttpContextAccessor httpContextAccessor, IConfiguration configuration) : ISecurityProvider
 {

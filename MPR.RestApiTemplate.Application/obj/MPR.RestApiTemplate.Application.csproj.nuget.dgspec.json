@@ -1,0 +1,234 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Application/MPR.RestApiTemplate.Application.csproj": {}
+  },
+  "projects": {
+    "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Application/MPR.RestApiTemplate.Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Application/MPR.RestApiTemplate.Application.csproj",
+        "projectName": "MPR.RestApiTemplate.Application",
+        "projectPath": "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Application/MPR.RestApiTemplate.Application.csproj",
+        "packagesPath": "/Users/aalejandrom/.nuget/packages/",
+        "outputPath": "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Application/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/aalejandrom/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Domain/MPR.RestApiTemplate.Domain.csproj": {
+                "projectPath": "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Domain/MPR.RestApiTemplate.Domain.csproj"
+              },
+              "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Infrastructure/MPR.RestApiTemplate.Infrastructure.csproj": {
+                "projectPath": "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Infrastructure/MPR.RestApiTemplate.Infrastructure.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.200"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[14.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.202/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Domain/MPR.RestApiTemplate.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Domain/MPR.RestApiTemplate.Domain.csproj",
+        "projectName": "MPR.RestApiTemplate.Domain",
+        "projectPath": "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Domain/MPR.RestApiTemplate.Domain.csproj",
+        "packagesPath": "/Users/aalejandrom/.nuget/packages/",
+        "outputPath": "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Domain/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/aalejandrom/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.200"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.202/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Infrastructure/MPR.RestApiTemplate.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Infrastructure/MPR.RestApiTemplate.Infrastructure.csproj",
+        "projectName": "MPR.RestApiTemplate.Infrastructure",
+        "projectPath": "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Infrastructure/MPR.RestApiTemplate.Infrastructure.csproj",
+        "packagesPath": "/Users/aalejandrom/.nuget/packages/",
+        "outputPath": "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Infrastructure/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/aalejandrom/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Domain/MPR.RestApiTemplate.Domain.csproj": {
+                "projectPath": "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate.Domain/MPR.RestApiTemplate.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.200"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.3, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.3, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[9.0.3, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.3, )"
+            },
+            "Oracle.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.23.60, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.202/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
