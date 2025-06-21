@@ -1,8 +1,8 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MPR.RestApiTemplate.Application.Dtos;
+using MPR.RestApiTemplate.Application.DTOs;
 using MPR.RestApiTemplate.Application.Services;
-using NSwag.Annotations;
 
 namespace MPR.RestApiTemplate.Api.Controllers
 {
@@ -18,48 +18,49 @@ namespace MPR.RestApiTemplate.Api.Controllers
             _service = service;
         }
 
+        [Authorize(Policy = "GetEmployee")]
         [HttpGet]
-        public virtual async Task<ActionResult<IEnumerable<EmployeeDto>>> GetAsync([FromQuery] string filters = null, [FromQuery] string includes = null)
+        public virtual async Task<ActionResult<IEnumerable<EmployeeDto>>> GetAllAsync()
         {
-            var result = await _service.GetAsync(filters, includes);
-
+            var result = await _service.GetAllAsync();
             return Ok(result);
         }
 
-        [HttpGet("{employee_Id}")]
-        public virtual async Task<ActionResult<EmployeeDto>> GetById(int employee_Id, [FromQuery] string includes = null)
+        [Authorize(Policy = "GetbyidEmployee")]
+        [HttpGet("{employeeID}")]
+        public virtual async Task<ActionResult<EmployeeDto>> GetById(int employeeID)
         {
-            var result = await _service.GetByIdAsync(employee_Id, includes);
+            var result = await _service.GetByIdAsync(employeeID);
             if (result == null)
                 return NotFound();
-
             return Ok(result);
         }
 
-        [HttpDelete("{employee_Id}")]
-        public virtual async Task<ActionResult> DeleteAsync(int employee_Id)
+        [Authorize(Policy = "DeleteEmployee")]
+        [HttpDelete("{employeeID}")]
+        public virtual async Task<ActionResult> DeleteAsync(int employeeID)
         {
-            await _service.DeleteAsync(employee_Id);
-
+            await _service.DeleteAsync(employeeID);
             return NoContent();
         }
 
-        [HttpPut("{employee_Id}")]
-        public virtual async Task<ActionResult<EmployeeDto>> UpdateAsync(int employee_Id, [FromBody] EmployeeUpdateDto model)
+        [Authorize(Policy = "PutEmployee")]
+        [HttpPut("{employeeID}")]
+        public virtual async Task<ActionResult<EmployeeDto>> UpdateAsync(int employeeID, [FromBody] EmployeeUpdateDto model)
         {
-            if (model.Employee_Id != employee_Id)
+            if (model.EmployeeID != employeeID)
                 return BadRequest("Key mismatch between route and payload");
             var result = await _service.UpdateAsync(model);
-
             return Accepted(result);
         }
 
+        [Authorize(Policy = "PostEmployee")]
         [HttpPost]
         public virtual async Task<ActionResult<EmployeeDto>> AddAsync([FromBody] EmployeeCreateDto model)
         {
             var result = await _service.AddAsync(model);
-
-            return CreatedAtAction(nameof(GetById), new { Employee_Id = result.Employee_Id }, result);
+            return CreatedAtAction(nameof(GetById), new { EmployeeID = result.EmployeeID }, result);
         }
+
     }
 }

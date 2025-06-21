@@ -16,36 +16,34 @@ namespace MPR.RestApiTemplate.Infrastructure.Repositories
             _dbSet = _dbContext.Set<TEntity>();
         }
 
-        //public virtual async Task<IEnumerable<TEntity>> GetAllAsync() => await _dbSet.ToListAsync();
+        public virtual async Task<IEnumerable<TEntity>> GetAllAsync() => await _dbSet.ToListAsync();
 
-        //public virtual async Task<IEnumerable<TEntity>> GetAllAsync(
-        //    params Expression<Func<TEntity, object>>[] includes)
-        //{
-        //    IQueryable<TEntity> query = _dbSet;
+public virtual async Task<IEnumerable<TEntity>> GetAllAsync(
+    params Expression<Func<TEntity, object>>[] includes)
+{
+    IQueryable<TEntity> query = _dbSet;
 
-        //    foreach (var include in includes)
-        //    {
-        //        query = query.Include(include);
-        //    }
+    foreach (var include in includes)
+    {
+        query = query.Include(include);
+    }
 
-        //    return await query.ToListAsync();
-        //}
+    return await query.ToListAsync();
+}
 
-        //public virtual async Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>>? predicate = null)
-        //    => await _dbSet.Where(predicate).ToListAsync();
+        public virtual async Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate)
+            => await _dbSet.Where(predicate).ToListAsync();
 
         public virtual async Task<IEnumerable<TEntity>> GetAsync(
-            Expression<Func<TEntity, bool>>? predicate = null,
-            Expression<Func<TEntity, object>>[]? includes = null)
+            Expression<Func<TEntity, bool>> predicate,
+            params Expression<Func<TEntity, object>>[] includes)
         {
             IQueryable<TEntity> query = _dbSet;
 
-            if (predicate == null)
-                predicate = e => true; // Default to all entities if no predicate is provided
-
-            if (includes != null && includes.Length > 0)
-                foreach (var include in includes)
-                    query = query.Include(include);
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
 
             return await query.Where(predicate).ToListAsync();
         }
@@ -55,7 +53,7 @@ namespace MPR.RestApiTemplate.Infrastructure.Repositories
 
         public virtual async Task<TEntity?> GetByIdAsync(
             object[] keys,
-            Expression<Func<TEntity, object>>[]? includes = null)
+            params Expression<Func<TEntity, object>>[] includes)
         {
             var entityType = _dbContext.Model.FindEntityType(typeof(TEntity));
             var key = entityType?.FindPrimaryKey();
@@ -82,10 +80,11 @@ namespace MPR.RestApiTemplate.Infrastructure.Repositories
 
             IQueryable<TEntity> query = _dbSet;
 
-            if (includes != null && includes.Length > 0)
-                foreach (var include in includes)
-                    query = query.Include(include);
-            
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
             return await query.FirstOrDefaultAsync(lambda);
         }
 
@@ -101,11 +100,11 @@ namespace MPR.RestApiTemplate.Infrastructure.Repositories
             if (entity != null) _dbSet.Remove(entity);
         }
 
-        //public virtual async Task<int> ExecuteSqlRaw(string sql, params DbParameter[] dbParameters)
-        //    => await _dbContext.Database.ExecuteSqlRawAsync(sql, dbParameters);
+        public virtual async Task<int> ExecuteSqlRaw(string sql, params DbParameter[] dbParameters)
+            => await _dbContext.Database.ExecuteSqlRawAsync(sql, dbParameters);
 
-        //public virtual async Task<IEnumerable<TEntity>> FromSqlRaw(string sql, params DbParameter[] dbParameters)
-        //    => await _dbSet.FromSqlRaw(sql, dbParameters).ToListAsync();
+        public virtual async Task<IEnumerable<TEntity>> FromSqlRaw(string sql, params DbParameter[] dbParameters)
+            => await _dbSet.FromSqlRaw(sql, dbParameters).ToListAsync();
 
         public virtual async Task<int> SaveChangesAsync()
             => await _dbContext.SaveChangesAsync();

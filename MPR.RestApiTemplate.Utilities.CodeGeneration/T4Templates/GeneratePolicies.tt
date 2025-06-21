@@ -1,0 +1,44 @@
+﻿<#@ template language="C#" hostSpecific="true" #>
+<#@ output extension=".generated.json" #>
+<#@ include file="..\T4Includes\ConfigHelper.ttinclude" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+
+<#
+    var config = LoadConfig(Host.TemplateFile);
+    var allPolicies = new Dictionary<string, string>();
+
+    foreach (var entity in config.entities.Keys)
+    {
+        var methods = new[] { "get", "getById", "post", "put", "delete" };
+
+        foreach (var method in methods)
+        {
+            if (GetMethodValue(config.defaults?.generatePolicies, method))
+            {
+                var policy = GetPolicy(entity, method, config);
+                if (!string.IsNullOrWhiteSpace(policy) && !allPolicies.ContainsKey(policy))
+                {
+                    allPolicies[policy] = policy;                    
+                }
+            }
+        }
+    }
+
+    var policyList = allPolicies.ToList();
+#>
+{
+  "Security": {
+    "Policies": {
+<#  for (int i = 0; i < policyList.Count; i++)
+    {
+        var kv = policyList[i];
+#>
+      "<#= kv.Key #>": {
+        "RequiredPermissions": ["<#= kv.Value #>"]
+      }<#= i < policyList.Count - 1 ? "," : "" #>
+<#  } #>
+    }
+  }
+}

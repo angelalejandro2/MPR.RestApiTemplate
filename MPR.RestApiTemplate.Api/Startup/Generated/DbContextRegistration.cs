@@ -26,10 +26,10 @@ namespace MPR.RestApiTemplate.Infrastructure.Context
 
         protected virtual void ConfigureDbContexts()
         {
-            _services.AddDbContext<HrContext>(options =>
-                options.UseOracle(
-                    _configuration.GetConnectionString("HrConnection"),
-                    optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(HrContext).Assembly.FullName)
+            _services.AddDbContext<NorthwindContext>(options =>
+                options.UseSqlServer(
+                    _configuration.GetConnectionString("NorthwindConnection"),
+                    optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(NorthwindContext).Assembly.FullName)
                 )
             );
         }

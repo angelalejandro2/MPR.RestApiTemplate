@@ -15,33 +15,56 @@
     },
     "generatePolicies": {
       "get": true,
+      "getById": true,
       "post": true,
       "put": true,
       "delete": true
+    },
+    "security": {
+      "defaultPolicies": {
+        "get": "ReadData",
+        "getById": "ReadData",
+        "post": "WriteData",
+        "put": "WriteData",
+        "delete": "DeleteData"
+      }
     }
   },
   "entities": {
-    "CUSTWHATEVER": {
-      "name": "Customer",
+    "A00001234": {
+      "dto": "ListOfProductsDto",
+      "createDto": "CreateListOfProductsDto",
+      "updateDto": "UpdateListOfProductsDto",
       "includes": [
+        "Customer",
+        "Items.Product"
       ],
       "mappings": {
+        "Name": "customer_name",
+        "Address": "customer_address",
+        "IsActive": "is_active_flag"
       },
       "generateMethods": {
         "get": true,
-        "getById": false,
-        "post": false,
-        "put": false,
+        "getById": true,
+        "post": true,
+        "put": true,
         "delete": false
       },
       "policies": {
-        "get": "ReadProducts"
+        "get": "ReadCustomer",
+        "post": "CreateCustomer",
+        "put": "UpdateCustomer",
+        "delete": "DeleteCustomer"
       }
     }
   },
   "contexts": {
     "NorthwindDbContext": {
-      "provider": "SqlServer"
+      "provider": "SqlServer",
+      "entities": [
+        "Customer"
+      ]
     }
   }
 }

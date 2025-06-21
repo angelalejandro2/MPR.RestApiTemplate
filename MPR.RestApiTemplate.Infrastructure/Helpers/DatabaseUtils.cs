@@ -47,46 +47,20 @@ namespace MPR.RestApiTemplate.Infrastructure.Helpers
                     Direction = ParameterDirection.Output
                 };
                 command.Parameters.Add(cursor);
-            }
 
-            using var reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                results.Add(map(reader));
-            }
-
-            return results;
-        }
-
-        public static async Task<IEnumerable<TResult>> ExecuteSqlQueryAsync<TResult>(
-           DbContext dbContext,
-           string sqlQuery,
-           Func<DbDataReader, TResult> map,
-           IEnumerable<DbParameterDefinition>? parameters = null)
-        {
-            var conn = dbContext.Database.GetDbConnection();
-            await dbContext.Database.OpenConnectionAsync();
-
-            using var command = conn.CreateCommand();
-            command.CommandText = sqlQuery;
-            command.CommandType = CommandType.Text;
-
-            bool isOracle = IsOracle(dbContext);
-
-            if (parameters != null)
-            {
-                foreach (var paramDef in parameters)
+                using var reader = ((OracleRefCursor)cursor.Value).GetDataReader();
+                while (await reader.ReadAsync())
                 {
-                    command.Parameters.Add(CreateProviderParameter(command, paramDef, isOracle));
+                    results.Add(map(reader));
                 }
             }
-
-            var results = new List<TResult>();
-
-            using var reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
+            else
             {
-                results.Add(map(reader));
+                using var reader = await command.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    results.Add(map(reader));
+                }
             }
 
             return results;
@@ -102,12 +76,13 @@ namespace MPR.RestApiTemplate.Infrastructure.Helpers
             if (def.DbType.HasValue)
                 param.DbType = def.DbType.Value;
 
+            // Opcionalmente podrías agregar más lógica específica si se requiere para Oracle o SQL Server
             return param;
         }
 
         private static bool IsOracle(DbContext dbContext)
         {
-            return dbContext.Database.ProviderName?.ToLower().Contains("oracle", StringComparison.CurrentCultureIgnoreCase) ?? false;
+            return dbContext.Database.ProviderName?.ToLower().Contains("oracle") ?? false;
         }
     }
 }

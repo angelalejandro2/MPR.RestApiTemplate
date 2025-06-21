@@ -1,11 +1,14 @@
 using Asp.Versioning;
-//using Microsoft.AspNetCore.Authentication.Negotiate;
-//using MPR.RestApiTemplate.Api.Middlewares.UserContext.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using MPR.RestApiTemplate.Application.Mappings;
 using MPR.RestApiTemplate.Application.Services;
 using MPR.RestApiTemplate.Domain.Interfaces;
 using MPR.RestApiTemplate.Infrastructure;
 using MPR.RestApiTemplate.Infrastructure.Context;
+using MPR.RestApiTemplate.Security.Authorization;
+using MPR.RestApiTemplate.Security.Factories;
+using MPR.RestApiTemplate.Security.Interfaces;
+using Scalar.AspNetCore;
 
 public partial class Program
 {
@@ -17,17 +20,20 @@ public partial class Program
     }
 
     public static WebApplication ConfigureApp(WebApplicationBuilder builder)
-    {
-        builder.Services.AddHttpContextAccessor();
+    { 
         builder.Services.AddInfrastructureDbContexts(builder.Configuration);
-        //builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme).AddNegotiate();
-        //builder.Services.AddAuthorization();
-
-        //builder.Services.AddUserContext();
 
         //mvc service (set to ignore ReferenceLoopHandling in json serialization like Users[0].Account.Users)
         builder.Services.AddMvc(option => option.EnableEndpointRouting = false)
         .AddNewtonsoftJson(options => { options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore; });
+
+        builder.Configuration
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile("appsettings.generated.json", optional: true, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+            .AddEnvironmentVariables();
+
 
         builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
@@ -50,28 +56,63 @@ public partial class Program
                 options.SubstituteApiVersionInUrl = true;
             });
 
-        builder.Services.AddControllers().AddNewtonsoftJson(options => { options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore; });
+        builder.Services.AddControllers();
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddSingleton<SecurityProviderFactory>();
+        builder.Services.AddScoped(sp => sp.GetRequiredService<SecurityProviderFactory>().CreateProvider());
+        builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        builder.Services.AddAuthorization(options =>
+        {
+            var policies = builder.Configuration.GetSection("Security:Policies").GetChildren();
+            foreach (var policy in policies)
+            {
+                options.AddPolicy(policy.Key, policyBuilder =>
+                {
+                    policyBuilder.Requirements.Add(new PermissionRequirement(policy.Key));
+                });
+            }
+        });
+
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-        builder.Services.AddOpenApiDocument(config => {
-            config.Title = "Rest APi Template";
-            config.Version = "v1";
-        });
+        builder.Services.AddOpenApi();
 
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            app.UseOpenApi();
-            app.UseSwaggerUi();
+            app.MapOpenApi();
+            app.MapScalarApiReference();
         }
 
         app.UseHttpsRedirection();
         app.UseRouting();
-        //app.UseAuthentication();
-       // app.UseAuthorization();
-        //app.UseUserContext();
+        app.Use(async (context, next) =>
+        {
+            var provider = context.RequestServices.GetRequiredService<ISecurityProvider>();
+
+            // Autenticación
+            var authenticated = await provider.AuthenticateAsync(context);
+            if (!authenticated)
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                await context.Response.WriteAsync("Unauthorized");
+                return;
+            }
+
+            // Claims principal
+            var username = context.User?.Identity?.Name;
+            if (!string.IsNullOrWhiteSpace(username))
+            {
+                var principal = await provider.CreateClaimsPrincipalAsync(username);
+                context.User = principal;
+            }
+
+            await next();
+        });
+
+        app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
         {

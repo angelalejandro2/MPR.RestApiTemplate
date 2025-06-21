@@ -6,115 +6,74 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MPR.RestApiTemplate.Domain.Entities;
 
-/// <summary>
-/// employees table. References with departments,
-/// jobs, job_history tables. Contains a self reference.
-/// </summary>
-[Table("EMPLOYEES")]
-[Index("Department_Id", Name = "EMP_DEPARTMENT_IX")]
-[Index("Email", Name = "EMP_EMAIL_UK", IsUnique = true)]
-[Index("Job_Id", Name = "EMP_JOB_IX")]
-[Index("Manager_Id", Name = "EMP_MANAGER_IX")]
-[Index("Last_Name", "First_Name", Name = "EMP_NAME_IX")]
+[Index("LastName", Name = "LastName")]
+[Index("PostalCode", Name = "PostalCode")]
 public partial class Employee
 {
-    /// <summary>
-    /// Primary key of employees table.
-    /// </summary>
     [Key]
-    [Precision(6)]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Employee_Id { get; set; }
+    public int EmployeeID { get; set; }
 
-    /// <summary>
-    /// First name of the employee. A not null column.
-    /// </summary>
     [StringLength(20)]
-    [Unicode(false)]
-    public string? First_Name { get; set; }
+    public string LastName { get; set; } = null!;
 
-    /// <summary>
-    /// Last name of the employee. A not null column.
-    /// </summary>
-    [StringLength(25)]
-    [Unicode(false)]
-    public string Last_Name { get; set; } = null!;
-
-    /// <summary>
-    /// Email id of the employee
-    /// </summary>
-    [StringLength(25)]
-    [Unicode(false)]
-    public string Email { get; set; } = null!;
-
-    /// <summary>
-    /// Phone number of the employee; includes country code and area code
-    /// </summary>
-    [StringLength(20)]
-    [Unicode(false)]
-    public string? Phone_Number { get; set; }
-
-    /// <summary>
-    /// Date when the employee started on this job. A not null column.
-    /// </summary>
-    [Column(TypeName = "DATE")]
-    public DateTime Hire_Date { get; set; }
-
-    /// <summary>
-    /// Current job of the employee; foreign key to job_id column of the
-    /// jobs table. A not null column.
-    /// </summary>
     [StringLength(10)]
-    [Unicode(false)]
-    public string Job_Id { get; set; } = null!;
+    public string FirstName { get; set; } = null!;
 
-    /// <summary>
-    /// Monthly salary of the employee. Must be greater
-    /// than zero (enforced by constraint emp_salary_min)
-    /// </summary>
-    [Column(TypeName = "NUMBER(8,2)")]
-    public decimal? Salary { get; set; }
+    [StringLength(30)]
+    public string? Title { get; set; }
 
-    /// <summary>
-    /// Commission percentage of the employee; Only employees in sales
-    /// department elgible for commission percentage
-    /// </summary>
-    [Column(TypeName = "NUMBER(2,2)")]
-    public decimal? Commission_Pct { get; set; }
+    [StringLength(25)]
+    public string? TitleOfCourtesy { get; set; }
 
-    /// <summary>
-    /// Manager id of the employee; has same domain as manager_id in
-    /// departments table. Foreign key to employee_id column of employees table.
-    /// (useful for reflexive joins and CONNECT BY query)
-    /// </summary>
-    [Precision(6)]
-    public int? Manager_Id { get; set; }
+    [Column(TypeName = "datetime")]
+    public DateTime? BirthDate { get; set; }
 
-    /// <summary>
-    /// Department id where employee works; foreign key to department_id
-    /// column of the departments table
-    /// </summary>
-    [Precision(4)]
-    public int? Department_Id { get; set; }
+    [Column(TypeName = "datetime")]
+    public DateTime? HireDate { get; set; }
 
-    [ForeignKey("Department_Id")]
-    [InverseProperty("Employees")]
-    public virtual Department? Department { get; set; }
+    [StringLength(60)]
+    public string? Address { get; set; }
 
-    [InverseProperty("Manager")]
-    public virtual ICollection<Department> Departments { get; set; } = new List<Department>();
+    [StringLength(15)]
+    public string? City { get; set; }
 
-    [InverseProperty("Manager")]
-    public virtual ICollection<Employee> InverseManager { get; set; } = new List<Employee>();
+    [StringLength(15)]
+    public string? Region { get; set; }
 
-    [ForeignKey("Job_Id")]
-    [InverseProperty("Employees")]
-    public virtual Job Job { get; set; } = null!;
+    [StringLength(10)]
+    public string? PostalCode { get; set; }
+
+    [StringLength(15)]
+    public string? Country { get; set; }
+
+    [StringLength(24)]
+    public string? HomePhone { get; set; }
+
+    [StringLength(4)]
+    public string? Extension { get; set; }
+
+    [Column(TypeName = "image")]
+    public byte[]? Photo { get; set; }
+
+    [Column(TypeName = "ntext")]
+    public string? Notes { get; set; }
+
+    public int? ReportsTo { get; set; }
+
+    [StringLength(255)]
+    public string? PhotoPath { get; set; }
+
+    [InverseProperty("ReportsToNavigation")]
+    public virtual ICollection<Employee> InverseReportsToNavigation { get; set; } = new List<Employee>();
 
     [InverseProperty("Employee")]
-    public virtual ICollection<JobHistory> Job_Histories { get; set; } = new List<JobHistory>();
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
-    [ForeignKey("Manager_Id")]
-    [InverseProperty("InverseManager")]
-    public virtual Employee? Manager { get; set; }
+    [ForeignKey("ReportsTo")]
+    [InverseProperty("InverseReportsToNavigation")]
+    public virtual Employee? ReportsToNavigation { get; set; }
+
+    [ForeignKey("EmployeeID")]
+    [InverseProperty("Employees")]
+    public virtual ICollection<Territory> Territories { get; set; } = new List<Territory>();
 }

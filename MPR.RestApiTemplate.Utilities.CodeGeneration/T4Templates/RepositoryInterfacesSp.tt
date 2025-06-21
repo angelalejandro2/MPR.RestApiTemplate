@@ -12,7 +12,7 @@ string GenerateRepositoryInterface(string className)
 	StringBuilder sb = new StringBuilder();
     sb.AppendLine("namespace MPR.RestApiTemplate.Domain.Interfaces.Repositories");
     sb.AppendLine("{");
-    sb.AppendLine($"    public partial interface I{className}SqlExecutor : ISqlExecutor");
+    sb.AppendLine($"    public partial interface I{className}SpRepository : IStoredProcedureRepository");
     sb.AppendLine("    {");
     sb.AppendLine("    }");
     sb.AppendLine("}");
@@ -44,7 +44,7 @@ foreach (var file in files)
     string interfaceContent = GenerateRepositoryInterface(className);
     
     // Nombre del archivo de salida
-    string outputFileName = $"I{className}SqlExecutor.cs";
+    string outputFileName = $"I{className}SpRepository.cs";
     string outputFilePath = Path.Combine(outputPath, outputFileName);
     
     // Verificar si el archivo ya existe antes de escribirlo

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>MPR.RestApiTemplate</PackageId> <!-- Cambia esto por el nombre que quieras publicar -->
-    <Version>1.0.4</Version>
+    <Version>1.0.2</Version>
     <Authors>Mapfre PR</Authors>
     <Description>Plantilla para APIs REST</Description>
     <PackageType>Template</PackageType>
@@ -14,7 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include=".dockerignore" Pack="true" PackagePath="content\.dockerignore" />
     <None Include="**\*" Exclude="Template.csproj;**\.vs\**;**\bin\**;**\obj\**" Pack="true" PackagePath="content\" />
   </ItemGroup>
 </Project>

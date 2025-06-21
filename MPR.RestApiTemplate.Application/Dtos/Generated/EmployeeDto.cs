@@ -2,28 +2,32 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MPR.RestApiTemplate.Application.Dtos
+namespace MPR.RestApiTemplate.Application.DTOs
 {
     public class EmployeeDto
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Employee_Id { get; set; }
-        public string? First_Name { get; set; }
-        public string Last_Name { get; set; }
-        public string Email { get; set; }
-        public string? Phone_Number { get; set; }
-        public DateTime Hire_Date { get; set; }
-        public string Job_Id { get; set; }
-        public decimal? Salary { get; set; }
-        public decimal? Commission_Pct { get; set; }
-        public int? Manager_Id { get; set; }
-        public int? Department_Id { get; set; }
-        public DepartmentDto Department { get; set; }
-        public ICollection<DepartmentDto> Departments { get; set; }
-        public ICollection<EmployeeDto> InverseManager { get; set; }
-        public JobDto Job { get; set; }
-        public ICollection<JobHistoryDto> Job_Histories { get; set; }
-        public EmployeeDto Manager { get; set; }
+        public int EmployeeID { get; set; }
+        public string LastName { get; set; }
+        public string FirstName { get; set; }
+        public string? Title { get; set; }
+        public string? TitleOfCourtesy { get; set; }
+        public DateTime? BirthDate { get; set; }
+        public DateTime? HireDate { get; set; }
+        public string? Address { get; set; }
+        public string? City { get; set; }
+        public string? Region { get; set; }
+        public string? PostalCode { get; set; }
+        public string? Country { get; set; }
+        public string? HomePhone { get; set; }
+        public string? Extension { get; set; }
+        public byte[]? Photo { get; set; }
+        public string? Notes { get; set; }
+        public int? ReportsTo { get; set; }
+        public string? PhotoPath { get; set; }
+        public ICollection<EmployeeDto> InverseReportsToNavigation { get; set; }
+        public ICollection<OrderDto> Orders { get; set; }
+        public EmployeeDto ReportsToNavigation { get; set; }
+        public ICollection<TerritoryDto> Territories { get; set; }
     }
 }

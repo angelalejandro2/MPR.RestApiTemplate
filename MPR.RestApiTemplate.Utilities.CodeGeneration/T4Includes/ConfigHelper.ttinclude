@@ -24,17 +24,24 @@
         }
     }
 
+    public class SecurityConfig
+    {
+        public Dictionary<string, string> defaultPolicies { get; set; }
+    }
+
     public class DefaultsConfig
     {
         public MethodsConfig? generateMethods { get; set; }
         public MethodsConfig? requireKeysFor { get; set; }
         public MethodsConfig? generatePolicies { get; set; }
+        public SecurityConfig? security { get; set; }
 
         public DefaultsConfig()
         {
             generateMethods = new MethodsConfig();
             requireKeysFor = new MethodsConfig();
             generatePolicies = new MethodsConfig();
+            security = new SecurityConfig();
         }
     }
 
@@ -108,10 +115,10 @@
     public CodeGenConfig LoadConfig(string hostTemplateFile)
     {
         var config = new CodeGenConfig();
-        
+    
         // Buscar el archivo JSON
         string jsonPath = Path.Combine(Path.GetDirectoryName(hostTemplateFile), "mpr.codegen.json");
-        
+    
         // Verificar si el archivo existe
         if (!File.Exists(jsonPath))
         {
@@ -121,19 +128,40 @@
 
         try
         {
-            // Leer el contenido del archivo JSON
             string jsonContent = File.ReadAllText(jsonPath);
             System.Diagnostics.Debug.WriteLine($"JSON content loaded: {jsonContent.Substring(0, Math.Min(100, jsonContent.Length))}...");
-            
-            // Obtener manualmente la configuración para AlphabeticalListOfProducts
+
+            // parsear defaults.security.defaultPolicies manualmente
+            if (jsonContent.Contains("\"defaultPolicies\""))
+            {
+                var defaultPolicies = new Dictionary<string, string>();
+                string section = ExtractJsonSection(jsonContent, "\"defaultPolicies\"");
+                if (!string.IsNullOrEmpty(section))
+                {
+                    var matches = Regex.Matches(section, "\"([^\"]+)\"\\s*:\\s*\"([^\"]+)\"");
+                    foreach (Match match in matches)
+                    {
+                        defaultPolicies[match.Groups[1].Value] = match.Groups[2].Value;
+                    }
+
+                    if (config.defaults == null)
+                        config.defaults = new DefaultsConfig();
+
+                    if (config.defaults.security == null)
+                        config.defaults.security = new SecurityConfig();
+
+                    config.defaults.security.defaultPolicies = defaultPolicies;
+                    System.Diagnostics.Debug.WriteLine($"🔹 Cargadas {defaultPolicies.Count} defaultPolicies desde JSON.");
+                }
+            }
+
             if (jsonContent.Contains("\"AlphabeticalListOfProducts\""))
             {
                 if (config.entities == null)
                     config.entities = new Dictionary<string, EntityConfig>();
-                
+            
                 var entityConfig = new EntityConfig();
-                
-                // Extraer valores usando índices
+
                 int dtoIndex = jsonContent.IndexOf("\"dto\":", jsonContent.IndexOf("\"AlphabeticalListOfProducts\""));
                 if (dtoIndex > 0)
                 {
@@ -141,7 +169,7 @@
                     int endQuote = jsonContent.IndexOf("\"", startQuote + 1);
                     entityConfig.dto = jsonContent.Substring(startQuote + 1, endQuote - startQuote - 1);
                 }
-                
+
                 int createDtoIndex = jsonContent.IndexOf("\"createDto\":", jsonContent.IndexOf("\"AlphabeticalListOfProducts\""));
                 if (createDtoIndex > 0)
                 {
@@ -149,7 +177,7 @@
                     int endQuote = jsonContent.IndexOf("\"", startQuote + 1);
                     entityConfig.createDto = jsonContent.Substring(startQuote + 1, endQuote - startQuote - 1);
                 }
-                
+
                 int updateDtoIndex = jsonContent.IndexOf("\"updateDto\":", jsonContent.IndexOf("\"AlphabeticalListOfProducts\""));
                 if (updateDtoIndex > 0)
                 {
@@ -157,10 +185,10 @@
                     int endQuote = jsonContent.IndexOf("\"", startQuote + 1);
                     entityConfig.updateDto = jsonContent.Substring(startQuote + 1, endQuote - startQuote - 1);
                 }
-                
+
                 config.entities["AlphabeticalListOfProducts"] = entityConfig;
             }
-            
+
             DebugConfig(config);
             return config;
         }
@@ -170,6 +198,7 @@
             return config;
         }
     }
+
 
     // Métodos de ayuda para acceder a la configuración
     public string GetDtoName(string entityName, CodeGenConfig config)
@@ -265,42 +294,87 @@
                 return false;
         }
     }
-    
+
     public string GetPolicy(string entityName, string methodName, CodeGenConfig config)
     {
-        if (config != null && config.entities != null && config.entities.TryGetValue(entityName, out var entityConfig) &&
-            entityConfig.policies != null && entityConfig.policies.TryGetValue(methodName.ToLower(), out var policy))
+        methodName = methodName.ToLowerInvariant();
+
+        // 🟢 1. Política específica por entidad
+        if (config?.entities != null &&
+            config.entities.TryGetValue(entityName, out var entityConfig) &&
+            entityConfig.policies != null &&
+            entityConfig.policies.TryGetValue(methodName, out var specificPolicy))
         {
-            return policy;
+            System.Diagnostics.Debug.WriteLine($"🔹 Usando política específica '{specificPolicy}' para '{entityName}.{methodName}'");
+            return specificPolicy;
         }
-        
-        // Si debe generar políticas según la configuración por defecto y no hay una política específica
-        if (config != null && config.defaults?.generatePolicies != null && 
+
+        // 🟢 2. ¿Está habilitada la generación de políticas?
+        if (config?.defaults?.generatePolicies != null &&
             GetMethodValue(config.defaults.generatePolicies, methodName))
         {
-            return $"{char.ToUpper(methodName[0])}{methodName.Substring(1)}{entityName}";
+            // 🟢 2a. Usar política por defecto si existe
+            if (config.defaults.security?.defaultPolicies != null &&
+                config.defaults.security.defaultPolicies.TryGetValue(methodName, out var defaultPolicy))
+            {
+                System.Diagnostics.Debug.WriteLine($"🔸 Usando política por defecto '{defaultPolicy}' para método '{methodName}'");
+                return defaultPolicy;
+            }
+
+            // 🟡 2b. Fallback dinámico: si no hay política por defecto
+            var dynamicPolicy = $"{char.ToUpper(methodName[0])}{methodName.Substring(1)}{entityName}";
+            System.Diagnostics.Debug.WriteLine($"⚠️ Usando política dinámica '{dynamicPolicy}' para '{entityName}.{methodName}'");
+            return dynamicPolicy;
         }
-        
+
+        // ⚫ 3. Política no requerida
+        System.Diagnostics.Debug.WriteLine($"⚫ No se requiere política para '{entityName}.{methodName}'");
         return string.Empty;
     }
+
+
     
     // Obtener el valor de un método desde MethodsConfig
     private bool GetMethodValue(MethodsConfig methodsConfig, string methodName)
     {
-        switch (methodName.ToLower())
+        if (methodsConfig == null)
+            return false;
+
+        methodName = methodName.ToLowerInvariant();
+
+        return methodName switch
         {
-            case "get":
-                return methodsConfig.get;
-            case "getbyid":
-                return methodsConfig.getById;
-            case "post":
-                return methodsConfig.post;
-            case "put":
-                return methodsConfig.put;
-            case "delete":
-                return methodsConfig.delete;
-            default:
-                return false;
-        }
+            "get" => methodsConfig.get,
+            "getbyid" => methodsConfig.getById,
+            "post" => methodsConfig.post,
+            "put" => methodsConfig.put,
+            "delete" => methodsConfig.delete,
+            _ => false
+        };
     }
+
+    private string ExtractJsonSection(string json, string sectionKey)
+    {
+        int startIndex = json.IndexOf(sectionKey);
+        if (startIndex < 0) return null;
+
+        int openBrace = json.IndexOf('{', startIndex);
+        if (openBrace < 0) return null;
+
+        int depth = 1;
+        int endIndex = openBrace + 1;
+
+        while (endIndex < json.Length && depth > 0)
+        {
+            if (json[endIndex] == '{') depth++;
+            else if (json[endIndex] == '}') depth--;
+            endIndex++;
+        }
+
+        if (depth != 0) return null;
+
+        return json.Substring(openBrace, endIndex - openBrace);
+    }
+
+
 #>
