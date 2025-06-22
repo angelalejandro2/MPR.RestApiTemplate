@@ -3,9 +3,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
-using MPR.RestApiTemplate.Security.Configuration;
+using MPR.RestApiTemplate.Api.Security.Configuration;
 
-namespace MPR.RestApiTemplate.Security.Authorization;
+namespace MPR.RestApiTemplate.Api.Security.Authorization;
 
 public class PermissionAuthorizationHandler(IOptions<SecurityConfiguration> securityOptions)
     : AuthorizationHandler<PermissionRequirement>
@@ -22,9 +22,9 @@ public class PermissionAuthorizationHandler(IOptions<SecurityConfiguration> secu
             return Task.CompletedTask;
         }
 
-        // Get user's permission claims
+        // Get user's permission claims from JWT token
         var userPermissions = context.User.Claims
-            .Where(c => c.Type == "permission")
+            .Where(c => c.Type == "permissions" || c.Type == "permission")
             .Select(c => c.Value)
             .ToList();
 

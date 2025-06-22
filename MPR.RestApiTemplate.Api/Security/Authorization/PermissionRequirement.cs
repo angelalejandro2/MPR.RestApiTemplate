@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace MPR.RestApiTemplate.Security.Authorization;
+namespace MPR.RestApiTemplate.Api.Security.Authorization;
 
 public class PermissionRequirement(string policyName) : IAuthorizationRequirement
 {

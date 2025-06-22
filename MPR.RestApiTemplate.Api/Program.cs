@@ -4,7 +4,7 @@ using MPR.RestApiTemplate.Application.Services;
 using MPR.RestApiTemplate.Domain.Interfaces;
 using MPR.RestApiTemplate.Infrastructure;
 using MPR.RestApiTemplate.Infrastructure.Context;
-using MPR.RestApiTemplate.Security.Extensions;
+using MPR.RestApiTemplate.Api.Security.Extensions;
 using Scalar.AspNetCore;
 
 public partial class Program
@@ -21,16 +21,8 @@ public partial class Program
         builder.Services.AddInfrastructureDbContexts(builder.Configuration);
 
         //mvc service (set to ignore ReferenceLoopHandling in json serialization like Users[0].Account.Users)
-        builder.Services.AddMvc(option => option.EnableEndpointRouting = false)
+        builder.Services.AddControllers()
         .AddNewtonsoftJson(options => { options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore; });
-
-        builder.Configuration
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile("appsettings.generated.json", optional: true, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
-            .AddEnvironmentVariables();
-
 
         builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
@@ -53,8 +45,7 @@ public partial class Program
                 options.SubstituteApiVersionInUrl = true;
             });
 
-        builder.Services.AddControllers();
-        builder.Services.AddSecurityServices(builder.Configuration);
+        builder.Services.AddJwtSecurity(builder.Configuration);
         
         // Configure authorization policies
         builder.Services.AddAuthorization(options =>
@@ -64,7 +55,7 @@ public partial class Program
             {
                 options.AddPolicy(policy.Key, policyBuilder =>
                 {
-                    policyBuilder.Requirements.Add(new MPR.RestApiTemplate.Security.Authorization.PermissionRequirement(policy.Key));
+                    policyBuilder.Requirements.Add(new MPR.RestApiTemplate.Api.Security.Authorization.PermissionRequirement(policy.Key));
                 });
             }
         });
@@ -84,22 +75,13 @@ public partial class Program
 
         app.UseHttpsRedirection();
         app.UseRouting();
-        app.UseSecurityMiddleware();
-
+        
+        app.UseAuthentication();
         app.UseAuthorization();
 
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapGet("/", async http =>
-            {
-                http.Response.Redirect("api/info/html", true);
-            });
-            endpoints.MapGet("/api", async http =>
-            {
-                http.Response.Redirect("api/info/html", true);
-            });
-        });
-
+        // Route mappings
+        app.MapGet("/", () => Results.Redirect("api/info/html", true));
+        app.MapGet("/api", () => Results.Redirect("api/info/html", true));
         app.MapControllers();
 
         return app;

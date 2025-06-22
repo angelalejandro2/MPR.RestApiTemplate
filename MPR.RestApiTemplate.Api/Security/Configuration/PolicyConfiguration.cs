@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace MPR.RestApiTemplate.Security.Configuration;
+namespace MPR.RestApiTemplate.Api.Security.Configuration;
 
 public class PolicyConfiguration
 {
