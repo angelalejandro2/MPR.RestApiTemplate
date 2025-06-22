@@ -41,11 +41,8 @@
         sb.AppendLine();
 
         // GET
-        var getPolicy = GetPolicy(className, "get", config);
-        if (!string.IsNullOrWhiteSpace(getPolicy))
-        {
-            sb.AppendLine($"        [Authorize(Policy = \"{getPolicy}\")]");
-        }
+        sb.AppendLine("        [Authorize(Policy = \"canRead\")]");
+        sb.AppendLine("        [Authorize(Policy = \"isAdmin\")]");
         sb.AppendLine("        [HttpGet]");
         sb.AppendLine($"        public virtual async Task<ActionResult<IEnumerable<{dtoName}>>> GetAllAsync()");
         sb.AppendLine("        {");
@@ -62,11 +59,8 @@
             string keyObject = string.Join(", ", keyProps.Select(p => $"{p.Name} = result.{p.Name}"));
 
             // GET BY ID
-            var getByIdPolicy = GetPolicy(className, "getById", config);
-            if (!string.IsNullOrWhiteSpace(getByIdPolicy))
-            {
-                sb.AppendLine($"        [Authorize(Policy = \"{getByIdPolicy}\")]");
-            }
+            sb.AppendLine("        [Authorize(Policy = \"canRead\")]");
+            sb.AppendLine("        [Authorize(Policy = \"isAdmin\")]");
             sb.AppendLine($"        [HttpGet(\"{routeParams}\")]");
             sb.AppendLine($"        public virtual async Task<ActionResult<{dtoName}>> GetById({methodParams})");
             sb.AppendLine("        {");
@@ -78,11 +72,8 @@
             sb.AppendLine();
 
             // DELETE
-            var deletePolicy = GetPolicy(className, "delete", config);
-            if (!string.IsNullOrWhiteSpace(deletePolicy))
-            {
-                sb.AppendLine($"        [Authorize(Policy = \"{deletePolicy}\")]");
-            }
+            sb.AppendLine("        [Authorize(Policy = \"canDelete\")]");
+            sb.AppendLine("        [Authorize(Policy = \"isAdmin\")]");
             sb.AppendLine($"        [HttpDelete(\"{routeParams}\")]");
             sb.AppendLine($"        public virtual async Task<ActionResult> DeleteAsync({methodParams})");
             sb.AppendLine("        {");
@@ -92,11 +83,8 @@
             sb.AppendLine();
 
             // PUT
-            var putPolicy = GetPolicy(className, "put", config);
-            if (!string.IsNullOrWhiteSpace(putPolicy))
-            {
-                sb.AppendLine($"        [Authorize(Policy = \"{putPolicy}\")]");
-            }
+            sb.AppendLine("        [Authorize(Policy = \"canUpdate\")]");
+            sb.AppendLine("        [Authorize(Policy = \"isAdmin\")]");
             sb.AppendLine($"        [HttpPut(\"{routeParams}\")]");
             sb.AppendLine($"        public virtual async Task<ActionResult<{dtoName}>> UpdateAsync({methodParams}, [FromBody] {updateDto} model)");
             sb.AppendLine("        {");
@@ -112,11 +100,8 @@
             sb.AppendLine();
 
             // POST
-            var postPolicy = GetPolicy(className, "post", config);
-            if (!string.IsNullOrWhiteSpace(postPolicy))
-            {
-                sb.AppendLine($"        [Authorize(Policy = \"{postPolicy}\")]");
-            }
+            sb.AppendLine("        [Authorize(Policy = \"canCreate\")]");
+            sb.AppendLine("        [Authorize(Policy = \"isAdmin\")]");
             sb.AppendLine("        [HttpPost]");
             sb.AppendLine($"        public virtual async Task<ActionResult<{dtoName}>> AddAsync([FromBody] {createDto} model)");
             sb.AppendLine("        {");
