@@ -45,5 +45,19 @@ namespace MPR.RestApiTemplate.Security.Tests.Common
 
             return mock.Object;
         }
+
+        protected IHttpContextAccessor MockHttpContextWithBasicAuth(string username, string applicationId)
+        {
+            var context = new DefaultHttpContext();
+            var credentials = $"{username}:{applicationId}";
+            var encodedCredentials = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(credentials));
+            
+            context.Request.Headers["Authorization"] = $"Basic {encodedCredentials}";
+
+            var mock = new Mock<IHttpContextAccessor>();
+            mock.Setup(m => m.HttpContext).Returns(context);
+
+            return mock.Object;
+        }
     }
 }

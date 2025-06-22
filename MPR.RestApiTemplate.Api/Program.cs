@@ -1,13 +1,10 @@
 using Asp.Versioning;
-using Microsoft.AspNetCore.Authorization;
 using MPR.RestApiTemplate.Application.Mappings;
 using MPR.RestApiTemplate.Application.Services;
 using MPR.RestApiTemplate.Domain.Interfaces;
 using MPR.RestApiTemplate.Infrastructure;
 using MPR.RestApiTemplate.Infrastructure.Context;
-using MPR.RestApiTemplate.Security.Authorization;
-using MPR.RestApiTemplate.Security.Factories;
-using MPR.RestApiTemplate.Security.Interfaces;
+using MPR.RestApiTemplate.Security.Extensions;
 using Scalar.AspNetCore;
 
 public partial class Program
@@ -57,10 +54,9 @@ public partial class Program
             });
 
         builder.Services.AddControllers();
-        builder.Services.AddHttpContextAccessor();
-        builder.Services.AddSingleton<SecurityProviderFactory>();
-        builder.Services.AddScoped(sp => sp.GetRequiredService<SecurityProviderFactory>().CreateProvider());
-        builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        builder.Services.AddSecurityServices(builder.Configuration);
+        
+        // Configure authorization policies
         builder.Services.AddAuthorization(options =>
         {
             var policies = builder.Configuration.GetSection("Security:Policies").GetChildren();
@@ -68,7 +64,7 @@ public partial class Program
             {
                 options.AddPolicy(policy.Key, policyBuilder =>
                 {
-                    policyBuilder.Requirements.Add(new PermissionRequirement(policy.Key));
+                    policyBuilder.Requirements.Add(new MPR.RestApiTemplate.Security.Authorization.PermissionRequirement(policy.Key));
                 });
             }
         });
@@ -88,29 +84,7 @@ public partial class Program
 
         app.UseHttpsRedirection();
         app.UseRouting();
-        app.Use(async (context, next) =>
-        {
-            var provider = context.RequestServices.GetRequiredService<ISecurityProvider>();
-
-            // Autenticación
-            var authenticated = await provider.AuthenticateAsync(context);
-            if (!authenticated)
-            {
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                await context.Response.WriteAsync("Unauthorized");
-                return;
-            }
-
-            // Claims principal
-            var username = context.User?.Identity?.Name;
-            if (!string.IsNullOrWhiteSpace(username))
-            {
-                var principal = await provider.CreateClaimsPrincipalAsync(username);
-                context.User = principal;
-            }
-
-            await next();
-        });
+        app.UseSecurityMiddleware();
 
         app.UseAuthorization();
 

@@ -1,6 +1,7 @@
 ﻿using MapfreUserSecurityLibrary.Implementation;
 using Microsoft.AspNetCore.Http;
 using Moq;
+using MPR.RestApiTemplate.Security.Providers;
 using MPR.RestApiTemplate.Security.Tests.Common;
 using System.Configuration;
 using System.Security.Claims;
@@ -25,9 +26,8 @@ public class MapfreSecurityProviderTests : TestBase
     [Fact]
     public async Task CreateClaimsPrincipal_ReturnsPrincipal_WhenUserIsValid()
     {
-            //"data source=RSSMPRT.MAPFREPRDOM.COM;user id=ExtranetPortal;password=extranetportal;persist security info=false;Pooling=true;Connection Lifetime=72000;Max Pool Size=100;Min Pool Size=0;";
-        var accessor = MockHttpContextWithUser(@"MAPFRE\fpereira");
         var config = GetTestConfiguration();
+        var accessor = MockHttpContextWithBasicAuth("fpereira", config["Security:MapfreSecurity:ApplicationId"]);
 
         var provider = new MapfreSecurityProvider(accessor, config);
 
@@ -49,15 +49,15 @@ public class MapfreSecurityProviderTests : TestBase
     [Fact]
     public async Task AuthenticateAsync_ReturnsTrue_WhenUserIsAuthenticated()
     {
-        var context = new DefaultHttpContext
-        {
-            User = new ClaimsPrincipal(new ClaimsIdentity("Windows"))
-        };
+        var config = GetTestConfiguration();
+        var context = new DefaultHttpContext();
+        var credentials = $"fpereira:{config["Security:MapfreSecurity:ApplicationId"]}";
+        var encodedCredentials = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(credentials));
+        context.Request.Headers["Authorization"] = $"Basic {encodedCredentials}";
 
         var accessor = new Mock<IHttpContextAccessor>();
         accessor.Setup(x => x.HttpContext).Returns(context);
 
-        var config = GetTestConfiguration();
         var provider = new MapfreSecurityProvider(accessor.Object, config);
 
         var result = await provider.AuthenticateAsync(context);
@@ -81,18 +81,11 @@ public class MapfreSecurityProviderTests : TestBase
     [Fact]
     public async Task GetUserPermissionsAsync_ReturnsEmpty_WhenUserIsInvalid()
     {
-        var context = new DefaultHttpContext
-        {
-            User = new ClaimsPrincipal(new ClaimsIdentity("Windows"))
-        };
-
-        var accessor = new Mock<IHttpContextAccessor>();
-        accessor.Setup(x => x.HttpContext).Returns(context);
-
         var config = GetTestConfiguration();
-        var provider = new MapfreSecurityProvider(accessor.Object, config);
+        var accessor = MockHttpContextWithBasicAuth("fpereira", config["Security:MapfreSecurity:ApplicationId"]);
 
-        _ = await provider.AuthenticateAsync(context);
+        var provider = new MapfreSecurityProvider(accessor, config);
+
         var result = await provider.GetUserPermissionsAsync("fpereira");
 
         Assert.NotEmpty(result);
@@ -117,8 +110,7 @@ public class MapfreSecurityProviderTests : TestBase
     public async Task AuthorizeAsync_ReturnsTrue_WhenPermissionMatches()
     {
         var config = GetTestConfiguration();
-
-        var accessor = MockHttpContextWithUser(@"MAPFRE\fpereira");
+        var accessor = MockHttpContextWithBasicAuth("fpereira", config["Security:MapfreSecurity:ApplicationId"]);
 
         var provider = new MapfreSecurityProvider(accessor, config);
 

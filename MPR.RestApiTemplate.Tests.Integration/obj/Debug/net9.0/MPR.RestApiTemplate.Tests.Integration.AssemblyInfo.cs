@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MPR.RestApiTemplate.Tests.Integration")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ba6f6ebc2a0e8f7cea6c429910463ed4aebce411")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9bcc9594ea9b3ded6a61f861e2d964d5f758f4f6")]
 [assembly: System.Reflection.AssemblyProductAttribute("MPR.RestApiTemplate.Tests.Integration")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MPR.RestApiTemplate.Tests.Integration")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
