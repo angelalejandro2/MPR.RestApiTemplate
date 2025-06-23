@@ -8,33 +8,14 @@ public static class ApplicationServiceRegistration
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        services.AddScoped<Alphabetical_list_of_productService>();
-        services.AddScoped<CategoryService>();
-        services.AddScoped<Category_Sales_for_1997Service>();
-        services.AddScoped<Current_Product_ListService>();
-        services.AddScoped<CustomerDemographicService>();
-        services.AddScoped<CustomerService>();
-        services.AddScoped<Customer_and_Suppliers_by_CityService>();
+        services.AddScoped<CountryService>();
+        services.AddScoped<DepartmentService>();
+        services.AddScoped<EmpDetailsViewService>();
         services.AddScoped<EmployeeService>();
-        services.AddScoped<InvoiceService>();
-        services.AddScoped<OrderService>();
-        services.AddScoped<Orders_QryService>();
-        services.AddScoped<Order_DetailService>();
-        services.AddScoped<Order_Details_ExtendedService>();
-        services.AddScoped<Order_SubtotalService>();
-        services.AddScoped<ProductService>();
-        services.AddScoped<Products_Above_Average_PriceService>();
-        services.AddScoped<Products_by_CategoryService>();
-        services.AddScoped<Product_Sales_for_1997Service>();
-        services.AddScoped<Quarterly_OrderService>();
+        services.AddScoped<JobHistoryService>();
+        services.AddScoped<JobService>();
+        services.AddScoped<LocationService>();
         services.AddScoped<RegionService>();
-        services.AddScoped<Sales_by_CategoryService>();
-        services.AddScoped<Sales_Totals_by_AmountService>();
-        services.AddScoped<ShipperService>();
-        services.AddScoped<Summary_of_Sales_by_QuarterService>();
-        services.AddScoped<Summary_of_Sales_by_YearService>();
-        services.AddScoped<SupplierService>();
-        services.AddScoped<TerritoryService>();
         return services;
     }
 }

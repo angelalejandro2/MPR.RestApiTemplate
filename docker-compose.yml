@@ -1,0 +1,12 @@
+services:
+  mpr.restapitemplate.api:
+    image: ${DOCKER_REGISTRY-}mpr.restapitemplate
+    build:
+      context: .
+      dockerfile: MPR.RestApiTemplate.Api/Dockerfile
+    networks:
+      - api-backend-network
+
+networks:
+  api-backend-network:
+    external: true  

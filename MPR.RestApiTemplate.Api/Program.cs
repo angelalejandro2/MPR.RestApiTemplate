@@ -1,11 +1,10 @@
 using Asp.Versioning;
+using MPR.RestApiTemplate.Api.Security.Extensions;
 using MPR.RestApiTemplate.Application.Mappings;
 using MPR.RestApiTemplate.Application.Services;
 using MPR.RestApiTemplate.Domain.Interfaces;
 using MPR.RestApiTemplate.Infrastructure;
 using MPR.RestApiTemplate.Infrastructure.Context;
-using MPR.RestApiTemplate.Api.Security.Extensions;
-using Scalar.AspNetCore;
 
 public partial class Program
 {
@@ -17,7 +16,7 @@ public partial class Program
     }
 
     public static WebApplication ConfigureApp(WebApplicationBuilder builder)
-    { 
+    {
         builder.Services.AddInfrastructureDbContexts(builder.Configuration);
 
         //mvc service (set to ignore ReferenceLoopHandling in json serialization like Users[0].Account.Users)
@@ -46,7 +45,7 @@ public partial class Program
             });
 
         builder.Services.AddJwtSecurity(builder.Configuration);
-        
+
         // Configure authorization policies
         builder.Services.AddAuthorization(options =>
         {
@@ -62,20 +61,23 @@ public partial class Program
 
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-        builder.Services.AddOpenApi();
+        builder.Services.AddOpenApiDocument(config => {
+            config.Title = "Rest APi Template";
+            config.Version = "v1";
+        });
 
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            app.MapOpenApi();
-            app.MapScalarApiReference();
+            app.UseOpenApi();
+            app.UseSwaggerUi();
         }
 
         app.UseHttpsRedirection();
         app.UseRouting();
-        
+
         app.UseAuthentication();
         app.UseAuthorization();
 
@@ -86,5 +88,4 @@ public partial class Program
 
         return app;
     }
-
 }

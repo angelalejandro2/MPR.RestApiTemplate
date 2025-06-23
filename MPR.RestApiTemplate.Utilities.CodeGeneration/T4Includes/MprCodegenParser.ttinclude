@@ -1,0 +1,404 @@
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+
+<#+
+    #nullable enable
+    
+    /// <summary>
+    /// Clase principal para cargar y analizar el archivo mpr.codegen.json
+    /// </summary>
+    public class MprCodegenParser
+    {
+        private string _configPath = string.Empty;
+        private Dictionary<string, object> _jsonData = new Dictionary<string, object>();
+        private bool _isConfigValid = false;
+        
+        /// <summary>
+        /// Constructor que acepta la ruta del archivo JSON
+        /// </summary>
+        public MprCodegenParser(string configPath)
+        {
+            _configPath = configPath;
+            LoadConfig();
+        }
+        
+        /// <summary>
+        /// Constructor que infiere la ruta del archivo JSON desde el template host
+        /// </summary>
+        public MprCodegenParser(string hostTemplateFile, string configFileName = "mpr.codegen.json")
+        {
+            try 
+            {
+                string templateDir = Path.GetDirectoryName(hostTemplateFile) ?? string.Empty;
+                System.Diagnostics.Debug.WriteLine($"Directorio de la plantilla: {templateDir}");
+                
+                // Intentar encontrar el archivo mpr.codegen.json en diferentes ubicaciones
+                string[] possiblePaths = new string[] {
+                    Path.Combine(templateDir, configFileName),                                // en el mismo directorio
+                    Path.Combine(templateDir, "..", configFileName),                          // un nivel arriba
+                    Path.Combine(templateDir, "..", "..", configFileName),                    // dos niveles arriba
+                    Path.Combine(templateDir, "..", "..", "..", configFileName),              // tres niveles arriba
+                    Path.GetFullPath(Path.Combine(templateDir, "..", "..", configFileName))   // ruta absoluta dos niveles arriba
+                };
+                
+                foreach (string path in possiblePaths)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Verificando ruta: {path}");
+                    if (File.Exists(path))
+                    {
+                        _configPath = path;
+                        System.Diagnostics.Debug.WriteLine($"¡Archivo encontrado en: {_configPath}!");
+                        break;
+                    }
+                }
+                
+                if (string.IsNullOrEmpty(_configPath))
+                {
+                    _configPath = Path.Combine(templateDir, configFileName); // Usar la ruta original como fallback
+                    System.Diagnostics.Debug.WriteLine($"No se encontró el archivo en ninguna ubicación, usando ruta predeterminada: {_configPath}");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al construir la ruta del archivo de configuración: {ex.Message}");
+                _configPath = Path.Combine(Path.GetDirectoryName(hostTemplateFile) ?? string.Empty, configFileName);
+            }
+            
+            LoadConfig();
+        }
+        
+        /// <summary>
+        /// Carga el archivo de configuración JSON
+        /// </summary>
+        private void LoadConfig()
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"Intentando cargar configuración desde: {_configPath}");
+                
+                if (!File.Exists(_configPath))
+                {
+                    System.Diagnostics.Debug.WriteLine($"ADVERTENCIA: Archivo de configuración no encontrado: {_configPath}");
+                    // Intentar buscar el archivo en un nivel superior
+                    var parentDir = Directory.GetParent(_configPath);
+                    var parentParentPath = parentDir?.Parent?.FullName ?? string.Empty;
+                    string altPath = Path.Combine(parentParentPath, "mpr.codegen.json");
+                    System.Diagnostics.Debug.WriteLine($"Intentando ruta alternativa: {altPath}");
+                    
+                    if (File.Exists(altPath))
+                    {
+                        _configPath = altPath;
+                        System.Diagnostics.Debug.WriteLine($"Archivo de configuración encontrado en ruta alternativa: {_configPath}");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"ERROR: Archivo de configuración no encontrado en ruta alternativa");
+                        _jsonData = new Dictionary<string, object>();
+                        return;
+                    }
+                }
+                
+                string jsonContent = File.ReadAllText(_configPath);
+                System.Diagnostics.Debug.WriteLine($"Contenido JSON cargado, longitud: {jsonContent.Length} caracteres");
+                
+                // Usando un analizador JSON simplificado para evitar dependencias externas
+                _jsonData = ParseJson(jsonContent);
+                _isConfigValid = true;
+                System.Diagnostics.Debug.WriteLine($"Configuración cargada exitosamente desde: {_configPath}");
+                
+                // Imprime algunas claves para depuración
+                if (_jsonData.TryGetValue("entities", out object? debugEntitiesObj) && 
+                    debugEntitiesObj is Dictionary<string, object> debugEntities)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Entidades encontradas: {string.Join(", ", debugEntities.Keys)}");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ERROR al cargar la configuración: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"StackTrace: {ex.StackTrace}");
+                _jsonData = new Dictionary<string, object>();
+            }
+        }
+        
+        /// <summary>
+        /// Analizador JSON simplificado que no depende de bibliotecas externas
+        /// </summary>
+        private Dictionary<string, object> ParseJson(string json)
+        {
+            var result = new Dictionary<string, object>();
+            
+            // Eliminar espacios en blanco innecesarios
+            json = json.Trim();
+            
+            // Verificar que sea un objeto JSON válido
+            if (!json.StartsWith("{") || !json.EndsWith("}"))
+            {
+                throw new Exception("Invalid JSON format");
+            }
+            
+            // Quitar las llaves exteriores
+            json = json.Substring(1, json.Length - 2).Trim();
+            
+            // Analizar cada par clave-valor
+            var regex = new Regex(@"""([^""\\]*(?:\\.[^""\\]*)*)""");
+            var currentIndex = 0;
+            
+            while (currentIndex < json.Length)
+            {
+                // Buscar la clave (siempre es un string)
+                var keyMatch = regex.Match(json, currentIndex);
+                if (!keyMatch.Success)
+                {
+                    break;
+                }
+                
+                var key = keyMatch.Groups[1].Value;
+                currentIndex = keyMatch.Index + keyMatch.Length;
+                
+                // Buscar el separador ':'
+                var colonIndex = json.IndexOf(':', currentIndex);
+                if (colonIndex == -1)
+                {
+                    break;
+                }
+                
+                currentIndex = colonIndex + 1;
+                
+                // Ignorar espacios en blanco
+                while (currentIndex < json.Length && char.IsWhiteSpace(json[currentIndex]))
+                {
+                    currentIndex++;
+                }
+                
+                // Analizar el valor
+                object? value;
+                
+                if (currentIndex < json.Length)
+                {
+                    char firstChar = json[currentIndex];
+                    
+                    if (firstChar == '{')
+                    {
+                        // Es un objeto anidado, encontrar el cierre correspondiente
+                        int openBraces = 1;
+                        int startIndex = currentIndex;
+                        currentIndex++;
+                        
+                        while (openBraces > 0 && currentIndex < json.Length)
+                        {
+                            if (json[currentIndex] == '{')
+                            {
+                                openBraces++;
+                            }
+                            else if (json[currentIndex] == '}')
+                            {
+                                openBraces--;
+                            }
+                            currentIndex++;
+                        }
+                        
+                        // Analizar el objeto anidado recursivamente
+                        string nestedJson = json.Substring(startIndex, currentIndex - startIndex);
+                        value = ParseJson(nestedJson);
+                    }
+                    else if (firstChar == '[')
+                    {
+                        // Es un array, lo tratamos como un string para simplificar
+                        // En una implementación completa, parseariamos cada elemento
+                        int openBrackets = 1;
+                        int startIndex = currentIndex;
+                        currentIndex++;
+                        
+                        while (openBrackets > 0 && currentIndex < json.Length)
+                        {
+                            if (json[currentIndex] == '[')
+                            {
+                                openBrackets++;
+                            }
+                            else if (json[currentIndex] == ']')
+                            {
+                                openBrackets--;
+                            }
+                            currentIndex++;
+                        }
+                        
+                        // Para simplificar, tratamos el array como un string
+                        value = json.Substring(startIndex, currentIndex - startIndex);
+                    }
+                    else if (firstChar == '"')
+                    {
+                        // Es un string
+                        var valueMatch = regex.Match(json, currentIndex);
+                        if (valueMatch.Success)
+                        {
+                            value = valueMatch.Groups[1].Value;
+                            currentIndex = valueMatch.Index + valueMatch.Length;
+                        }
+                        else
+                        {
+                            throw new Exception("Invalid JSON string value");
+                        }
+                    }
+                    else if (char.IsDigit(firstChar) || firstChar == '-')
+                    {
+                        // Es un número
+                        int endIndex = currentIndex;
+                        while (endIndex < json.Length && (char.IsDigit(json[endIndex]) || json[endIndex] == '.' || json[endIndex] == '-' || json[endIndex] == 'e' || json[endIndex] == 'E' || json[endIndex] == '+'))
+                        {
+                            endIndex++;
+                        }
+                        
+                        string numberStr = json.Substring(currentIndex, endIndex - currentIndex);
+                        currentIndex = endIndex;
+                        
+                        // Intentar convertir a número
+                        if (int.TryParse(numberStr, out int intValue))
+                        {
+                            value = intValue;
+                        }
+                        else if (double.TryParse(numberStr, out double doubleValue))
+                        {
+                            value = doubleValue;
+                        }
+                        else
+                        {
+                            value = numberStr;
+                        }
+                    }
+                    else if (json.Substring(currentIndex, 4) == "true")
+                    {
+                        value = true;
+                        currentIndex += 4;
+                    }
+                    else if (json.Substring(currentIndex, 5) == "false")
+                    {
+                        value = false;
+                        currentIndex += 5;
+                    }
+                    else if (json.Substring(currentIndex, 4) == "null")
+                    {
+                        value = null;
+                        currentIndex += 4;
+                    }
+                    else
+                    {
+                        throw new Exception($"Unexpected JSON token: {json.Substring(currentIndex, Math.Min(10, json.Length - currentIndex))}...");
+                    }
+                    
+                    // Agregar el par clave-valor al resultado
+                    result[key] = value;
+                    
+                    // Ignorar espacios en blanco
+                    while (currentIndex < json.Length && char.IsWhiteSpace(json[currentIndex]))
+                    {
+                        currentIndex++;
+                    }
+                    
+                    // Avanzar más allá de la coma si existe
+                    if (currentIndex < json.Length && json[currentIndex] == ',')
+                    {
+                        currentIndex++;
+                    }
+                    
+                    // Ignorar más espacios en blanco
+                    while (currentIndex < json.Length && char.IsWhiteSpace(json[currentIndex]))
+                    {
+                        currentIndex++;
+                    }
+                }
+            }
+            
+            return result;
+        }
+
+        /// <summary>
+        /// Obtiene los nombres de DTO para una entidad
+        /// </summary>
+        public (string dto, string createDto, string updateDto) GetDtoNames(string entityName)
+        {
+            System.Diagnostics.Debug.WriteLine($"GetDtoNames: Buscando configuración para entidad '{entityName}'");
+            
+            if (!_isConfigValid) 
+            {
+                System.Diagnostics.Debug.WriteLine($"GetDtoNames: La configuración no es válida, devolviendo nombres por defecto");
+                return ($"{entityName}Dto", $"{entityName}CreateDto", $"{entityName}UpdateDto");
+            }
+                
+            // Intenta obtener configuración específica de la entidad
+            try
+            {
+                if (!_jsonData.TryGetValue("entities", out object? entitiesObj))
+                {
+                    System.Diagnostics.Debug.WriteLine($"GetDtoNames: No se encontró la sección 'entities' en el JSON");
+                    return ($"{entityName}Dto", $"{entityName}CreateDto", $"{entityName}UpdateDto");
+                }
+                
+                if (entitiesObj == null || !(entitiesObj is Dictionary<string, object> entities))
+                {
+                    System.Diagnostics.Debug.WriteLine($"GetDtoNames: La sección 'entities' no es un diccionario válido");
+                    return ($"{entityName}Dto", $"{entityName}CreateDto", $"{entityName}UpdateDto");
+                }
+                
+                System.Diagnostics.Debug.WriteLine($"GetDtoNames: Entidades disponibles: {string.Join(", ", entities.Keys)}");
+                
+                // Intenta buscar primero con el nombre exacto
+                object? entityConfigObj = null;
+                if (entities.TryGetValue(entityName, out entityConfigObj))
+                {
+                    System.Diagnostics.Debug.WriteLine($"GetDtoNames: Encontrada configuración para '{entityName}'");
+                }
+                // Si no encuentra, intenta buscar con case insensitive
+                else
+                {
+                    var key = entities.Keys.FirstOrDefault(k => string.Equals(k, entityName, StringComparison.OrdinalIgnoreCase));
+                    if (key != null)
+                    {
+                        entityName = key; // Usar la clave con la capitalización original
+                        entityConfigObj = entities[key];
+                        System.Diagnostics.Debug.WriteLine($"GetDtoNames: Encontrada configuración para '{entityName}' (case insensitive)");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"GetDtoNames: No se encontró configuración para '{entityName}'");
+                        return ($"{entityName}Dto", $"{entityName}CreateDto", $"{entityName}UpdateDto");
+                    }
+                }
+                
+                if (entityConfigObj == null || !(entityConfigObj is Dictionary<string, object> entityConfig))
+                {
+                    System.Diagnostics.Debug.WriteLine($"GetDtoNames: La configuración para '{entityName}' no es un objeto válido");
+                    return ($"{entityName}Dto", $"{entityName}CreateDto", $"{entityName}UpdateDto");
+                }
+                
+                // Obtener el nombre personalizado si está definido
+                string customName = entityName;
+                if (entityConfig.TryGetValue("name", out object? nameObj) && 
+                    nameObj is string nameStr && !string.IsNullOrEmpty(nameStr))
+                {
+                    customName = nameStr;
+                    System.Diagnostics.Debug.WriteLine($"GetDtoNames: Nombre personalizado: '{nameStr}'");
+                }
+                
+                // Crear los nombres de DTO según la convención
+                string dto = $"{customName}Dto";
+                string createDto = $"{customName}CreateDto";
+                string updateDto = $"{customName}UpdateDto";
+            
+                System.Diagnostics.Debug.WriteLine($"GetDtoNames: Nombres generados por convención para '{customName}': DTO='{dto}', CreateDTO='{createDto}', UpdateDTO='{updateDto}'");
+                return (dto, createDto, updateDto);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al obtener nombres de DTO: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"StackTrace: {ex.StackTrace}");
+                return ($"{entityName}Dto", $"{entityName}CreateDto", $"{entityName}UpdateDto");
+            }
+        }
+    }
+#>

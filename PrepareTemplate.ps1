@@ -12,7 +12,7 @@ param(
     [string]$OutputPath = "./output",
 
     [Parameter(Mandatory = $false)]
-    [string[]]$Exclude = @("MPR.RestApiTemplate.Vsix", ".git", ".gitignore", ".vs", "PrepareTemplate.ps1", "CHANGELOG.md", "README.md", "LICENSE", "LICENSE.txt", "CONTRIBUTING.md", "CONTRIBUTORS.md", ".vscode", ".editorconfig", ".gitattributes", ".gitkeep", ".github", "template_tmp", "TemplateConfig", "template.json") # Exclude folders and files (wildcards are allowed)
+    [string[]]$Exclude = @("MPR.RestApiTemplate.Vsix", ".git", ".gitignore", ".vs", "PrepareTemplate.ps1", "CHANGELOG.md", "README.md", "LICENSE", "LICENSE.txt", "CONTRIBUTING.md", "CONTRIBUTORS.md", ".vscode", ".editorconfig", ".gitattributes", ".gitkeep", ".github", "template_tmp", "TemplateConfig", "template.json", "oracle-install-sample-schemas.sh", "output", ".DS_Store") # Exclude folders and files (wildcards are allowed)
 )
 
 $TempPath = "./template_tmp"
@@ -30,7 +30,7 @@ function Initialize-TempDirectory {
     Where-Object {
         $excludeMatch = $false
         foreach ($pattern in $Exclude) {
-            if ($_.FullName -like "*$pattern*") { $excludeMatch = $true; break }
+            if ($_.Name -ieq $pattern) { $excludeMatch = $true; break }
         }
         return !$excludeMatch
     } 
@@ -51,7 +51,7 @@ function New-NugetPackage {
     $nugetOutput = Join-Path $OutputPath "nuget"
 
     Write-Host "Empaquetando plantilla como NuGet..."
-    dotnet pack $templateCsproj -o $nugetOutput --nologo
+    dotnet pack $templateCsproj -o $nugetOutput --nologo -p:NoDefaultExcludes=true
 
     if (Test-Path $nugetOutput) {
         Write-Host "Paquete generado en: $nugetOutput"
@@ -131,36 +131,6 @@ function Copy-TemplateConfigFiles {
         Write-Warning "No se encontró 'Template.csproj' en TemplateConfig/"
     }
 }
-
-
-
-function Move-NugetPackage {
-    $NugetSourcePath = Join-Path $OutputPath "nuget"
-    $VsixProjectPath = "./MPR.RestApiTemplate.Vsix/ProjectTemplates"
-
-    if (!(Test-Path $NugetSourcePath)) {
-        Write-Warning "No se encontró la carpeta de paquetes NuGet en '$NugetSourcePath'"
-        return
-    }
-
-    $nupkg = Get-ChildItem -Path $NugetSourcePath -Filter *.nupkg | Select-Object -Last 1
-
-    if ($null -eq $nupkg) {
-        Write-Warning "No se encontró ningún archivo .nupkg en '$NugetSourcePath'"
-        return
-    }
-
-    if (!(Test-Path $VsixProjectPath)) {
-        Write-Host "Creando carpeta de destino: $VsixProjectPath"
-        New-Item -ItemType Directory -Path $VsixProjectPath -Force | Out-Null
-    }
-
-    Copy-Item -Path $nupkg.FullName -Destination $VsixProjectPath -Force
-
-    Write-Host "Paquete '$($nupkg.Name)' copiado a '$VsixProjectPath'"
-}
-
-Move-NugetPackage
 
 # === EJECUCIÓN ===
 

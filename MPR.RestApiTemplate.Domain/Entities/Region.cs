@@ -6,15 +6,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MPR.RestApiTemplate.Domain.Entities;
 
-[Table("Region")]
+/// <summary>
+/// Regions table that contains region numbers and names. references with the Countries table.
+/// </summary>
+[Table("REGIONS")]
 public partial class Region
 {
+    /// <summary>
+    /// Primary key of regions table.
+    /// </summary>
     [Key]
-    public int RegionID { get; set; }
+    [Column(TypeName = "NUMBER")]
+    public decimal Region_Id { get; set; }
 
-    [StringLength(50)]
-    public string RegionDescription { get; set; } = null!;
+    /// <summary>
+    /// Names of regions. Locations are in the countries of these regions.
+    /// </summary>
+    [StringLength(25)]
+    [Unicode(false)]
+    public string? Region_Name { get; set; }
 
     [InverseProperty("Region")]
-    public virtual ICollection<Territory> Territories { get; set; } = new List<Territory>();
+    public virtual ICollection<Country> Countries { get; set; } = new List<Country>();
 }

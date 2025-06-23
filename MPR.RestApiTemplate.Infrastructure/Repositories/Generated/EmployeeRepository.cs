@@ -7,7 +7,7 @@ using MPR.RestApiTemplate.Infrastructure.Context;
 
 namespace MPR.RestApiTemplate.Infrastructure.Repositories
 {
-    public partial class EmployeeRepository(NorthwindContext northwindContext) : GenericRepository<Employee>(northwindContext), IEmployeeRepository
+    public partial class EmployeeRepository(HrContext hrContext) : GenericRepository<Employee>(hrContext), IEmployeeRepository
     {
     }
 }

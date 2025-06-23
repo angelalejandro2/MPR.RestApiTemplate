@@ -41,7 +41,7 @@ string GenerateRepositorySpImplementation(string dbContextName)
     sb.AppendLine("");
     sb.AppendLine("namespace MPR.RestApiTemplate.Infrastructure.Repositories");
     sb.AppendLine("{");
-    sb.AppendLine($"    public partial class {dbContextName}SpRepository(DbContext dbContext) : StoredProcedureRepository(dbContext), I{dbContextName}SpRepository");
+    sb.AppendLine($"    public partial class {dbContextName}SqlExecutor(DbContext dbContext) : SqlExecutor(dbContext), I{dbContextName}SqlExecutor");
     sb.AppendLine("    {");
     sb.AppendLine("    }");
     sb.AppendLine("}");
@@ -75,7 +75,7 @@ foreach (var dbContext in dbContexts)
     string repositoryContentSp = GenerateRepositorySpImplementation(dbContextName);
         
     // Nombre del archivo de salida
-    string outputFileNameSp = $"{dbContextName}SpRepository.cs";
+    string outputFileNameSp = $"{dbContextName}SqlExecutor.cs";
     string outputFilePathSp = Path.Combine(outputPath, outputFileNameSp);
         
     // Verificar si el archivo ya existe antes de escribirlo
