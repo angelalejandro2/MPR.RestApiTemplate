@@ -538,31 +538,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ngelale\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "/Users/aalejandrom/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Angel\\Sources\\Repos\\Github\\prico-architecture-restapitemplate\\MPR.RestApiTemplate\\MPR.RestApiTemplate.Domain\\MPR.RestApiTemplate.Domain.csproj",
+      "projectUniqueName": "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate/MPR.RestApiTemplate.Domain/MPR.RestApiTemplate.Domain.csproj",
       "projectName": "MPR.RestApiTemplate.Domain",
-      "projectPath": "C:\\Angel\\Sources\\Repos\\Github\\prico-architecture-restapitemplate\\MPR.RestApiTemplate\\MPR.RestApiTemplate.Domain\\MPR.RestApiTemplate.Domain.csproj",
-      "packagesPath": "C:\\Users\\ngelale\\.nuget\\packages\\",
-      "outputPath": "C:\\Angel\\Sources\\Repos\\Github\\prico-architecture-restapitemplate\\MPR.RestApiTemplate\\MPR.RestApiTemplate.Domain\\obj\\",
+      "projectPath": "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate/MPR.RestApiTemplate.Domain/MPR.RestApiTemplate.Domain.csproj",
+      "packagesPath": "/Users/aalejandrom/.nuget/packages/",
+      "outputPath": "/Users/aalejandrom/Sources/MPR.RestApiTemplate/MPR.RestApiTemplate/MPR.RestApiTemplate.Domain/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\ngelale\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/aalejandrom/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -581,7 +574,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.300"
+      "SdkAnalysisLevel": "9.0.200"
     },
     "frameworks": {
       "net9.0": {
@@ -608,7 +601,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.202/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
